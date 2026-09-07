@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ArrowRight, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
 
-const LINKS = [
+const NAV_LINKS = [
   { href: '#features', label: 'Features' },
-  { href: '#how-it-works', label: 'How it works' },
+  { href: '#demo', label: 'Interactive Demo' },
+  { href: '#interview-studio', label: 'Voice Studio' },
   { href: '/docs', label: 'Documentation', isRoute: true },
 ];
 
@@ -18,149 +19,224 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 12);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
     <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       style={{
         position: 'fixed',
-        top: 12,
+        top: 14,
         left: 0,
         right: 0,
         zIndex: 100,
-        padding: '0 16px',
+        padding: '0 20px',
       }}
     >
       <div
         style={{
-          maxWidth: 1180,
+          maxWidth: 1140,
           margin: '0 auto',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '10px 24px',
+          padding: '8px 18px 8px 22px',
           borderRadius: 999,
-          background: 'rgba(255, 255, 255, 0.95)',
+          background: scrolled ? 'var(--glass-bg)' : 'var(--surface)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid rgba(0, 0, 0, 0.08)',
-          boxShadow: '0 12px 36px rgba(0, 0, 0, 0.12)',
-          transition: 'all 300ms ease',
+          border: '1px solid var(--border-strong)',
+          boxShadow: scrolled
+            ? '0 16px 36px -8px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--glass-highlight) inset'
+            : '0 8px 24px -4px rgba(0, 0, 0, 0.15)',
+          transition: 'all 250ms ease',
         }}
       >
+        {/* Brand Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 10 }}>
-          <div style={{
-            width: 34,
-            height: 34,
-            borderRadius: '50%',
-            background: 'var(--minutrix-navy)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-          }}>
-            <img src="/small_logo.svg" alt="Smart Apply" style={{ height: 18, filter: 'brightness(0) invert(1)' }} />
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 10,
+              background: 'linear-gradient(135deg, var(--accent) 0%, #38bdf8 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 10px rgba(79, 110, 247, 0.35)',
+            }}
+          >
+            <img src="/small_logo.svg" alt="Smart Apply" style={{ height: 16, filter: 'brightness(0) invert(1)' }} />
           </div>
-          <span style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.02em', color: '#0b0e17' }}>
-            Smart<span style={{ color: '#4f6df5' }}>Apply</span>
+          <span style={{ fontWeight: 800, fontSize: '1.15rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+            Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
           </span>
         </Link>
 
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 28 }} className="desktop-nav-links">
-          <a href="#features" style={{ fontSize: 14.5, fontWeight: 500, color: '#1a1a2e', textDecoration: 'none' }}>
-            Services ▾
-          </a>
-          <a href="#ai-agents" style={{ fontSize: 14.5, fontWeight: 500, color: '#1a1a2e', textDecoration: 'none' }}>
-            AI Agents
-          </a>
-          <a href="#how-it-works" style={{ fontSize: 14.5, fontWeight: 500, color: '#1a1a2e', textDecoration: 'none' }}>
-            Learning ▾
-          </a>
-          <Link to="/docs" style={{ fontSize: 14.5, fontWeight: 500, color: '#1a1a2e', textDecoration: 'none' }}>
-            Community
-          </Link>
-          <a href="#pricing" style={{ fontSize: 14.5, fontWeight: 500, color: '#1a1a2e', textDecoration: 'none' }}>
-            Pricing
-          </a>
+        {/* Desktop Navigation Links */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 24 }} className="desktop-nav-links">
+          {NAV_LINKS.map((link) =>
+            link.isRoute ? (
+              <Link
+                key={link.label}
+                to={link.href}
+                className="nav-link"
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--ink-soft)',
+                  textDecoration: 'none',
+                  transition: 'color var(--transition-fast)',
+                }}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.label}
+                href={link.href}
+                className="nav-link"
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--ink-soft)',
+                  textDecoration: 'none',
+                  transition: 'color var(--transition-fast)',
+                }}
+              >
+                {link.label}
+              </a>
+            )
+          )}
         </nav>
 
+        {/* Actions Group + Embedded Theme Switcher */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }} className="desktop-nav-actions">
+          <ThemeSwitcher variant="compact" />
+
           {isAuthenticated ? (
-            <button className="btn btn-sm" onClick={() => navigate('/dashboard')} style={{ background: '#0b0e17', color: '#ffffff', borderRadius: 999, padding: '9px 20px', fontWeight: 600 }}>
-              Go to Dashboard
+            <button
+              className="btn btn-sm btn-primary"
+              onClick={() => navigate('/dashboard')}
+              style={{ borderRadius: 999, padding: '7px 18px', fontWeight: 600, fontSize: 13 }}
+            >
+              Dashboard <ArrowRight size={14} />
             </button>
           ) : (
             <>
-              <button className="btn btn-ghost btn-sm" onClick={() => navigate('/login')} style={{ color: '#1a1a2e', fontWeight: 600, border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, padding: '7px 16px' }}>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => navigate('/login')}
+                style={{
+                  color: 'var(--ink)',
+                  fontWeight: 600,
+                  fontSize: 13,
+                  borderRadius: 999,
+                  padding: '7px 16px',
+                }}
+              >
                 Sign In
               </button>
-              <button className="btn btn-sm" onClick={() => navigate('/signup')} style={{ background: '#0b0e17', color: '#ffffff', borderRadius: 999, padding: '9px 22px', fontWeight: 600 }}>
-                Get Started
+              <button
+                className="btn btn-sm btn-primary"
+                onClick={() => navigate('/signup')}
+                style={{
+                  borderRadius: 999,
+                  padding: '8px 18px',
+                  fontWeight: 600,
+                  fontSize: 13,
+                  boxShadow: '0 4px 14px rgba(79, 110, 247, 0.3)',
+                }}
+              >
+                Get Started Free
               </button>
             </>
           )}
         </div>
 
+        {/* Mobile Hamburger Toggle */}
         <button
           className="mobile-nav-toggle"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
-          style={{ display: 'none', background: 'transparent', border: 'none', cursor: 'pointer', color: '#0b0e17' }}
+          style={{
+            display: 'none',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            color: 'var(--ink)',
+            padding: 4,
+          }}
         >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
+      {/* Mobile Menu Dropdown */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.2 }}
             style={{
-              borderTop: '1px solid var(--border-color)',
-              background: 'rgba(3, 3, 5, 0.95)',
-              backdropFilter: 'blur(16px)',
-              padding: '16px 24px',
+              maxWidth: 1140,
+              margin: '8px auto 0',
+              borderRadius: 20,
+              background: 'var(--surface)',
+              border: '1px solid var(--border-strong)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+              padding: '20px',
               display: 'flex',
               flexDirection: 'column',
               gap: 16,
-              overflow: 'hidden'
             }}
           >
-            {LINKS.map((l) =>
+            {NAV_LINKS.map((l) =>
               l.isRoute ? (
-                <Link key={l.href} to={l.href} onClick={() => setMobileOpen(false)} style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-primary)' }}>
+                <Link
+                  key={l.href}
+                  to={l.href}
+                  onClick={() => setMobileOpen(false)}
+                  style={{ fontSize: 15, fontWeight: 500, color: 'var(--ink)' }}
+                >
                   {l.label}
                 </Link>
               ) : (
-                <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)} style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-primary)' }}>
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setMobileOpen(false)}
+                  style={{ fontSize: 15, fontWeight: 500, color: 'var(--ink)' }}
+                >
                   {l.label}
                 </a>
               )
             )}
-            <div style={{ paddingBottom: 10 }}>
-               <ThemeSwitcher />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 8, borderTop: '1px solid var(--border)' }}>
+              <span style={{ fontSize: 13, color: 'var(--ink-soft)' }}>Theme</span>
+              <ThemeSwitcher variant="compact" />
             </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 6 }}>
               {isAuthenticated ? (
-                <button className="btn btn-primary w-full" onClick={() => navigate('/dashboard')}>
-                  Go to dashboard
+                <button className="btn btn-primary" onClick={() => navigate('/dashboard')}>
+                  Go to Dashboard
                 </button>
               ) : (
                 <>
-                  <button className="btn btn-secondary w-full" onClick={() => navigate('/login')}>
-                    Log in
+                  <button className="btn btn-outline" onClick={() => navigate('/login')}>
+                    Sign In
                   </button>
-                  <button className="btn btn-primary w-full" onClick={() => navigate('/signup')}>
-                    Get started
+                  <button className="btn btn-primary" onClick={() => navigate('/signup')}>
+                    Get Started Free
                   </button>
                 </>
               )}
@@ -170,14 +246,13 @@ export default function Navbar() {
       </AnimatePresence>
 
       <style>{`
-        @media (max-width: 800px) {
+        @media (max-width: 860px) {
           .desktop-nav-links, .desktop-nav-actions { display: none !important; }
           .mobile-nav-toggle { display: inline-flex !important; }
         }
-        .nav-link-hover {
-          transition: color var(--transition);
+        .nav-link:hover {
+          color: var(--ink) !important;
         }
-        .nav-link-hover:hover { color: var(--text-primary) !important; }
       `}</style>
     </motion.header>
   );

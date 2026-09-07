@@ -18,10 +18,7 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 function getStoredTheme(): Theme {
   const stored = localStorage.getItem('sa_theme');
   if (stored === 'light' || stored === 'dark' || stored === 'ice') return stored;
-  // Respect the OS preference the first time a person visits, same as
-  // most modern apps, but never override an explicit choice afterwards.
-  if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) return 'dark';
-  return 'light';
+  return 'dark';
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

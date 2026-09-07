@@ -17,8 +17,8 @@
 :root {
   /* ── Neutrals ── */
   --paper: #fafaf9;
-  --surface: #ffffff;
-  --surface-sunken: #f3f4f6;
+  --surface: rgba(255, 255, 255, 0.84);
+  --surface-sunken: rgba(243, 244, 246, 0.76);
   --ink: #16181d;
   --ink-soft: #565a63;
   --ink-faint: #8b8f99;
@@ -48,18 +48,21 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
 
-  /* ── Minutrix.in Official Palette & Gradients ── */
-  --minutrix-navy: #0b0e17;
-  --minutrix-blue: #4f6df5;
-  --minutrix-purple: #7c5cf5;
-  --minutrix-lavender: #e8d5f5;
+  /* ── Core Gradients & Modern Studio Tokens ── */
+  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --gradient-heading: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  --gradient-accent-text: linear-gradient(180deg, #ffffff 15%, #93c5fd 100%);
+  --gradient-glow-card: linear-gradient(180deg, rgba(37, 99, 235, 0.12) 0%, rgba(14, 19, 34, 0.9) 100%);
+  --glass-bg: rgba(14, 19, 34, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.06);
+
+  /* Legacy compatibility aliases */
+  --minutrix-navy: #08090e;
+  --minutrix-blue: #4f6ef7;
+  --minutrix-purple: #6366f1;
+  --minutrix-lavender: #e0e7ff;
   --minutrix-card-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 244, 255, 0.7) 100%);
-  --gradient-primary: linear-gradient(135deg, #4f6df5 0%, #7c5cf5 50%, #38bdf8 100%);
-  --gradient-heading: linear-gradient(135deg, #ffffff 0%, #e2e8f0 60%, #94a3b8 100%);
-  --gradient-accent-text: linear-gradient(135deg, #4f6df5 0%, #7c5cf5 50%, #e8d5f5 100%);
-  --gradient-glow-card: linear-gradient(180deg, rgba(124, 92, 245, 0.15) 0%, rgba(11, 14, 23, 0.7) 100%);
-  --glass-bg: rgba(11, 14, 23, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.12);
 
   /* ── Shape ── */
   --radius-sm: 8px;
@@ -139,41 +142,47 @@
   --transition: var(--transition-base);
 }
 
-/* ── Dark — Minutrix Ultra-Modern Glow Aesthetic ───────────────────── */
+/* ── Dark — Professional Royal Obsidian & Sapphire Studio Aesthetic ──── */
 [data-theme='dark'] {
-  --paper: #07080c;
-  --surface: #0f111a;
-  --surface-sunken: #161926;
-  --ink: #f8fafc;
+  --paper: #070913;
+  --surface: #0e1322;
+  --surface-sunken: #090c16;
+  --ink: #ffffff;
   --ink-soft: #94a3b8;
   --ink-faint: #64748b;
   --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
+  --border-strong: rgba(255, 255, 255, 0.15);
 
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
   --accent-ink: #ffffff;
-  --accent-soft: rgba(99, 102, 241, 0.12);
-  --accent-soft-border: rgba(99, 102, 241, 0.3);
+  --accent-soft: rgba(37, 99, 235, 0.12);
+  --accent-soft-border: rgba(59, 130, 246, 0.3);
 
-  --success: #10b981;
+  --success: #059669;
   --success-soft: rgba(16, 185, 129, 0.12);
-  --success-border: rgba(16, 185, 129, 0.3);
-  --warning: #f59e0b;
-  --warning-soft: rgba(245, 158, 11, 0.12);
-  --warning-border: rgba(245, 158, 11, 0.3);
-  --danger: #ef4444;
-  --danger-soft: rgba(239, 68, 68, 0.12);
-  --danger-border: rgba(239, 68, 68, 0.3);
+  --success-border: rgba(16, 185, 129, 0.25);
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.12);
+  --warning-border: rgba(217, 119, 6, 0.25);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.12);
+  --danger-border: rgba(220, 38, 38, 0.25);
 
   --font-display: 'Sora', 'Space Grotesk', 'Inter', sans-serif;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
-  --shadow-focus: 0 0 0 3px rgba(99, 102, 241, 0.35);
-  --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.25);
-  --glass-bg: rgba(15, 17, 26, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.09);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 16px 36px -8px rgba(0, 0, 0, 0.75);
+  --shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.35);
+  --shadow-glow: 0 0 32px rgba(37, 99, 235, 0.2);
+  --glass-bg: rgba(14, 19, 34, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.06);
+
+  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --gradient-heading: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  --gradient-accent-text: linear-gradient(180deg, #ffffff 10%, #93c5fd 100%);
+  --gradient-glow-card: linear-gradient(180deg, rgba(37, 99, 235, 0.12) 0%, rgba(14, 19, 34, 0.9) 100%);
   color-scheme: dark;
 }
 
