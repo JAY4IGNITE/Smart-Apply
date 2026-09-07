@@ -4,9 +4,9 @@ services:
     env: python
     region: oregon
     plan: free
-    rootDir: backend/core
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    buildCommand: pip install -r core/requirements.txt
+    startCommand: uvicorn core.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -27,9 +27,9 @@ services:
     env: python
     region: oregon
     plan: free
-    rootDir: backend/ai
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    buildCommand: pip install -r ai/requirements.txt
+    startCommand: uvicorn ai.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -61,9 +61,9 @@ services:
     env: python
     region: oregon
     plan: free
-    rootDir: backend/tools
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    buildCommand: pip install -r tools/requirements.txt
+    startCommand: uvicorn tools.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0

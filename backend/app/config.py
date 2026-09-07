@@ -31,7 +31,9 @@ class Settings(BaseSettings):
     
     CHATBOT_API_KEY: str = ""
 
-    # ── RapidAPI (JSearch) ──
+    # ── Job Search (Adzuna & RapidAPI JSearch) ──
+    ADZUNA_APP_ID: str = ""
+    ADZUNA_APP_KEY: str = ""
     RAPIDAPI_KEY: str = ""
 
     # ── Cloudflare R2 (Storage) ──

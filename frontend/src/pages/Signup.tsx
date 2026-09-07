@@ -85,7 +85,12 @@ export default function Signup() {
         transition={{ duration: 0.35 }}
       >
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-          <img src="/logo.svg" alt="Smart Apply" style={{ height: 42 }} />
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <img src="/logo.png" alt="Smart Apply" style={{ height: 42, width: 42, objectFit: 'contain' }} />
+            <span style={{ fontWeight: 800, fontSize: '1.4rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+            </span>
+          </Link>
         </div>
 
         <div className="auth-header">

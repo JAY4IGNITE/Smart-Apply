@@ -1213,20 +1213,19 @@ export default function Landing() {
       <footer style={{ borderTop: '1px solid var(--border)', padding: '32px 24px', position: 'relative', zIndex: 10, background: 'transparent' }}>
         <div style={{ maxWidth: 1140, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div
+            <img
+              src="/logo.png"
+              alt="Smart Apply"
               style={{
                 width: 26,
                 height: 26,
-                borderRadius: 7,
-                background: 'linear-gradient(135deg, var(--accent) 0%, #38bdf8 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                objectFit: 'contain',
+                filter: isDark ? 'drop-shadow(0 2px 8px rgba(56, 189, 248, 0.35))' : 'drop-shadow(0 1px 4px rgba(37, 99, 235, 0.2))',
               }}
-            >
-              <img src="/small_logo.svg" alt="Smart Apply" style={{ height: 13, filter: 'brightness(0) invert(1)' }} />
-            </div>
-            <span style={{ fontWeight: 700, color: 'var(--ink)', fontSize: 15 }}>SmartApply</span>
+            />
+            <span style={{ fontWeight: 700, color: 'var(--ink)', fontSize: 15 }}>
+              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+            </span>
           </div>
 
           <div style={{ display: 'flex', gap: 20, fontSize: 13, color: 'var(--ink-soft)' }}>

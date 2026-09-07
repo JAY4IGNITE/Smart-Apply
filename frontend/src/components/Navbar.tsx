@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ArrowRight, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import ThemeSwitcher from './ThemeSwitcher';
 
 const NAV_LINKS = [
@@ -14,6 +15,8 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
+  const { theme } = useTheme();
+  const isDark = theme !== 'light';
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -34,23 +37,25 @@ export default function Navbar() {
         top: 14,
         left: 0,
         right: 0,
-        zIndex: 100,
+        zIndex: 50,
+        display: 'flex',
+        justifyContent: 'center',
         padding: '0 20px',
       }}
     >
       <div
         style={{
+          width: '100%',
           maxWidth: 1140,
-          margin: '0 auto',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '8px 18px 8px 22px',
-          borderRadius: 999,
-          background: scrolled ? 'var(--glass-bg)' : 'var(--surface)',
+          padding: '10px 20px',
+          borderRadius: 18,
+          background: 'var(--nav-glass-bg)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid var(--border-strong)',
+          border: '1px solid var(--nav-glass-border)',
           boxShadow: scrolled
             ? '0 16px 36px -8px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--glass-highlight) inset'
             : '0 8px 24px -4px rgba(0, 0, 0, 0.15)',
@@ -58,22 +63,23 @@ export default function Navbar() {
         }}
       >
         {/* Brand Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 10 }}>
-          <div
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 11 }}>
+          <img
+            src="/logo.png"
+            alt="Smart Apply"
             style={{
               width: 32,
               height: 32,
-              borderRadius: 10,
-              background: 'linear-gradient(135deg, var(--accent) 0%, #38bdf8 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 2px 10px rgba(79, 110, 247, 0.35)',
+              objectFit: 'contain',
+              filter: isDark
+                ? 'drop-shadow(0 2px 10px rgba(56, 189, 248, 0.45))'
+                : 'drop-shadow(0 2px 8px rgba(37, 99, 235, 0.25))',
+              transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
-          >
-            <img src="/small_logo.svg" alt="Smart Apply" style={{ height: 16, filter: 'brightness(0) invert(1)' }} />
-          </div>
-          <span style={{ fontWeight: 800, fontSize: '1.15rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.08)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          />
+          <span style={{ fontWeight: 800, fontSize: '1.18rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
             Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
           </span>
         </Link>
