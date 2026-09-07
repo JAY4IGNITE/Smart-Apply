@@ -241,15 +241,7 @@ export default function Landing() {
             }}
           >
             <SplitText text="Prepare, tailor, and interview for" splitBy="words" delay={0.03} />{' '}
-            <span
-              style={{
-                background: isDark
-                  ? 'linear-gradient(180deg, #ffffff 15%, #93c5fd 100%)'
-                  : 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
+            <span className="gradient-text">
               top engineering roles.
             </span>
           </h1>
