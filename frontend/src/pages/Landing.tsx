@@ -340,48 +340,88 @@ export default function Landing() {
           {/* ── Interactive Live Product Showcase HUD ────────────────── */}
           <div id="demo" style={{ width: '100%', maxWidth: 1120, margin: '0 auto' }}>
             <TiltedCard maxTilt={4} scale={1.01} perspective={1400} glareEffect={true}>
-              <div className="demo-sandbox" style={{ margin: 0, width: '100%' }}>
+              <div
+                style={{
+                  margin: 0,
+                  width: '100%',
+                  background: 'rgba(11, 15, 26, 0.88)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: 20,
+                  boxShadow: '0 28px 70px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05) inset',
+                  overflow: 'hidden',
+                  textAlign: 'left',
+                }}
+              >
                 {/* HUD Header Bar */}
-                <div className="demo-sandbox-header">
-                  <div className="sandbox-window-dots">
-                    <span className="sandbox-dot red" />
-                    <span className="sandbox-dot yellow" />
-                    <span className="sandbox-dot green" />
-                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-faint)', marginLeft: 8 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '14px 22px',
+                    background: 'rgba(8, 11, 20, 0.96)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                    flexWrap: 'wrap',
+                    gap: 12,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                    <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#ef4444', opacity: 0.8 }} />
+                    <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#f59e0b', opacity: 0.8 }} />
+                    <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#10b981', opacity: 0.8 }} />
+                    <span style={{ fontSize: 12.5, fontWeight: 600, color: '#64748b', marginLeft: 8 }}>
                       SmartApply Studio · Live Demonstration
                     </span>
                   </div>
 
                   {/* Navigation Tabs */}
-                  <div className="sandbox-nav-tabs">
-                    <button
-                      type="button"
-                      className={`sandbox-tab ${activeTab === 'ats' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('ats')}
-                    >
-                      <ScanSearch size={14} /> Resume Tailor & ATS
-                    </button>
-                    <button
-                      type="button"
-                      className={`sandbox-tab ${activeTab === 'interview' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('interview')}
-                    >
-                      <Video size={14} /> Live Mock Interview
-                    </button>
-                    <button
-                      type="button"
-                      className={`sandbox-tab ${activeTab === 'latex' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('latex')}
-                    >
-                      <FileCode size={14} /> LaTeX & PDF Maker
-                    </button>
-                    <button
-                      type="button"
-                      className={`sandbox-tab ${activeTab === 'projects' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('projects')}
-                    >
-                      <Lightbulb size={14} /> Project Ideas
-                    </button>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      background: 'rgba(6, 8, 16, 0.9)',
+                      padding: 4,
+                      borderRadius: 10,
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                    }}
+                  >
+                    {[
+                      { id: 'ats', icon: ScanSearch, label: 'Resume Tailor & ATS' },
+                      { id: 'interview', icon: Video, label: 'Live Mock Interview' },
+                      { id: 'latex', icon: FileCode, label: 'LaTeX & PDF Maker' },
+                      { id: 'projects', icon: Lightbulb, label: 'Project Ideas' },
+                    ].map((tab) => {
+                      const Icon = tab.icon;
+                      const isActive = activeTab === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => setActiveTab(tab.id as any)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            padding: '7px 14px',
+                            borderRadius: 8,
+                            fontSize: 12.5,
+                            fontWeight: 600,
+                            color: isActive ? '#ffffff' : '#94a3b8',
+                            background: isActive ? 'rgba(37, 99, 235, 0.22)' : 'transparent',
+                            border: isActive ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid transparent',
+                            boxShadow: isActive ? '0 2px 10px rgba(37, 99, 235, 0.25)' : 'none',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          <Icon size={14} style={{ color: isActive ? '#60a5fa' : '#94a3b8' }} />
+                          <span>{tab.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -884,36 +924,63 @@ export default function Landing() {
             </h2>
           </div>
 
-          <div className="workflow-grid">
-            <div className="workflow-card">
-              <div className="workflow-step-num">01</div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: '#ffffff', marginBottom: 10 }}>
-                Import Resume & Target Job
-              </h3>
-              <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
-                Upload your existing resume in PDF, DOCX, or text format and paste the job description you are targeting. SmartApply parses your skills and identifies matching and missing terms.
-              </p>
-            </div>
-
-            <div className="workflow-card">
-              <div className="workflow-step-num">02</div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: '#ffffff', marginBottom: 10 }}>
-                Tailor Experience & Practice
-              </h3>
-              <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
-                Use AI suggestions to reframe bullet points with measurable metrics. Rehearse spoken interview questions and execute code solutions inside the Judge0 runner to build fluency.
-              </p>
-            </div>
-
-            <div className="workflow-card">
-              <div className="workflow-step-num">03</div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: '#ffffff', marginBottom: 10 }}>
-                Export Clean LaTeX & Apply
-              </h3>
-              <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
-                Download compiled, ATS-compliant PDFs and source LaTeX files. Submit your applications with verified keyword alignment and structured formatting.
-              </p>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, position: 'relative' }}>
+            {[
+              {
+                step: '01',
+                title: 'Import Resume & Target Job',
+                desc: 'Upload your existing resume in PDF, DOCX, or text format and paste the job description you are targeting. SmartApply parses your skills and identifies matching and missing terms.',
+              },
+              {
+                step: '02',
+                title: 'Tailor Experience & Practice',
+                desc: 'Use AI suggestions to reframe bullet points with measurable metrics. Rehearse spoken interview questions and execute code solutions inside the Judge0 runner to build fluency.',
+              },
+              {
+                step: '03',
+                title: 'Export Clean LaTeX & Apply',
+                desc: 'Download compiled, ATS-compliant PDFs and source LaTeX files. Submit your applications with verified keyword alignment and structured formatting.',
+              },
+            ].map((wf, i) => (
+              <div
+                key={i}
+                style={{
+                  background: 'rgba(11, 15, 26, 0.65)',
+                  backdropFilter: 'blur(16px)',
+                  WebkitBackdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: 20,
+                  padding: '32px 26px',
+                  position: 'relative',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 10,
+                    background: 'rgba(37, 99, 235, 0.14)',
+                    color: '#60a5fa',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 14,
+                    fontWeight: 800,
+                    marginBottom: 20,
+                    border: '1px solid rgba(59, 130, 246, 0.25)',
+                  }}
+                >
+                  {wf.step}
+                </div>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: '#ffffff', marginBottom: 10 }}>
+                  {wf.title}
+                </h3>
+                <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
+                  {wf.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -991,38 +1058,68 @@ export default function Landing() {
             </h2>
           </div>
 
-          <div className="faq-container">
-            {FAQS.map((faq, idx) => (
-              <div key={idx} className={`faq-card ${openFaq === idx ? 'open' : ''}`}>
-                <button
-                  type="button"
-                  className="faq-question"
-                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 840, margin: '0 auto' }}>
+            {FAQS.map((faq, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    background: isOpen ? 'rgba(15, 22, 38, 0.85)' : 'rgba(11, 15, 26, 0.6)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    border: isOpen ? '1px solid rgba(59, 130, 246, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: 16,
+                    overflow: 'hidden',
+                    transition: 'all 0.2s ease',
+                  }}
                 >
-                  <span>{faq.q}</span>
-                  <motion.span
-                    animate={{ rotate: openFaq === idx ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : idx)}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '20px 24px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      fontSize: 16,
+                      fontWeight: 600,
+                      color: isOpen ? '#ffffff' : '#e2e8f0',
+                    }}
                   >
-                    <ChevronDown size={18} />
-                  </motion.span>
-                </button>
-
-                <AnimatePresence>
-                  {openFaq === idx && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: 'easeInOut' }}
-                      style={{ overflow: 'hidden' }}
+                    <span>{faq.q}</span>
+                    <motion.span
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ color: isOpen ? '#60a5fa' : '#94a3b8', display: 'flex', alignItems: 'center' }}
                     >
-                      <div className="faq-answer">{faq.a}</div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+                      <ChevronDown size={18} />
+                    </motion.span>
+                  </button>
+
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: 'easeInOut' }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div style={{ padding: '0 24px 22px', fontSize: 14.5, lineHeight: 1.65, color: '#94a3b8' }}>
+                          {faq.a}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
