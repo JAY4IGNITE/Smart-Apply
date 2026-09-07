@@ -26,6 +26,7 @@ import {
 import Navbar from '../components/Navbar';
 import AnimatedBackground from '../components/AnimatedBackground';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 import SpotlightCard from '../components/reactbits/SpotlightCard';
 import SplitText from '../components/reactbits/SplitText';
@@ -178,6 +179,8 @@ const FAQS = [
 export default function Landing() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const [activeTab, setActiveTab] = useState<'ats' | 'interview' | 'latex' | 'projects'>('ats');
   const [selectedRole, setSelectedRole] = useState<string>('backend');
@@ -187,7 +190,6 @@ export default function Landing() {
 
   return (
     <div
-      data-theme="dark"
       style={{
         position: 'relative',
         overflow: 'hidden',
@@ -215,13 +217,13 @@ export default function Landing() {
               gap: 8,
               padding: '6px 16px',
               borderRadius: 999,
-              background: 'rgba(37, 99, 235, 0.08)',
-              border: '1px solid rgba(59, 130, 246, 0.22)',
+              background: isDark ? 'rgba(37, 99, 235, 0.08)' : 'rgba(37, 99, 235, 0.06)',
+              border: isDark ? '1px solid rgba(59, 130, 246, 0.22)' : '1px solid rgba(37, 99, 235, 0.18)',
               marginBottom: 24,
             }}
           >
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#3b82f6', boxShadow: '0 0 8px #3b82f6' }} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#93c5fd', letterSpacing: '0.02em' }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: isDark ? '#93c5fd' : '#1d4ed8', letterSpacing: '0.02em' }}>
               SmartApply Studio · Technical Career Engineering
             </span>
           </div>
@@ -233,7 +235,7 @@ export default function Landing() {
               lineHeight: 1.1,
               fontWeight: 800,
               letterSpacing: '-0.035em',
-              color: '#ffffff',
+              color: 'var(--ink)',
               margin: '0 auto 24px',
               maxWidth: 960,
             }}
@@ -241,7 +243,9 @@ export default function Landing() {
             <SplitText text="Prepare, tailor, and interview for" splitBy="words" delay={0.03} />{' '}
             <span
               style={{
-                background: 'linear-gradient(180deg, #ffffff 15%, #93c5fd 100%)',
+                background: isDark
+                  ? 'linear-gradient(180deg, #ffffff 15%, #93c5fd 100%)'
+                  : 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
@@ -257,7 +261,7 @@ export default function Landing() {
               maxWidth: 740,
               margin: '0 auto 36px',
               lineHeight: 1.65,
-              color: '#94a3b8',
+              color: 'var(--ink-soft)',
             }}
           >
             A unified suite for software professionals: tailor your resume to any job specification, verify ATS compliance, practice voice technical interviews with sandboxed code execution, and export clean LaTeX documents.
@@ -295,14 +299,15 @@ export default function Landing() {
                 padding: '14px 28px',
                 fontSize: 15,
                 fontWeight: 600,
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#cbd5e1',
+                background: isDark ? 'rgba(255, 255, 255, 0.04)' : '#ffffff',
+                border: isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid var(--border-strong)',
+                color: 'var(--ink)',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
                 transition: 'all 0.2s ease',
+                boxShadow: isDark ? 'none' : '0 1px 3px rgba(0, 0, 0, 0.06)',
               }}
             >
               Read Documentation
@@ -318,23 +323,36 @@ export default function Landing() {
               gap: 12,
               flexWrap: 'wrap',
               fontSize: 13,
-              color: '#94a3b8',
+              color: 'var(--ink-soft)',
               fontWeight: 500,
               marginBottom: 52,
             }}
           >
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 999, background: 'rgba(15, 23, 42, 0.65)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-              <ShieldCheck size={14} style={{ color: '#60a5fa' }} /> Zero training on candidate data
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 999, background: 'rgba(15, 23, 42, 0.65)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-              <FileCode size={14} style={{ color: '#60a5fa' }} /> Native LaTeX & PDF compilation
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 999, background: 'rgba(15, 23, 42, 0.65)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-              <Terminal size={14} style={{ color: '#60a5fa' }} /> Isolated Judge0 code sandbox
-            </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 999, background: 'rgba(15, 23, 42, 0.65)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-              <Check size={14} style={{ color: '#60a5fa' }} /> No credit card required
-            </span>
+            {[
+              { icon: ShieldCheck, text: 'Zero training on candidate data' },
+              { icon: FileCode, text: 'Native LaTeX & PDF compilation' },
+              { icon: Terminal, text: 'Isolated Judge0 code sandbox' },
+              { icon: Check, text: 'No credit card required' },
+            ].map((pill, i) => {
+              const Icon = pill.icon;
+              return (
+                <span
+                  key={i}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 7,
+                    padding: '6px 14px',
+                    borderRadius: 999,
+                    background: isDark ? 'rgba(15, 23, 42, 0.65)' : 'rgba(255, 255, 255, 0.9)',
+                    border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid var(--border)',
+                    boxShadow: isDark ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.04)',
+                  }}
+                >
+                  <Icon size={14} style={{ color: 'var(--accent)' }} /> {pill.text}
+                </span>
+              );
+            })}
           </div>
 
           {/* ── Interactive Live Product Showcase HUD ────────────────── */}
@@ -344,12 +362,14 @@ export default function Landing() {
                 style={{
                   margin: 0,
                   width: '100%',
-                  background: 'rgba(11, 15, 26, 0.88)',
+                  background: isDark ? 'rgba(11, 15, 26, 0.88)' : 'rgba(255, 255, 255, 0.94)',
                   backdropFilter: 'blur(24px)',
                   WebkitBackdropFilter: 'blur(24px)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid var(--border)',
                   borderRadius: 20,
-                  boxShadow: '0 28px 70px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05) inset',
+                  boxShadow: isDark
+                    ? '0 28px 70px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05) inset'
+                    : '0 20px 50px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.9) inset',
                   overflow: 'hidden',
                   textAlign: 'left',
                 }}
@@ -361,8 +381,8 @@ export default function Landing() {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '14px 22px',
-                    background: 'rgba(8, 11, 20, 0.96)',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                    background: isDark ? 'rgba(8, 11, 20, 0.96)' : 'rgba(248, 250, 252, 0.98)',
+                    borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid var(--border)',
                     flexWrap: 'wrap',
                     gap: 12,
                   }}
@@ -371,7 +391,7 @@ export default function Landing() {
                     <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#ef4444', opacity: 0.8 }} />
                     <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#f59e0b', opacity: 0.8 }} />
                     <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#10b981', opacity: 0.8 }} />
-                    <span style={{ fontSize: 12.5, fontWeight: 600, color: '#64748b', marginLeft: 8 }}>
+                    <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink-faint)', marginLeft: 8 }}>
                       SmartApply Studio · Live Demonstration
                     </span>
                   </div>
@@ -382,10 +402,10 @@ export default function Landing() {
                       display: 'flex',
                       alignItems: 'center',
                       gap: 4,
-                      background: 'rgba(6, 8, 16, 0.9)',
+                      background: isDark ? 'rgba(6, 8, 16, 0.9)' : 'rgba(241, 245, 249, 0.9)',
                       padding: 4,
                       borderRadius: 10,
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid var(--border)',
                     }}
                   >
                     {[
@@ -409,15 +429,21 @@ export default function Landing() {
                             borderRadius: 8,
                             fontSize: 12.5,
                             fontWeight: 600,
-                            color: isActive ? '#ffffff' : '#94a3b8',
-                            background: isActive ? 'rgba(37, 99, 235, 0.22)' : 'transparent',
-                            border: isActive ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid transparent',
-                            boxShadow: isActive ? '0 2px 10px rgba(37, 99, 235, 0.25)' : 'none',
+                            color: isActive ? (isDark ? '#ffffff' : '#1d4ed8') : 'var(--ink-soft)',
+                            background: isActive
+                              ? (isDark ? 'rgba(37, 99, 235, 0.22)' : '#ffffff')
+                              : 'transparent',
+                            border: isActive
+                              ? (isDark ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid var(--border)')
+                              : '1px solid transparent',
+                            boxShadow: isActive
+                              ? (isDark ? '0 2px 10px rgba(37, 99, 235, 0.25)' : '0 1px 4px rgba(0, 0, 0, 0.08)')
+                              : 'none',
                             cursor: 'pointer',
                             transition: 'all 0.15s ease',
                           }}
                         >
-                          <Icon size={14} style={{ color: isActive ? '#60a5fa' : '#94a3b8' }} />
+                          <Icon size={14} style={{ color: isActive ? 'var(--accent)' : 'inherit' }} />
                           <span>{tab.label}</span>
                         </button>
                       );
@@ -804,7 +830,7 @@ export default function Landing() {
             <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--accent)', textTransform: 'uppercase' }}>
               Functional Capabilities
             </span>
-            <h2 style={{ fontSize: 'clamp(28px, 3.6vw, 44px)', fontWeight: 800, marginTop: 10, color: '#ffffff', letterSpacing: '-0.025em' }}>
+            <h2 style={{ fontSize: 'clamp(28px, 3.6vw, 44px)', fontWeight: 800, marginTop: 10, color: 'var(--ink)', letterSpacing: '-0.025em' }}>
               Everything in SmartApply, built for technical candidates.
             </h2>
             <p style={{ color: 'var(--ink-soft)', fontSize: 16, maxWidth: 640, margin: '14px auto 0', lineHeight: 1.6 }}>
@@ -814,11 +840,11 @@ export default function Landing() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
             {/* Tool 1 */}
-            <SpotlightCard spotlightColor="rgba(59, 102, 255, 0.16)">
+            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
               <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
                 <Wand2 size={20} />
               </div>
-              <h3 style={{ fontSize: 19, fontWeight: 700, color: '#ffffff', marginBottom: 8 }}>
+              <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
                 Resume Tailor
               </h3>
               <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 16px' }}>
@@ -830,11 +856,11 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 2 */}
-            <SpotlightCard spotlightColor="rgba(59, 102, 255, 0.16)">
+            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
               <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
                 <ScanSearch size={20} />
               </div>
-              <h3 style={{ fontSize: 19, fontWeight: 700, color: '#ffffff', marginBottom: 8 }}>
+              <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
                 ATS Compatibility Checker
               </h3>
               <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 16px' }}>
@@ -846,11 +872,11 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 3 */}
-            <SpotlightCard spotlightColor="rgba(59, 102, 255, 0.16)">
+            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
               <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
                 <Video size={20} />
               </div>
-              <h3 style={{ fontSize: 19, fontWeight: 700, color: '#ffffff', marginBottom: 8 }}>
+              <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
                 Live Mock Interview Studio
               </h3>
               <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 16px' }}>
@@ -862,11 +888,11 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 4 */}
-            <SpotlightCard spotlightColor="rgba(59, 102, 255, 0.16)">
+            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
               <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
                 <FileCode size={20} />
               </div>
-              <h3 style={{ fontSize: 19, fontWeight: 700, color: '#ffffff', marginBottom: 8 }}>
+              <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
                 LaTeX Resume Maker
               </h3>
               <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 16px' }}>
@@ -878,11 +904,11 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 5 */}
-            <SpotlightCard spotlightColor="rgba(59, 102, 255, 0.16)">
+            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
               <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
                 <Lightbulb size={20} />
               </div>
-              <h3 style={{ fontSize: 19, fontWeight: 700, color: '#ffffff', marginBottom: 8 }}>
+              <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
                 Portfolio Project Recommender
               </h3>
               <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 16px' }}>
@@ -894,11 +920,11 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 6 */}
-            <SpotlightCard spotlightColor="rgba(59, 102, 255, 0.16)">
-              <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
+            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
+              <div style={{ width: 42, height: 42, borderRadius: 10, background: isDark ? 'rgba(59, 102, 255, 0.14)' : 'rgba(37, 99, 235, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isDark ? '#60a5fa' : '#2563eb', marginBottom: 18 }}>
                 <Share2 size={20} />
               </div>
-              <h3 style={{ fontSize: 19, fontWeight: 700, color: '#ffffff', marginBottom: 8 }}>
+              <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
                 Cover Letters & Profile Optimizer
               </h3>
               <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 16px' }}>
@@ -919,7 +945,7 @@ export default function Landing() {
             <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--accent)', textTransform: 'uppercase' }}>
               Workflow
             </span>
-            <h2 style={{ fontSize: 'clamp(28px, 3.6vw, 42px)', fontWeight: 800, marginTop: 10, color: '#ffffff', letterSpacing: '-0.025em' }}>
+            <h2 style={{ fontSize: 'clamp(28px, 3.6vw, 42px)', fontWeight: 800, marginTop: 10, color: 'var(--ink)', letterSpacing: '-0.025em' }}>
               How SmartApply integrates with your job hunt.
             </h2>
           </div>
@@ -945,13 +971,14 @@ export default function Landing() {
               <div
                 key={i}
                 style={{
-                  background: 'rgba(11, 15, 26, 0.65)',
+                  background: isDark ? 'rgba(11, 15, 26, 0.65)' : 'rgba(255, 255, 255, 0.85)',
                   backdropFilter: 'blur(16px)',
                   WebkitBackdropFilter: 'blur(16px)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid var(--border)',
                   borderRadius: 20,
                   padding: '32px 26px',
                   position: 'relative',
+                  boxShadow: isDark ? 'none' : '0 10px 30px -10px rgba(0, 0, 0, 0.06)',
                   transition: 'all 0.2s ease',
                 }}
               >
@@ -960,23 +987,23 @@ export default function Landing() {
                     width: 36,
                     height: 36,
                     borderRadius: 10,
-                    background: 'rgba(37, 99, 235, 0.14)',
-                    color: '#60a5fa',
+                    background: isDark ? 'rgba(37, 99, 235, 0.14)' : 'rgba(37, 99, 235, 0.1)',
+                    color: isDark ? '#60a5fa' : '#2563eb',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: 14,
                     fontWeight: 800,
                     marginBottom: 20,
-                    border: '1px solid rgba(59, 130, 246, 0.25)',
+                    border: isDark ? '1px solid rgba(59, 130, 246, 0.25)' : '1px solid rgba(37, 99, 235, 0.2)',
                   }}
                 >
                   {wf.step}
                 </div>
-                <h3 style={{ fontSize: 18, fontWeight: 700, color: '#ffffff', marginBottom: 10 }}>
+                <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 10 }}>
                   {wf.title}
                 </h3>
-                <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
+                <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
                   {wf.desc}
                 </p>
               </div>
@@ -1005,7 +1032,7 @@ export default function Landing() {
               </span>
             </div>
 
-            <h3 style={{ fontSize: 24, fontWeight: 700, color: '#ffffff', marginBottom: 12 }}>
+            <h3 style={{ fontSize: 24, fontWeight: 700, color: 'var(--ink)', marginBottom: 12 }}>
               Built with open technologies and strict candidate privacy.
             </h3>
 
@@ -1053,7 +1080,7 @@ export default function Landing() {
             <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--accent)', textTransform: 'uppercase' }}>
               Frequently Asked Questions
             </span>
-            <h2 style={{ fontSize: 'clamp(26px, 3.4vw, 38px)', fontWeight: 800, marginTop: 10, color: '#ffffff', letterSpacing: '-0.025em' }}>
+            <h2 style={{ fontSize: 'clamp(26px, 3.4vw, 38px)', fontWeight: 800, marginTop: 10, color: 'var(--ink)', letterSpacing: '-0.025em' }}>
               Common questions about SmartApply.
             </h2>
           </div>
@@ -1065,12 +1092,17 @@ export default function Landing() {
                 <div
                   key={idx}
                   style={{
-                    background: isOpen ? 'rgba(15, 22, 38, 0.85)' : 'rgba(11, 15, 26, 0.6)',
+                    background: isDark
+                      ? (isOpen ? 'rgba(15, 22, 38, 0.85)' : 'rgba(11, 15, 26, 0.6)')
+                      : (isOpen ? '#ffffff' : 'rgba(255, 255, 255, 0.75)'),
                     backdropFilter: 'blur(16px)',
                     WebkitBackdropFilter: 'blur(16px)',
-                    border: isOpen ? '1px solid rgba(59, 130, 246, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
+                    border: isOpen
+                      ? (isDark ? '1px solid rgba(59, 130, 246, 0.35)' : '1px solid rgba(37, 99, 235, 0.4)')
+                      : (isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid var(--border)'),
                     borderRadius: 16,
                     overflow: 'hidden',
+                    boxShadow: !isDark && isOpen ? '0 12px 24px -8px rgba(0, 0, 0, 0.08)' : 'none',
                     transition: 'all 0.2s ease',
                   }}
                 >
@@ -1089,14 +1121,14 @@ export default function Landing() {
                       textAlign: 'left',
                       fontSize: 16,
                       fontWeight: 600,
-                      color: isOpen ? '#ffffff' : '#e2e8f0',
+                      color: 'var(--ink)',
                     }}
                   >
                     <span>{faq.q}</span>
                     <motion.span
                       animate={{ rotate: isOpen ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
-                      style={{ color: isOpen ? '#60a5fa' : '#94a3b8', display: 'flex', alignItems: 'center' }}
+                      style={{ color: isOpen ? 'var(--accent)' : 'var(--ink-soft)', display: 'flex', alignItems: 'center' }}
                     >
                       <ChevronDown size={18} />
                     </motion.span>
@@ -1111,7 +1143,7 @@ export default function Landing() {
                         transition={{ duration: 0.2, ease: 'easeInOut' }}
                         style={{ overflow: 'hidden' }}
                       >
-                        <div style={{ padding: '0 24px 22px', fontSize: 14.5, lineHeight: 1.65, color: '#94a3b8' }}>
+                        <div style={{ padding: '0 24px 22px', fontSize: 14.5, lineHeight: 1.65, color: 'var(--ink-soft)' }}>
                           {faq.a}
                         </div>
                       </motion.div>
@@ -1128,16 +1160,16 @@ export default function Landing() {
       <section style={{ padding: '40px 24px 90px', position: 'relative', zIndex: 10 }}>
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <SpotlightCard
-            spotlightColor="rgba(59, 102, 255, 0.22)"
+            spotlightColor={isDark ? "rgba(59, 102, 255, 0.22)" : "rgba(37, 99, 235, 0.1)"}
             style={{
               textAlign: 'center',
               padding: '60px 32px',
               borderRadius: 22,
               border: '1px solid var(--border-strong)',
-              boxShadow: '0 24px 60px -12px rgba(0, 0, 0, 0.5)',
+              boxShadow: isDark ? '0 24px 60px -12px rgba(0, 0, 0, 0.5)' : '0 20px 48px -12px rgba(0, 0, 0, 0.08)',
             }}
           >
-            <h2 style={{ fontSize: 'clamp(26px, 3.6vw, 42px)', fontWeight: 800, color: '#ffffff', marginBottom: 14 }}>
+            <h2 style={{ fontSize: 'clamp(26px, 3.6vw, 42px)', fontWeight: 800, color: 'var(--ink)', marginBottom: 14 }}>
               Ready to streamline your applications?
             </h2>
             <p style={{ color: 'var(--ink-soft)', fontSize: 16, maxWidth: 540, margin: '0 auto 32px', lineHeight: 1.6 }}>
@@ -1168,7 +1200,15 @@ export default function Landing() {
               <Link
                 to="/docs"
                 className="btn btn-lg btn-outline"
-                style={{ borderRadius: 14, padding: '14px 28px', fontSize: 15.5, fontWeight: 600, border: '1px solid var(--border-strong)' }}
+                style={{
+                  borderRadius: 14,
+                  padding: '14px 28px',
+                  fontSize: 15.5,
+                  fontWeight: 600,
+                  border: '1px solid var(--border-strong)',
+                  background: isDark ? 'rgba(255, 255, 255, 0.04)' : '#ffffff',
+                  color: 'var(--ink)',
+                }}
               >
                 Read Documentation
               </Link>
@@ -1194,7 +1234,7 @@ export default function Landing() {
             >
               <img src="/small_logo.svg" alt="Smart Apply" style={{ height: 13, filter: 'brightness(0) invert(1)' }} />
             </div>
-            <span style={{ fontWeight: 700, color: '#ffffff', fontSize: 15 }}>SmartApply</span>
+            <span style={{ fontWeight: 700, color: 'var(--ink)', fontSize: 15 }}>SmartApply</span>
           </div>
 
           <div style={{ display: 'flex', gap: 20, fontSize: 13, color: 'var(--ink-soft)' }}>
