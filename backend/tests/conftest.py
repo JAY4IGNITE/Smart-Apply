@@ -48,11 +48,10 @@ async def make_resume():
     async def _make(owner: User):
         resume = Resume(
             user_id=owner.id,
-            content="Resume content",
+            filename="resume.pdf",
+            file_url="https://example.com/resume.pdf",
+            extracted_text="Resume content",
             parsed_data={"skills": []},
-            fileName="resume.pdf",
-            contentType="application/pdf",
-            size=1024
         )
         await resume.insert()
         return resume
