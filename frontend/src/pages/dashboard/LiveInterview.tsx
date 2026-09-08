@@ -558,6 +558,9 @@ export default function LiveInterview() {
       return;
     }
     window.speechSynthesis.cancel();
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
 
     // Strip markdown formatting symbols (*, #, `, _, links) so TTS speaks fluidly
     const cleanText = text
@@ -602,11 +605,15 @@ export default function LiveInterview() {
       setAiState('listening');
     };
 
-    utterance.onerror = () => {
+    utterance.onerror = (e) => {
+      console.warn('Speech synthesis utterance error:', e);
       setAiState('listening');
     };
 
     if (isCallActiveRef.current) {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -710,6 +717,8 @@ export default function LiveInterview() {
         recognition.start();
         recognitionRef.current = recognition;
       } catch (e) {}
+    } else {
+      showToast('info', 'Voice recognition is best supported in Chrome, Edge, or Brave. You can also type your answers in the chat input.');
     }
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
