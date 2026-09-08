@@ -84,12 +84,14 @@ services:
 
   - type: web
     name: smartapply-frontend
-    env: static
-    region: oregon
-    plan: free
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: VITE_CORE_API_BASE_URL
         fromService:
