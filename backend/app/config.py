@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator
 from typing import Optional
 
 
@@ -57,6 +58,14 @@ class Settings(BaseSettings):
 
     # ── LaTeX Service ──
     LATEX_FALLBACK_URL: Optional[str] = None
+
+    @field_validator("MONGODB_URI", "REDIS_URL", "SECRET_KEY", mode="before")
+    @classmethod
+    def clean_env_strings(cls, v):
+        if isinstance(v, str):
+            cleaned = v.strip().strip('"').strip("'")
+            return cleaned if cleaned else v
+        return v
 
     model_config = SettingsConfigDict(
         env_file=".env",

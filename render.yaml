@@ -34,7 +34,10 @@ services:
       - key: PYTHON_VERSION
         value: 3.10.0
       - key: MONGODB_URI
-        sync: false
+        fromService:
+          type: web
+          name: smartapply-core
+          envVarKey: MONGODB_URI
       - key: REDIS_URL
         fromService:
           type: redis
@@ -68,7 +71,10 @@ services:
       - key: PYTHON_VERSION
         value: 3.10.0
       - key: MONGODB_URI
-        sync: false
+        fromService:
+          type: web
+          name: smartapply-core
+          envVarKey: MONGODB_URI
       - key: REDIS_URL
         fromService:
           type: redis
