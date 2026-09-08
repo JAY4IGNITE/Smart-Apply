@@ -52,7 +52,16 @@ function BouncingDots() {
 }
 
 /** Centered loader with an optional title/subtitle, for a section that's still fetching. */
-export function InlineLoader({ title, subtitle }: { title: string; subtitle?: string }) {
+export function InlineLoader({
+  title,
+  subtitle,
+  showDots = true,
+}: {
+  title: string;
+  subtitle?: string;
+  showDots?: boolean;
+}) {
+  const cleanTitle = title.replace(/[.…]+$/, '');
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -95,8 +104,8 @@ export function InlineLoader({ title, subtitle }: { title: string; subtitle?: st
       </div>
       <div>
         <div style={{ fontWeight: 600, color: 'var(--ink)', fontSize: 14.5, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
-          {title}
-          <BouncingDots />
+          {cleanTitle}
+          {showDots && <BouncingDots />}
         </div>
         {subtitle && <div style={{ fontSize: 13, marginTop: 6, color: 'var(--ink-faint)' }}>{subtitle}</div>}
       </div>
