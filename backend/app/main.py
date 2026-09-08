@@ -56,7 +56,11 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # ── CORS ──
-origins = ["https://www.smartapplies.app", "https://smartapplies.app"]
+origins = [
+    "https://www.smartapplies.app",
+    "https://smartapplies.app",
+    "https://smartapply-frontend.onrender.com",
+]
 if settings.FRONTEND_URL and settings.FRONTEND_URL not in origins:
     origins.append(settings.FRONTEND_URL)
 
@@ -66,6 +70,7 @@ if settings.ENVIRONMENT != "production":
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https://.*\.onrender\.com",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
