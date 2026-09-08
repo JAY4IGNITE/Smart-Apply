@@ -49,10 +49,10 @@
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
 
   /* ── Core Gradients & Modern Studio Tokens (Light Theme Default) ── */
-  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --gradient-primary: linear-gradient(135deg, #5227ff 0%, #7c3aed 50%, #c026d3 100%);
   --gradient-heading: linear-gradient(180deg, #0f172a 0%, #334155 100%);
-  --gradient-accent-text: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
-  --gradient-glow-card: linear-gradient(180deg, rgba(37, 99, 235, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
+  --gradient-accent-text: linear-gradient(135deg, #7928ca 0%, #5227ff 100%);
+  --gradient-glow-card: linear-gradient(180deg, rgba(82, 39, 255, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%);
   --glass-bg: rgba(255, 255, 255, 0.88);
   --glass-border: rgba(0, 0, 0, 0.08);
   --glass-highlight: rgba(255, 255, 255, 0.9);
@@ -179,10 +179,10 @@
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-highlight: rgba(255, 255, 255, 0.06);
 
-  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  --gradient-primary: linear-gradient(135deg, #5227ff 0%, #7c3aed 50%, #d946ef 100%);
   --gradient-heading: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
-  --gradient-accent-text: linear-gradient(180deg, #ffffff 10%, #93c5fd 100%);
-  --gradient-glow-card: linear-gradient(180deg, rgba(37, 99, 235, 0.12) 0%, rgba(14, 19, 34, 0.9) 100%);
+  --gradient-accent-text: linear-gradient(135deg, #FF9FFC 10%, #d946ef 55%, #5227FF 100%);
+  --gradient-glow-card: linear-gradient(180deg, rgba(82, 39, 255, 0.15) 0%, rgba(14, 19, 34, 0.9) 100%);
   color-scheme: dark;
 }
 

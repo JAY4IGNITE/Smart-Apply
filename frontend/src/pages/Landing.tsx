@@ -217,13 +217,13 @@ export default function Landing() {
               gap: 8,
               padding: '6px 16px',
               borderRadius: 999,
-              background: isDark ? 'rgba(37, 99, 235, 0.08)' : 'rgba(37, 99, 235, 0.06)',
-              border: isDark ? '1px solid rgba(59, 130, 246, 0.22)' : '1px solid rgba(37, 99, 235, 0.18)',
+              background: isDark ? 'rgba(82, 39, 255, 0.14)' : 'rgba(82, 39, 255, 0.08)',
+              border: isDark ? '1px solid rgba(255, 159, 252, 0.32)' : '1px solid rgba(82, 39, 255, 0.22)',
               marginBottom: 24,
             }}
           >
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#3b82f6', boxShadow: '0 0 8px #3b82f6' }} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: isDark ? '#93c5fd' : '#1d4ed8', letterSpacing: '0.02em' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#FF9FFC', boxShadow: '0 0 10px #FF9FFC' }} />
+            <span style={{ fontSize: 13, fontWeight: 600, color: isDark ? '#FF9FFC' : '#5227FF', letterSpacing: '0.02em' }}>
               SmartApply Studio · Technical Career Engineering
             </span>
           </div>
@@ -269,9 +269,9 @@ export default function Landing() {
                 padding: '14px 34px',
                 fontSize: 15,
                 fontWeight: 600,
-                background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 8px 24px -4px rgba(37, 99, 235, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
+                background: 'linear-gradient(135deg, #5227ff 0%, #7c3aed 50%, #c026d3 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 24px -4px rgba(82, 39, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
                 color: '#ffffff',
                 cursor: 'pointer',
                 display: 'inline-flex',
@@ -1176,9 +1176,9 @@ export default function Landing() {
                   padding: '14px 36px',
                   fontSize: 15.5,
                   fontWeight: 600,
-                  background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  boxShadow: '0 8px 24px -4px rgba(37, 99, 235, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
+                  background: 'linear-gradient(135deg, #5227ff 0%, #7c3aed 50%, #c026d3 100%)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 24px -4px rgba(82, 39, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25)',
                   color: '#ffffff',
                   cursor: 'pointer',
                   display: 'inline-flex',
