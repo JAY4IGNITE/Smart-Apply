@@ -188,6 +188,7 @@ export default function App() {
           }
         />
         <Route path="/dashboard/live-interview/report/:roomName" element={<Protected><InterviewReport /></Protected>} />
+        <Route path="/dashboard/interview-report/:roomName" element={<Protected><InterviewReport /></Protected>} />
         <Route path="/dashboard/profile" element={<Protected><Profile /></Protected>} />
         <Route path="/dashboard/settings" element={<Protected><Settings /></Protected>} />
         <Route path="/dashboard/linkedin" element={<Protected><LinkedInOptimizer /></Protected>} />

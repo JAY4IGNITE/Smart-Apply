@@ -787,7 +787,7 @@ export default function LiveInterview() {
         
         setStatus('idle');
         showToast('success', 'Interview ended! Generating performance analysis report...');
-        navigate(`/dashboard/interview-report/${roomName}`);
+        navigate(`/dashboard/live-interview/report/${roomName}`);
         return;
       } catch (e) {
         showToast('error', 'Failed to queue report analysis.');
