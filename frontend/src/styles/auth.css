@@ -6,23 +6,28 @@
   align-items: center;
   justify-content: center;
   padding: 32px 20px;
+  position: relative;
   background: var(--paper);
   background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 48px 48px;
-  background-position: center;
+    radial-gradient(circle at 50% 0%, rgba(82, 39, 255, 0.2) 0%, transparent 60%),
+    radial-gradient(circle at 85% 90%, rgba(255, 159, 252, 0.14) 0%, transparent 50%),
+    radial-gradient(circle at 15% 85%, rgba(124, 58, 237, 0.12) 0%, transparent 50%);
   transition: background-color var(--transition-slow);
+  overflow: hidden;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 20px;
   padding: 40px 36px;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px var(--glass-highlight) inset;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  z-index: 2;
 }
 
 .auth-header {

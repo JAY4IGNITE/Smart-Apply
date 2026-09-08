@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   FileText,
@@ -70,7 +70,12 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
       {mobileOpen && <div className="sidebar-overlay" onClick={onCloseMobile} />}
       <aside className={`sidebar ${mobileOpen ? 'open' : ''}`}>
         <div className="sidebar-logo">
-          <img src="/small_logo.svg" alt="Smart Apply" />
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+            <img src="/logo.png" alt="Smart Apply" style={{ height: 28, width: 28, objectFit: 'contain' }} />
+            <span style={{ fontWeight: 800, fontSize: '1.12rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+            </span>
+          </Link>
         </div>
 
         <nav className="sidebar-nav">

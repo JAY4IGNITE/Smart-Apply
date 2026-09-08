@@ -44,7 +44,8 @@ export function getApiBaseUrl(endpoint?: string): string {
     if (
       cleanEndpoint.startsWith('/ai') ||
       cleanEndpoint.startsWith('/interview') ||
-      cleanEndpoint.startsWith('/tailor')
+      cleanEndpoint.startsWith('/tailor') ||
+      cleanEndpoint.startsWith('/jobs')
     ) {
       baseUrl = import.meta.env.VITE_AI_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || fallback;
     } else if (

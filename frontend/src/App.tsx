@@ -14,6 +14,7 @@ import { AlertTriangle } from 'lucide-react';
 // the person actually navigates there, keeping the initial bundle small.
 // keeping the initial bundle small.
 const Landing = lazy(() => import('./pages/Landing'));
+const HeroPreview = lazy(() => import('./pages/HeroPreview'));
 const Login = lazy(() => import('./pages/Login'));
 const Signup = lazy(() => import('./pages/Signup'));
 const OtpVerify = lazy(() => import('./pages/OtpVerify'));
@@ -151,6 +152,7 @@ export default function App() {
         <Routes>
         {/* Public */}
         <Route path="/" element={<Landing />} />
+        <Route path="/hero-preview" element={<HeroPreview />} />
         <Route path="/docs" element={<Docs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -188,6 +190,7 @@ export default function App() {
           }
         />
         <Route path="/dashboard/live-interview/report/:roomName" element={<Protected><InterviewReport /></Protected>} />
+        <Route path="/dashboard/interview-report/:roomName" element={<Protected><InterviewReport /></Protected>} />
         <Route path="/dashboard/profile" element={<Protected><Profile /></Protected>} />
         <Route path="/dashboard/settings" element={<Protected><Settings /></Protected>} />
         <Route path="/dashboard/linkedin" element={<Protected><LinkedInOptimizer /></Protected>} />

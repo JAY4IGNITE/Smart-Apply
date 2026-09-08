@@ -13,6 +13,7 @@ from app.models.interview_report import InterviewReport
 from app.models.user import User
 from app.services.email_service import send_interview_report_email
 from app.services.auth_service import decode_access_token
+from app.services.ai_service import _call_llm_with_tracking
 
 import openai
 
@@ -95,16 +96,9 @@ async def respond_to_candidate(request: Request, body: InterviewRespondRequest, 
         for msg in body.messages[-10:]: # keep last 10 turns for context
             full_messages.append({"role": msg.get("role", "user"), "content": msg.get("content", "")})
 
-        nvidia_api_key = settings.NVIDIA_API_KEY
-        nvidia_model = settings.NVIDIA_MODEL
-
-        client = openai.AsyncOpenAI(
-            base_url=settings.NVIDIA_BASE_URL,
-            api_key=nvidia_api_key,
-        )
-
-        response = await client.chat.completions.create(
-            model=nvidia_model,
+        logger.info(f"Calling NVIDIA LLM ({settings.NVIDIA_MODEL}) for interview response...")
+        response = await _call_llm_with_tracking(
+            model=settings.NVIDIA_MODEL,
             messages=full_messages,
             temperature=0.7,
             max_tokens=250,
@@ -213,13 +207,9 @@ async def _run_llm_and_save(data: AnalyzeRequest) -> None:
     )
 
     try:
-        client = openai.AsyncOpenAI(
-            base_url=settings.NVIDIA_BASE_URL,
-            api_key=nvidia_api_key,
-        )
-        logger.info(f"Calling NVIDIA LLM for room {data.room_name}...")
-        response = await client.chat.completions.create(
-            model=nvidia_model,
+        logger.info(f"Calling NVIDIA LLM for room {data.room_name} report generation...")
+        response = await _call_llm_with_tracking(
+            model=settings.NVIDIA_MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2,
             max_tokens=1024,

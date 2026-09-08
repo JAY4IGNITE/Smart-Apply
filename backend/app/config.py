@@ -1,4 +1,5 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator
 from typing import Optional
 
 
@@ -24,14 +25,16 @@ class Settings(BaseSettings):
 
     # ── NVIDIA NIM (AI) ──
     NVIDIA_API_KEY: str = ""
-    NVIDIA_MODEL: str = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
+    NVIDIA_MODEL: str = "meta/llama-3.2-11b-vision-instruct"
     NVIDIA_IMAGE: str = ""
-    NVIDIA_IMAGE_MODEL: str = "meta/llama-3.2-90b-vision-instruct"
+    NVIDIA_IMAGE_MODEL: str = "meta/llama-3.2-11b-vision-instruct"
     NVIDIA_BASE_URL: str = "https://integrate.api.nvidia.com/v1"
     
     CHATBOT_API_KEY: str = ""
 
-    # ── RapidAPI (JSearch) ──
+    # ── Job Search (Adzuna & RapidAPI JSearch) ──
+    ADZUNA_APP_ID: str = ""
+    ADZUNA_APP_KEY: str = ""
     RAPIDAPI_KEY: str = ""
 
     # ── Cloudflare R2 (Storage) ──
@@ -56,10 +59,19 @@ class Settings(BaseSettings):
     # ── LaTeX Service ──
     LATEX_FALLBACK_URL: Optional[str] = None
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        extra = "ignore"
+    @field_validator("MONGODB_URI", "REDIS_URL", "SECRET_KEY", mode="before")
+    @classmethod
+    def clean_env_strings(cls, v):
+        if isinstance(v, str):
+            cleaned = v.strip().strip('"').strip("'")
+            return cleaned if cleaned else v
+        return v
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
 
 
 settings = Settings()

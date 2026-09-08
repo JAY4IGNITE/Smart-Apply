@@ -586,14 +586,14 @@ textarea.input-field {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.5) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(144, 97, 255, 0.6) 30%, rgba(255, 159, 252, 0.7) 50%, rgba(82, 39, 255, 0.6) 70%, transparent 100%);
   opacity: 0.6;
   transition: opacity var(--transition-base);
 }
 
 .glow-card:hover {
-  border-color: rgba(99, 102, 241, 0.4);
-  box-shadow: 0 12px 40px -10px rgba(99, 102, 241, 0.25);
+  border-color: rgba(255, 159, 252, 0.35);
+  box-shadow: 0 12px 40px -10px rgba(82, 39, 255, 0.3);
   transform: translateY(-3px);
 }
 
@@ -605,7 +605,7 @@ textarea.input-field {
   background: var(--gradient-primary) !important;
   color: #ffffff !important;
   border: none !important;
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 20px rgba(82, 39, 255, 0.4);
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -614,7 +614,7 @@ textarea.input-field {
 
 .btn-glow:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 28px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 6px 28px rgba(82, 39, 255, 0.55);
 }
 
 .btn-glow::after {

@@ -24,6 +24,7 @@
     "@vladmandic/face-api": "^1.7.15",
     "framer-motion": "^12.42.0",
     "lucide-react": "^1.21.0",
+    "ogl": "^1.0.11",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-easy-crop": "^6.0.2",

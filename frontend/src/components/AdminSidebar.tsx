@@ -1,11 +1,17 @@
-import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, BarChart3, LogOut, ArrowLeft, Settings as SettingsIcon } from 'lucide-react';
+import { Link, NavLink } from 'react-router-dom';
+import { LayoutDashboard, Users, LogOut, ArrowLeft, Settings as SettingsIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
 import '../styles/dashboard.css';
 
-export default function AdminSidebar({ mobileOpen, onCloseMobile }: { mobileOpen: boolean; onCloseMobile: () => void }) {
-  const { logout } = useAuth();
+interface AdminSidebarProps {
+  mobileOpen: boolean;
+  onCloseMobile: () => void;
+}
+
+export default function AdminSidebar({ mobileOpen, onCloseMobile }: AdminSidebarProps) {
+  const { user, logout } = useAuth();
+  const initials = (user?.full_name || user?.email || '?').charAt(0).toUpperCase();
 
   return (
     <>
@@ -13,8 +19,13 @@ export default function AdminSidebar({ mobileOpen, onCloseMobile }: { mobileOpen
       <aside className={`sidebar ${mobileOpen ? 'open' : ''}`}>
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div className="sidebar-header" style={{ padding: '24px 20px 16px' }}>
-            <img src="/small_logo.svg" alt="Smart Apply" style={{ height: 28, marginBottom: 4 }} />
-            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--primary)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', marginBottom: 6 }}>
+              <img src="/logo.png" alt="Smart Apply" style={{ height: 28, width: 28, objectFit: 'contain' }} />
+              <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+                Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+              </span>
+            </Link>
+            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Admin Console
             </div>
           </div>

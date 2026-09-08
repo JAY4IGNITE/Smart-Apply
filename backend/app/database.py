@@ -15,7 +15,13 @@ _client: AsyncIOMotorClient | None = None
 async def init_db() -> None:
     """Initialize Motor client and Beanie ODM."""
     global _client
-    _client = AsyncIOMotorClient(settings.MONGODB_URI)
+    raw_uri = (settings.MONGODB_URI or "").strip().strip('"').strip("'")
+    if not raw_uri or not (raw_uri.startswith("mongodb://") or raw_uri.startswith("mongodb+srv://")):
+        raise ValueError(
+            f"Invalid MONGODB_URI: Connection string must start with 'mongodb://' or 'mongodb+srv://'. "
+            f"Current value: {repr(raw_uri)}. Please ensure MONGODB_URI is set properly in your Render environment variables without surrounding quotes."
+        )
+    _client = AsyncIOMotorClient(raw_uri)
     database = _client[settings.MONGODB_DB_NAME]
     await init_beanie(
         database=database,

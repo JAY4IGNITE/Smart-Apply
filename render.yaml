@@ -4,9 +4,9 @@ services:
     env: python
     region: oregon
     plan: free
-    rootDir: backend/core
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    buildCommand: pip install -r core/requirements.txt
+    startCommand: uvicorn core.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -21,20 +21,29 @@ services:
         generateValue: true
       - key: FRONTEND_URL
         value: https://smartapplies.app
+      - key: ADZUNA_APP_ID
+        value: 6ee93d80
+      - key: ADZUNA_APP_KEY
+        value: 8788ae5ae01923e09e4fa568477759b6
+      - key: RAPIDAPI_KEY
+        value: fa07d89f58msh04e859394cc9d75p191797jsn14a1d0492bd2
 
   - type: web
     name: smartapply-ai
     env: python
     region: oregon
     plan: free
-    rootDir: backend/ai
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    buildCommand: pip install -r ai/requirements.txt
+    startCommand: uvicorn ai.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
       - key: MONGODB_URI
-        sync: false
+        fromService:
+          type: web
+          name: smartapply-core
+          envVarKey: MONGODB_URI
       - key: REDIS_URL
         fromService:
           type: redis
@@ -42,6 +51,14 @@ services:
           property: connectionString
       - key: NVIDIA_API_KEY
         sync: false
+      - key: NVIDIA_MODEL
+        value: meta/llama-3.2-11b-vision-instruct
+      - key: ADZUNA_APP_ID
+        value: 6ee93d80
+      - key: ADZUNA_APP_KEY
+        value: 8788ae5ae01923e09e4fa568477759b6
+      - key: RAPIDAPI_KEY
+        value: fa07d89f58msh04e859394cc9d75p191797jsn14a1d0492bd2
       - key: SECRET_KEY
         fromService:
           type: web
@@ -61,14 +78,17 @@ services:
     env: python
     region: oregon
     plan: free
-    rootDir: backend/tools
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    buildCommand: pip install -r tools/requirements.txt
+    startCommand: uvicorn tools.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
       - key: MONGODB_URI
-        sync: false
+        fromService:
+          type: web
+          name: smartapply-core
+          envVarKey: MONGODB_URI
       - key: REDIS_URL
         fromService:
           type: redis
@@ -84,12 +104,14 @@ services:
 
   - type: web
     name: smartapply-frontend
-    env: static
-    region: oregon
-    plan: free
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishPath: dist
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: VITE_CORE_API_BASE_URL
         fromService:

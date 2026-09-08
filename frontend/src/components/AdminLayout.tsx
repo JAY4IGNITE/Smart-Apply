@@ -14,7 +14,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <div className="mobile-dashboard-nav">
-          <img src="/small_logo.svg" alt="Smart Apply" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <img src="/logo.png" alt="Smart Apply" style={{ height: 26, width: 26, objectFit: 'contain' }} />
+            <span style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--ink)' }}>
+              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+            </span>
+          </div>
           <button
             onClick={() => setMobileNavOpen(true)}
             aria-label="Open menu"

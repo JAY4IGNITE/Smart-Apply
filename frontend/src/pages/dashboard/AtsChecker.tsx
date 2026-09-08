@@ -38,6 +38,11 @@ export default function AtsChecker() {
     (async () => {
       const res = await apiFetch<{ resumes: Resume[] }>('/resumes');
       if (res.ok) setResumes(res.data.resumes || []);
+      const prefillJob = localStorage.getItem('sa_ats_job_description');
+      if (prefillJob) {
+        setJobDescription(prefillJob);
+        localStorage.removeItem('sa_ats_job_description');
+      }
     })();
   }, []);
 

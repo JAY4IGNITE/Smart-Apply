@@ -189,9 +189,11 @@ export default function Docs() {
             <button className="docs-mobile-menu-btn" onClick={() => setMobileNavOpen(true)}>
               <Menu size={18} />
             </button>
-            <Link to="/" className="docs-header-logo">
-              <img src="/small_logo.svg" alt="Smart Apply" />
-              <span>SmartApply</span>
+            <Link to="/" className="docs-header-logo" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+              <img src="/logo.png" alt="Smart Apply" style={{ height: 26, width: 26, objectFit: 'contain' }} />
+              <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+                Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+              </span>
             </Link>
             <div className="docs-header-divider" />
             <span className="docs-header-label">Documentation</span>
