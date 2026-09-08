@@ -72,8 +72,8 @@ export default function Navbar() {
               height: 32,
               objectFit: 'contain',
               filter: isDark
-                ? 'drop-shadow(0 2px 10px rgba(56, 189, 248, 0.45))'
-                : 'drop-shadow(0 2px 8px rgba(37, 99, 235, 0.25))',
+                ? 'drop-shadow(0 2px 12px rgba(255, 159, 252, 0.45)) drop-shadow(0 4px 18px rgba(82, 39, 255, 0.35))'
+                : 'drop-shadow(0 2px 10px rgba(82, 39, 255, 0.28))',
               transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
             onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.08)')}

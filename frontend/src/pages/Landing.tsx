@@ -421,15 +421,15 @@ export default function Landing() {
                             borderRadius: 8,
                             fontSize: 12.5,
                             fontWeight: 600,
-                            color: isActive ? (isDark ? '#ffffff' : '#1d4ed8') : 'var(--ink-soft)',
+                            color: isActive ? (isDark ? '#FF9FFC' : '#5227FF') : 'var(--ink-soft)',
                             background: isActive
-                              ? (isDark ? 'rgba(37, 99, 235, 0.22)' : '#ffffff')
+                              ? (isDark ? 'rgba(82, 39, 255, 0.22)' : '#ffffff')
                               : 'transparent',
                             border: isActive
-                              ? (isDark ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid var(--border)')
+                              ? (isDark ? '1px solid rgba(255, 159, 252, 0.35)' : '1px solid var(--border)')
                               : '1px solid transparent',
                             boxShadow: isActive
-                              ? (isDark ? '0 2px 10px rgba(37, 99, 235, 0.25)' : '0 1px 4px rgba(0, 0, 0, 0.08)')
+                              ? (isDark ? '0 2px 12px rgba(82, 39, 255, 0.35)' : '0 1px 4px rgba(0, 0, 0, 0.08)')
                               : 'none',
                             cursor: 'pointer',
                             transition: 'all 0.15s ease',
@@ -832,8 +832,8 @@ export default function Landing() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
             {/* Tool 1 */}
-            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
-              <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
+            <SpotlightCard spotlightColor={isDark ? "rgba(255, 159, 252, 0.2)" : "rgba(82, 39, 255, 0.1)"}>
+              <div style={{ width: 42, height: 42, borderRadius: 10, background: isDark ? 'rgba(82, 39, 255, 0.16)' : 'rgba(82, 39, 255, 0.08)', border: isDark ? '1px solid rgba(255, 159, 252, 0.25)' : '1px solid rgba(82, 39, 255, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isDark ? '#FF9FFC' : '#5227FF', marginBottom: 18 }}>
                 <Wand2 size={20} />
               </div>
               <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
@@ -848,8 +848,8 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 2 */}
-            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
-              <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
+            <SpotlightCard spotlightColor={isDark ? "rgba(255, 159, 252, 0.2)" : "rgba(82, 39, 255, 0.1)"}>
+              <div style={{ width: 42, height: 42, borderRadius: 10, background: isDark ? 'rgba(82, 39, 255, 0.16)' : 'rgba(82, 39, 255, 0.08)', border: isDark ? '1px solid rgba(255, 159, 252, 0.25)' : '1px solid rgba(82, 39, 255, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isDark ? '#FF9FFC' : '#5227FF', marginBottom: 18 }}>
                 <ScanSearch size={20} />
               </div>
               <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
@@ -864,8 +864,8 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 3 */}
-            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
-              <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
+            <SpotlightCard spotlightColor={isDark ? "rgba(255, 159, 252, 0.2)" : "rgba(82, 39, 255, 0.1)"}>
+              <div style={{ width: 42, height: 42, borderRadius: 10, background: isDark ? 'rgba(82, 39, 255, 0.16)' : 'rgba(82, 39, 255, 0.08)', border: isDark ? '1px solid rgba(255, 159, 252, 0.25)' : '1px solid rgba(82, 39, 255, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isDark ? '#FF9FFC' : '#5227FF', marginBottom: 18 }}>
                 <Video size={20} />
               </div>
               <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
@@ -880,8 +880,8 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 4 */}
-            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
-              <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
+            <SpotlightCard spotlightColor={isDark ? "rgba(255, 159, 252, 0.2)" : "rgba(82, 39, 255, 0.1)"}>
+              <div style={{ width: 42, height: 42, borderRadius: 10, background: isDark ? 'rgba(82, 39, 255, 0.16)' : 'rgba(82, 39, 255, 0.08)', border: isDark ? '1px solid rgba(255, 159, 252, 0.25)' : '1px solid rgba(82, 39, 255, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isDark ? '#FF9FFC' : '#5227FF', marginBottom: 18 }}>
                 <FileCode size={20} />
               </div>
               <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
@@ -896,8 +896,8 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 5 */}
-            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
-              <div style={{ width: 42, height: 42, borderRadius: 10, background: 'rgba(59, 102, 255, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', marginBottom: 18 }}>
+            <SpotlightCard spotlightColor={isDark ? "rgba(255, 159, 252, 0.2)" : "rgba(82, 39, 255, 0.1)"}>
+              <div style={{ width: 42, height: 42, borderRadius: 10, background: isDark ? 'rgba(82, 39, 255, 0.16)' : 'rgba(82, 39, 255, 0.08)', border: isDark ? '1px solid rgba(255, 159, 252, 0.25)' : '1px solid rgba(82, 39, 255, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isDark ? '#FF9FFC' : '#5227FF', marginBottom: 18 }}>
                 <Lightbulb size={20} />
               </div>
               <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
@@ -912,8 +912,8 @@ export default function Landing() {
             </SpotlightCard>
 
             {/* Tool 6 */}
-            <SpotlightCard spotlightColor={isDark ? "rgba(59, 102, 255, 0.16)" : "rgba(37, 99, 235, 0.08)"}>
-              <div style={{ width: 42, height: 42, borderRadius: 10, background: isDark ? 'rgba(59, 102, 255, 0.14)' : 'rgba(37, 99, 235, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isDark ? '#60a5fa' : '#2563eb', marginBottom: 18 }}>
+            <SpotlightCard spotlightColor={isDark ? "rgba(255, 159, 252, 0.2)" : "rgba(82, 39, 255, 0.1)"}>
+              <div style={{ width: 42, height: 42, borderRadius: 10, background: isDark ? 'rgba(82, 39, 255, 0.16)' : 'rgba(82, 39, 255, 0.08)', border: isDark ? '1px solid rgba(255, 159, 252, 0.25)' : '1px solid rgba(82, 39, 255, 0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isDark ? '#FF9FFC' : '#5227FF', marginBottom: 18 }}>
                 <Share2 size={20} />
               </div>
               <h3 style={{ fontSize: 19, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
@@ -979,15 +979,15 @@ export default function Landing() {
                     width: 36,
                     height: 36,
                     borderRadius: 10,
-                    background: isDark ? 'rgba(37, 99, 235, 0.14)' : 'rgba(37, 99, 235, 0.1)',
-                    color: isDark ? '#60a5fa' : '#2563eb',
+                    background: isDark ? 'rgba(82, 39, 255, 0.16)' : 'rgba(82, 39, 255, 0.08)',
+                    color: isDark ? '#FF9FFC' : '#5227FF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: 14,
                     fontWeight: 800,
                     marginBottom: 20,
-                    border: isDark ? '1px solid rgba(59, 130, 246, 0.25)' : '1px solid rgba(37, 99, 235, 0.2)',
+                    border: isDark ? '1px solid rgba(255, 159, 252, 0.28)' : '1px solid rgba(82, 39, 255, 0.2)',
                   }}
                 >
                   {wf.step}
@@ -1220,7 +1220,7 @@ export default function Landing() {
                 width: 26,
                 height: 26,
                 objectFit: 'contain',
-                filter: isDark ? 'drop-shadow(0 2px 8px rgba(56, 189, 248, 0.35))' : 'drop-shadow(0 1px 4px rgba(37, 99, 235, 0.2))',
+                filter: isDark ? 'drop-shadow(0 2px 10px rgba(255, 159, 252, 0.45))' : 'drop-shadow(0 1px 6px rgba(82, 39, 255, 0.25))',
               }}
             />
             <span style={{ fontWeight: 700, color: 'var(--ink)', fontSize: 15 }}>

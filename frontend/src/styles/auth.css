@@ -9,8 +9,9 @@
   position: relative;
   background: var(--paper);
   background-image:
-    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.15) 0%, transparent 60%),
-    radial-gradient(circle at 85% 90%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
+    radial-gradient(circle at 50% 0%, rgba(82, 39, 255, 0.2) 0%, transparent 60%),
+    radial-gradient(circle at 85% 90%, rgba(255, 159, 252, 0.14) 0%, transparent 50%),
+    radial-gradient(circle at 15% 85%, rgba(124, 58, 237, 0.12) 0%, transparent 50%);
   transition: background-color var(--transition-slow);
   overflow: hidden;
 }
