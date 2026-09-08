@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 
 import Navbar from '../components/Navbar';
+import CinematicHeroSection from '../components/cinematic-hero/CinematicHeroSection';
 import AnimatedBackground from '../components/AnimatedBackground';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -188,6 +189,25 @@ export default function Landing() {
 
   const role = SAMPLE_ROLES.find((r) => r.id === selectedRole) || SAMPLE_ROLES[0];
 
+  const [inHeroTrack, setInHeroTrack] = useState(true);
+  const landingContentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onScroll = () => {
+      // Reveal standard navbar when scrolling into landing features (past ~2.5 screens)
+      const heroThreshold = window.innerHeight * 2.5;
+      setInHeroTrack(window.scrollY < heroThreshold);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const handleExploreClick = () => {
+    if (landingContentRef.current) {
+      landingContentRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div
       style={{
@@ -198,11 +218,15 @@ export default function Landing() {
         color: 'var(--ink)',
       }}
     >
-      <AnimatedBackground />
-      <Navbar />
+      {/* ── Cinematic Hero Sequence (Sticky 380vh Scroll Runway) ────── */}
+      <CinematicHeroSection onExploreClick={handleExploreClick} />
 
-      {/* ── Hero Section ────────────────────────────────────────────── */}
-      <section style={{ padding: '130px 24px 70px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
+      <AnimatedBackground />
+      <Navbar visible={!inHeroTrack} />
+
+      <div ref={landingContentRef} id="features-overview">
+        {/* ── Hero Section ────────────────────────────────────────────── */}
+        <section style={{ padding: '130px 24px 70px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
         <motion.div
           style={{ maxWidth: 1040, margin: '0 auto' }}
           initial={{ opacity: 0, y: 20 }}
@@ -1239,6 +1263,7 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }

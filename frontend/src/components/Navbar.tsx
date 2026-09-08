@@ -13,7 +13,11 @@ const NAV_LINKS = [
   { href: '/docs', label: 'Documentation', isRoute: true },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  visible?: boolean;
+}
+
+export default function Navbar({ visible = true }: NavbarProps) {
   const { isAuthenticated } = useAuth();
   const { theme } = useTheme();
   const isDark = theme !== 'light';
@@ -28,21 +32,24 @@ export default function Navbar() {
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -60, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      style={{
-        position: 'fixed',
-        top: 14,
-        left: 0,
-        right: 0,
-        zIndex: 50,
-        display: 'flex',
-        justifyContent: 'center',
-        padding: '0 20px',
-      }}
-    >
+    <AnimatePresence>
+      {visible && (
+        <motion.header
+          initial={{ y: -70, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -70, opacity: 0 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            position: 'fixed',
+            top: 14,
+            left: 0,
+            right: 0,
+            zIndex: 50,
+            display: 'flex',
+            justifyContent: 'center',
+            padding: '0 20px',
+          }}
+        >
       <div
         style={{
           width: '100%',
@@ -261,5 +268,7 @@ export default function Navbar() {
         }
       `}</style>
     </motion.header>
+      )}
+    </AnimatePresence>
   );
 }
