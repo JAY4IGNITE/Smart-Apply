@@ -45,6 +45,8 @@ services:
           property: connectionString
       - key: NVIDIA_API_KEY
         sync: false
+      - key: NVIDIA_MODEL
+        value: meta/llama-3.2-11b-vision-instruct
       - key: SECRET_KEY
         fromService:
           type: web

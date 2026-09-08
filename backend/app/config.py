@@ -25,9 +25,9 @@ class Settings(BaseSettings):
 
     # ── NVIDIA NIM (AI) ──
     NVIDIA_API_KEY: str = ""
-    NVIDIA_MODEL: str = "nvidia/llama-3.1-nemotron-ultra-253b-v1"
+    NVIDIA_MODEL: str = "meta/llama-3.2-11b-vision-instruct"
     NVIDIA_IMAGE: str = ""
-    NVIDIA_IMAGE_MODEL: str = "meta/llama-3.2-90b-vision-instruct"
+    NVIDIA_IMAGE_MODEL: str = "meta/llama-3.2-11b-vision-instruct"
     NVIDIA_BASE_URL: str = "https://integrate.api.nvidia.com/v1"
     
     CHATBOT_API_KEY: str = ""
