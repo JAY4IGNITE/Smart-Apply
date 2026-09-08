@@ -25,6 +25,8 @@ import {
 
 import Navbar from '../components/Navbar';
 import AnimatedBackground from '../components/AnimatedBackground';
+import SplashScreen from './SplashScreen';
+import SplashCursor from '../components/reactbits/SplashCursor';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -182,6 +184,7 @@ export default function Landing() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
+  const [introActive, setIntroActive] = useState(true);
   const [activeTab, setActiveTab] = useState<'ats' | 'interview' | 'latex' | 'projects'>('ats');
   const [selectedRole, setSelectedRole] = useState<string>('backend');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -197,7 +200,41 @@ export default function Landing() {
         color: 'var(--ink)',
       }}
     >
+      <AnimatePresence>
+        {introActive && (
+          <motion.div
+            key="landing-intro-overlay"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              width: '100vw',
+              height: '100vh',
+              zIndex: 99999,
+              background: '#000000',
+              overflow: 'hidden',
+            }}
+          >
+            <SplashScreen onComplete={() => setIntroActive(false)} standalone={false} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatedBackground />
+      <SplashCursor
+        DENSITY_DISSIPATION={3.5}
+        VELOCITY_DISSIPATION={2}
+        PRESSURE={0.1}
+        CURL={3}
+        SPLAT_RADIUS={0.2}
+        SPLAT_FORCE={6000}
+        COLOR_UPDATE_SPEED={10}
+        SHADING
+        RAINBOW_MODE={false}
+        COLOR="#A855F7"
+      />
       <Navbar visible={true} />
 
       <div

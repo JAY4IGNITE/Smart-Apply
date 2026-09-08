@@ -70,7 +70,7 @@ export default function Navbar({ visible = true }: NavbarProps) {
         }}
       >
         {/* Brand Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 11 }}>
+        <Link to="/landing" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 11 }}>
           <img
             src="/logo.png"
             alt="Smart Apply"

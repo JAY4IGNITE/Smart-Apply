@@ -12,7 +12,7 @@ import { AlertTriangle } from 'lucide-react';
 
 // Route-level code splitting: each page (and its dependencies) loads only when
 // the person actually navigates there, keeping the initial bundle small.
-// keeping the initial bundle small.
+const SplashScreen = lazy(() => import('./pages/SplashScreen'));
 const Landing = lazy(() => import('./pages/Landing'));
 const Login = lazy(() => import('./pages/Login'));
 const Signup = lazy(() => import('./pages/Signup'));
@@ -43,7 +43,23 @@ const ResumeMaker = lazy(() => import('./pages/dashboard/ResumeMaker'));
 const AdminResumeTemplates = lazy(() => import('./pages/dashboard/AdminResumeTemplates'));
 
 function PageFallback() {
-  return <InlineLoader title="Loading…" />;
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#000000',
+        zIndex: 99999,
+      }}
+    >
+      <InlineLoader title="Loading SmartApply…" />
+    </div>
+  );
 }
 
 /**
@@ -109,9 +125,6 @@ export default function App() {
 
   useEffect(() => {
     let mounted = true;
-    const timeoutId = setTimeout(() => {
-      if (mounted) setLoading(false);
-    }, 1000);
 
     apiFetch<{ maintenance_mode: boolean }>('/auth/public-settings')
       .then(res => {
@@ -121,14 +134,12 @@ export default function App() {
       })
       .finally(() => {
         if (mounted) {
-          clearTimeout(timeoutId);
           setLoading(false);
         }
       });
 
     return () => {
       mounted = false;
-      clearTimeout(timeoutId);
     };
   }, []);
 
@@ -151,7 +162,8 @@ export default function App() {
         <Routes>
         {/* Public */}
         <Route path="/" element={<Landing />} />
-        <Route path="/landing" element={<Navigate to="/" replace />} />
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/splash" element={<SplashScreen />} />
         <Route path="/docs" element={<Docs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
