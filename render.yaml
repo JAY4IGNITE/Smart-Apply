@@ -21,6 +21,12 @@ services:
         generateValue: true
       - key: FRONTEND_URL
         value: https://smartapplies.app
+      - key: ADZUNA_APP_ID
+        value: 6ee93d80
+      - key: ADZUNA_APP_KEY
+        value: 8788ae5ae01923e09e4fa568477759b6
+      - key: RAPIDAPI_KEY
+        value: fa07d89f58msh04e859394cc9d75p191797jsn14a1d0492bd2
 
   - type: web
     name: smartapply-ai
@@ -47,6 +53,12 @@ services:
         sync: false
       - key: NVIDIA_MODEL
         value: meta/llama-3.2-11b-vision-instruct
+      - key: ADZUNA_APP_ID
+        value: 6ee93d80
+      - key: ADZUNA_APP_KEY
+        value: 8788ae5ae01923e09e4fa568477759b6
+      - key: RAPIDAPI_KEY
+        value: fa07d89f58msh04e859394cc9d75p191797jsn14a1d0492bd2
       - key: SECRET_KEY
         fromService:
           type: web

@@ -14,7 +14,7 @@ from slowapi.errors import RateLimitExceeded
 from app.rate_limiter import limiter
 from app.config import settings
 from app.database import close_db, init_db
-from app.routers import ai, interview, tailor
+from app.routers import ai, interview, tailor, jobs
 from app.websockets.auth_ws import router as ws_router
 from app.websockets.manager import manager
 
@@ -80,6 +80,7 @@ async def ping():
 app.include_router(ai.router)
 app.include_router(interview.router)
 app.include_router(tailor.router)
+app.include_router(jobs.router)
 
 # ── WebSocket Router ──
 app.include_router(ws_router, prefix="/api")
