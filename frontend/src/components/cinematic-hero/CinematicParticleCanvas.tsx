@@ -171,8 +171,15 @@ export default function CinematicParticleCanvas({ className = '' }: Props) {
   return (
     <canvas
       ref={canvasRef}
-      className={`absolute inset-0 pointer-events-none w-full h-full ${className}`}
-      style={{ opacity: 0.95 }}
+      className={className}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        opacity: 0.95,
+      }}
     />
   );
 }

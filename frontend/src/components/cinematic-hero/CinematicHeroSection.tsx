@@ -45,18 +45,18 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
   // ── Multi-layer Parallax & Split Transforms ───────────────────────────
 
   // Scene 2 & 4: Split typography: "SMART" moves left, "APPLY" moves right
-  const splitLeftX = useTransform(smoothProgress, [0.04, 0.44], [0, -180]);
-  const splitRightX = useTransform(smoothProgress, [0.04, 0.44], [0, 180]);
+  const splitLeftX = useTransform(smoothProgress, [0.03, 0.42], [0, -180]);
+  const splitRightX = useTransform(smoothProgress, [0.03, 0.42], [0, 180]);
 
   // Typography vertical drift & smooth fade-out as center clears
-  const headingY = useTransform(smoothProgress, [0.04, 0.42], [0, -45]);
-  const headingOpacity = useTransform(smoothProgress, [0.05, 0.26, 0.46], [1, 0.9, 0]);
-  const headingScale = useTransform(smoothProgress, [0.05, 0.45], [1, 0.94]);
+  const headingY = useTransform(smoothProgress, [0.03, 0.40], [0, -40]);
+  const headingOpacity = useTransform(smoothProgress, [0.04, 0.24, 0.44], [1, 0.95, 0]);
+  const headingScale = useTransform(smoothProgress, [0.04, 0.44], [1, 0.94]);
 
   // Scene 4: Radial vignette that intensifies to focus gaze into center
   const vignetteOpacity = useTransform(
     smoothProgress,
-    [0.08, 0.35, 0.65, 1],
+    [0.06, 0.32, 0.65, 1],
     [0.1, 0.55, 0.88, 0.75]
   );
 
@@ -67,19 +67,22 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
     [0.2, 0.45, 0.75, 0.5]
   );
 
+  // Top bar fade-out as logo settles and site transitions
+  const topBarOpacity = useTransform(smoothProgress, [0.65, 0.82], [1, 0]);
+
   // Bottom scroll cue opacity
   const scrollCueOpacity = useTransform(smoothProgress, [0, 0.12], [1, 0]);
 
   // Bottom final action button reveal in Scene 7
-  const ctaOpacity = useTransform(smoothProgress, [0.82, 0.94], [0, 1]);
-  const ctaY = useTransform(smoothProgress, [0.82, 0.94], [20, 0]);
+  const ctaOpacity = useTransform(smoothProgress, [0.80, 0.94], [0, 1]);
+  const ctaY = useTransform(smoothProgress, [0.80, 0.94], [20, 0]);
 
   // ── Auto-Play Cinematic Preview Feature ───────────────────────────────
   useEffect(() => {
     if (!isPlaying || !sectionRef.current) return;
 
     let startTime: number | null = null;
-    const duration = 7500; // 7.5s cinematic cycle
+    const duration = 7000; // 7s cinematic cycle
     const startScroll = window.scrollY;
     const sectionTop = sectionRef.current.offsetTop;
     const sectionHeight = sectionRef.current.offsetHeight - window.innerHeight;
@@ -92,7 +95,7 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
       const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / duration, 1);
 
-      // Smooth custom cubic easing
+      // Smooth cubic easing
       const easeProgress =
         progress < 0.5
           ? 4 * progress * progress * progress
@@ -119,7 +122,6 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
       setIsPlaying(false);
     } else {
       if (sectionRef.current) {
-        // Reset to top of section if at the end
         const sectionTop = sectionRef.current.offsetTop;
         const sectionHeight = sectionRef.current.offsetHeight - window.innerHeight;
         if (window.scrollY >= sectionTop + sectionHeight - 50) {
@@ -143,31 +145,41 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
     <section
       ref={sectionRef}
       id="cinematic-hero"
-      className="relative w-full h-[360vh] sm:h-[380vh] md:h-[400vh] bg-[#050308] text-[#F7F2FF] select-none"
+      className="cinematic-hero-section"
     >
       {/* ── Sticky Viewport ─────────────────────────────────────────────── */}
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-between overflow-hidden bg-[#050308]">
+      <div className="cinematic-hero-sticky">
 
         {/* ── Layer 0: Pure Deep Black & Soft Background Purple Light ─────── */}
-        <div className="absolute inset-0 z-0 pointer-events-none bg-[#050308]" />
+        <div
+          className="cinematic-layer"
+          style={{ backgroundColor: '#050308', zIndex: 0 }}
+        />
 
         {/* Deep Violet / Electric Purple Ambient Background Radial Gradients */}
         <motion.div
-          className="absolute inset-0 z-[1] pointer-events-none"
-          style={{ opacity: bgVioletGlowOpacity }}
+          className="cinematic-layer"
+          style={{ opacity: bgVioletGlowOpacity, zIndex: 1 }}
         >
           <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85vw] max-w-[1000px] h-[70vh] rounded-full"
             style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '85vw',
+              maxWidth: 1100,
+              height: '70vh',
+              borderRadius: '50%',
               background:
-                'radial-gradient(ellipse 65% 55% at 50% 50%, rgba(118, 33, 176, 0.28) 0%, rgba(48, 0, 107, 0.18) 45%, transparent 70%)',
+                'radial-gradient(ellipse 65% 55% at 50% 50%, rgba(118, 33, 176, 0.3) 0%, rgba(48, 0, 107, 0.18) 45%, transparent 70%)',
               filter: 'blur(70px)',
             }}
           />
         </motion.div>
 
         {/* ── Layer 1: Atmospheric Canvas Particles (Violet/Magenta/Lavender) */}
-        <div className="absolute inset-0 z-[2] pointer-events-none">
+        <div className="cinematic-layer" style={{ zIndex: 2 }}>
           <CinematicParticleCanvas />
         </div>
 
@@ -176,55 +188,62 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
 
         {/* ── Layer 3: Radial Vignette Overlay (Focuses Gaze into Center) ─── */}
         <motion.div
-          className="absolute inset-0 z-[6] pointer-events-none"
+          className="cinematic-layer"
           style={{
+            zIndex: 6,
             opacity: vignetteOpacity,
             background:
-              'radial-gradient(ellipse 60% 55% at 50% 50%, transparent 0%, rgba(5, 3, 8, 0.4) 40%, rgba(5, 3, 8, 0.95) 100%)',
+              'radial-gradient(ellipse 60% 55% at 50% 50%, transparent 0%, rgba(5, 3, 8, 0.4) 40%, rgba(5, 3, 8, 0.96) 100%)',
           }}
         />
 
         {/* ── Top Bar: Brand Pill & Interactive Cinematic Toggle ─────────── */}
-        <header className="relative z-30 w-full px-6 sm:px-10 pt-6 sm:pt-8 flex justify-between items-center pointer-events-auto">
-          <div className="flex items-center gap-3">
+        <motion.header className="cinematic-top-bar" style={{ opacity: topBarOpacity, pointerEvents: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <img
               src="/logo.png"
               alt="SmartApply"
-              className="w-7 h-7 sm:w-8 sm:h-8 object-contain"
+              style={{ width: 32, height: 32, objectFit: 'contain' }}
             />
             <span
-              className="text-xs sm:text-sm font-semibold tracking-[0.2em] text-[#F7F2FF] uppercase"
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 14,
+                fontWeight: 700,
+                letterSpacing: '0.2em',
+                color: '#F7F2FF',
+                textTransform: 'uppercase',
+              }}
             >
               SmartApply
             </span>
           </div>
 
           {/* Cinematic Play / Pause Mode Control */}
-          <div className="flex items-center gap-2.5">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button
               onClick={toggleCinematicPlay}
               type="button"
-              className="flex items-center gap-2 text-[#EAD7FF] text-[11px] sm:text-xs font-medium uppercase tracking-wider px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#30006B]/30 hover:bg-[#7621B0]/30 border border-[#9B00FF]/30 hover:border-[#E000D6]/50 transition-all duration-300 shadow-[0_0_20px_rgba(155,0,255,0.15)] cursor-pointer backdrop-blur-md active:scale-95"
+              className="cinematic-play-btn"
               title={isPlaying ? 'Pause auto-play preview' : 'Play cinematic reveal animation'}
             >
               {isPlaying ? (
                 <>
-                  <Pause className="w-3.5 h-3.5 text-[#FF35E8]" />
+                  <Pause size={13} color="#FF35E8" />
                   <span>Pause Reveal</span>
                 </>
               ) : (
                 <>
-                  <Play className="w-3.5 h-3.5 text-[#FF35E8] fill-[#FF35E8]" />
+                  <Play size={13} color="#FF35E8" fill="#FF35E8" />
                   <span>Cinematic Play</span>
                 </>
               )}
             </button>
           </div>
-        </header>
+        </motion.header>
 
         {/* ── Center Stage: Split Typography & Logo Reveal ────────────────── */}
-        <div className="relative z-20 flex-1 flex flex-col justify-center items-center px-4 overflow-visible">
+        <div className="cinematic-center-stage">
 
           {/* ════════════════════════════════════════════════════════════════
               SCENE 2 & 4: TYPOGRAPHY ENTRANCE & PARALLAX SEPARATION
@@ -236,42 +255,28 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
               y: headingY,
               scale: headingScale,
             }}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none px-4 sm:px-8"
+            className="cinematic-typography-container"
           >
-            <div className="w-full max-w-7xl flex justify-between items-center text-center">
+            <div className="cinematic-typography-row">
               {/* SMART — glides left */}
               <motion.div
-                style={{ x: splitLeftX }}
-                className="flex-1 flex justify-start sm:justify-center will-change-transform"
+                style={{ x: splitLeftX, flex: 1, display: 'flex', justifyContent: 'flex-start' }}
+                className="will-change-transform"
               >
-                <h1
-                  className="font-black uppercase tracking-tight text-[#F7F2FF] leading-none select-none text-left"
-                  style={{
-                    fontFamily: "'Space Grotesk', 'Inter', sans-serif",
-                    fontSize: 'clamp(3rem, 11vw, 10.5rem)',
-                    textShadow: '0 4px 40px rgba(118, 33, 176, 0.35)',
-                  }}
-                >
+                <h1 className="cinematic-heading-word">
                   Smart
                 </h1>
               </motion.div>
 
               {/* Central Gap Space that expands */}
-              <div className="w-[4vw] sm:w-[8vw] md:w-[12vw] shrink-0" />
+              <div style={{ width: '6vw', flexShrink: 0 }} />
 
               {/* APPLY — glides right */}
               <motion.div
-                style={{ x: splitRightX }}
-                className="flex-1 flex justify-end sm:justify-center will-change-transform"
+                style={{ x: splitRightX, flex: 1, display: 'flex', justifyContent: 'flex-end' }}
+                className="will-change-transform"
               >
-                <h1
-                  className="font-black uppercase tracking-tight text-[#F7F2FF] leading-none select-none text-right"
-                  style={{
-                    fontFamily: "'Space Grotesk', 'Inter', sans-serif",
-                    fontSize: 'clamp(3rem, 11vw, 10.5rem)',
-                    textShadow: '0 4px 40px rgba(118, 33, 176, 0.35)',
-                  }}
-                >
+                <h1 className="cinematic-heading-word">
                   Apply
                 </h1>
               </motion.div>
@@ -282,44 +287,62 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
               SCENE 5, 6, 7: EXACT SMARTAPPLY LOGO & IDENTITY REVEAL
               Scales 68% -> 100%, tilts -3.5° -> 0°, wordmark & tagline reveal
               ════════════════════════════════════════════════════════════════ */}
-          <div className="relative z-20 flex items-center justify-center w-full">
+          <div style={{ position: 'relative', zIndex: 25, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <SmartApplyLogoReveal scrollYProgress={smoothProgress} />
           </div>
 
-          {/* ── Scene 7 Final Call to Action Buttons (Bottom of Stage) ───── */}
+          {/* ── Scene 7 Final Call to Action Button (Bottom of Stage) ───── */}
           <motion.div
             style={{
               opacity: ctaOpacity,
               y: ctaY,
+              position: 'absolute',
+              bottom: 40,
+              zIndex: 35,
+              pointerEvents: 'auto',
             }}
-            className="absolute bottom-16 sm:bottom-20 z-30 flex flex-col sm:flex-row items-center gap-3.5 pointer-events-auto"
           >
             <button
               onClick={handleScrollToLandingContent}
               type="button"
-              className="px-6 py-3 rounded-full font-semibold text-xs sm:text-sm tracking-wide text-white bg-gradient-to-r from-[#7621B0] via-[#9B00FF] to-[#E000D6] hover:brightness-110 shadow-[0_0_30px_rgba(155,0,255,0.4)] transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2"
+              className="cinematic-explore-btn"
             >
               <span>Explore Platform</span>
-              <ChevronDown className="w-4 h-4 animate-bounce" />
+              <ChevronDown size={16} />
             </button>
           </motion.div>
         </div>
 
         {/* ── Bottom Section Cue: Scroll Indicator ──────────────────────── */}
-        <footer className="relative z-30 w-full pb-7 sm:pb-8 flex flex-col items-center justify-center pointer-events-none">
+        <footer className="cinematic-bottom-bar">
           <motion.div
-            style={{ opacity: scrollCueOpacity }}
-            className="flex flex-col items-center gap-2"
+            style={{
+              opacity: scrollCueOpacity,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 8,
+            }}
           >
             <span
-              className="text-[#EAD7FF]/60 text-[9px] sm:text-[10px] uppercase font-medium tracking-[0.34em]"
-              style={{ fontFamily: "'Inter', sans-serif" }}
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                color: 'rgba(234, 215, 255, 0.65)',
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: '0.34em',
+                textTransform: 'uppercase',
+              }}
             >
               Scroll to reveal
             </span>
             <motion.div
-              className="w-[1px] h-9 sm:h-12 bg-gradient-to-b from-transparent via-[#9B00FF] to-transparent"
-              animate={{ y: [0, 5, 0] }}
+              style={{
+                width: 1,
+                height: 40,
+                background: 'linear-gradient(180deg, transparent 0%, #9B00FF 50%, transparent 100%)',
+              }}
+              animate={{ y: [0, 6, 0] }}
               transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
             />
           </motion.div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -24,7 +24,6 @@ import {
 } from 'lucide-react';
 
 import Navbar from '../components/Navbar';
-import CinematicHeroSection from '../components/cinematic-hero/CinematicHeroSection';
 import AnimatedBackground from '../components/AnimatedBackground';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -189,42 +188,26 @@ export default function Landing() {
 
   const role = SAMPLE_ROLES.find((r) => r.id === selectedRole) || SAMPLE_ROLES[0];
 
-  const [inHeroTrack, setInHeroTrack] = useState(true);
-  const landingContentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const onScroll = () => {
-      // Reveal standard navbar when scrolling into landing features (past ~2.5 screens)
-      const heroThreshold = window.innerHeight * 2.5;
-      setInHeroTrack(window.scrollY < heroThreshold);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const handleExploreClick = () => {
-    if (landingContentRef.current) {
-      landingContentRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <div
       style={{
         position: 'relative',
-        overflow: 'hidden',
         minHeight: '100vh',
         background: 'transparent',
         color: 'var(--ink)',
       }}
     >
-      {/* ── Cinematic Hero Sequence (Sticky 380vh Scroll Runway) ────── */}
-      <CinematicHeroSection onExploreClick={handleExploreClick} />
-
       <AnimatedBackground />
-      <Navbar visible={!inHeroTrack} />
+      <Navbar visible={true} />
 
-      <div ref={landingContentRef} id="features-overview">
+      <div
+        id="features-overview"
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+          zIndex: 10,
+        }}
+      >
         {/* ── Hero Section ────────────────────────────────────────────── */}
         <section style={{ padding: '130px 24px 70px', textAlign: 'center', position: 'relative', zIndex: 10 }}>
         <motion.div
@@ -328,6 +311,7 @@ export default function Landing() {
             >
               Read Documentation
             </Link>
+
           </div>
 
           {/* Value Pills */}
