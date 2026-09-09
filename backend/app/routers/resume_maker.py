@@ -2,10 +2,11 @@ import json
 import os
 import subprocess
 import tempfile
+import logging
 from typing import Dict, Any, Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from starlette.concurrency import run_in_threadpool
 from beanie import PydanticObjectId
 import urllib.parse
@@ -16,9 +17,11 @@ from app.middleware.admin_middleware import get_admin_user
 from app.models.resume_template import ResumeTemplate
 from app.models.resume import Resume
 from app.models.user import User
-from app.services import storage_service, ai_service
+from app.services import storage_service, ai_service, latex_service
 from app.rate_limiter import limiter
 from pydantic import BaseModel
+
+logger = logging.getLogger(__name__)
 
 class SmartFillRequest(BaseModel):
     resume_id: Optional[str] = None
@@ -148,24 +151,35 @@ async def compile_template(
                     log_content = f.read()
             raise ValueError(f"LaTeX compilation failed: {e.stderr.decode('utf-8')}\nLog: {log_content}")
         except FileNotFoundError:
-            raise ValueError("pdflatex command not found. Please ensure a TeX distribution is installed.")
+            raise ValueError("pdflatex command not found.")
         except subprocess.TimeoutExpired:
             raise ValueError("LaTeX compilation timed out.")
 
         if not os.path.exists(pdf_file_path):
             raise ValueError("PDF file was not generated.")
 
-        return pdf_file_path
+        with open(pdf_file_path, "rb") as pf:
+            return pf.read()
 
+    # Prefer cloud compilation (works on Render without texlive), fallback to local pdflatex
+    pdf_bytes = None
+    cloud_error = None
     try:
-        pdf_path = await run_in_threadpool(run_pdflatex)
-    except ValueError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        pdf_bytes = await latex_service.compile_latex_to_pdf(latex_content)
+    except Exception as e:
+        cloud_error = str(e)
+        logger.warning(f"Cloud LaTeX compilation failed ({cloud_error}), falling back to local pdflatex...")
 
-    return FileResponse(
-        path=pdf_path,
+    if not pdf_bytes:
+        try:
+            pdf_bytes = await run_in_threadpool(run_pdflatex)
+        except Exception as local_e:
+            err_msg = cloud_error or str(local_e)
+            raise HTTPException(status_code=500, detail=f"Failed to compile LaTeX: {err_msg}")
+
+    return Response(
+        content=pdf_bytes,
         media_type="application/pdf",
-        filename="resume.pdf",
         headers={"Content-Disposition": "attachment; filename=resume.pdf"}
     )
 

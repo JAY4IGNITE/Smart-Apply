@@ -185,6 +185,16 @@ export default function App() {
         <Route path="/dashboard/jobs" element={<Protected><JobMatching /></Protected>} />
         <Route path="/dashboard/tailor-resume/:id" element={<Protected><ResumeTailor /></Protected>} />
         <Route path="/dashboard/ats-checker" element={<Protected><AtsChecker /></Protected>} />
+        <Route path="/dashboard/ats_checker" element={<Navigate to="/dashboard/ats-checker" replace />} />
+        <Route path="/dashboard/ats" element={<Navigate to="/dashboard/ats-checker" replace />} />
+        <Route path="/dashboard/ats-intelligence" element={<Navigate to="/dashboard/ats-checker" replace />} />
+        <Route path="/dashboard/cover_letter" element={<Navigate to="/dashboard/cover-letter" replace />} />
+        <Route path="/dashboard/resume_maker" element={<Navigate to="/dashboard/resume-maker" replace />} />
+        <Route path="/dashboard/resume-studio" element={<Navigate to="/dashboard/resume-maker" replace />} />
+        <Route path="/dashboard/project_recommender" element={<Navigate to="/dashboard/project-recommender" replace />} />
+        <Route path="/dashboard/project-architect" element={<Navigate to="/dashboard/project-recommender" replace />} />
+        <Route path="/dashboard/idea_prompt_generator" element={<Navigate to="/dashboard/idea-prompt-generator" replace />} />
+        <Route path="/dashboard/ai_chatbot" element={<Navigate to="/dashboard/ai-chatbot" replace />} />
         <Route path="/dashboard/ai-chatbot" element={<Protected><AiChatbot /></Protected>} />
         <Route path="/dashboard/project-recommender" element={<Protected><ProjectRecommender /></Protected>} />
         <Route path="/dashboard/idea-prompt-generator" element={<Protected><IdeaPromptGenerator /></Protected>} />
