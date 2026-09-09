@@ -41,11 +41,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
+    try {
+      sessionStorage.setItem('sa_logging_out', '1');
+    } catch {}
     setToken(null);
     setUser(null);
     localStorage.removeItem('sa_token');
     localStorage.removeItem('sa_user');
     apiFetch('/auth/logout', { method: 'POST' }).catch(() => {});
+    if (typeof window !== 'undefined' && window.location.pathname !== '/' && window.location.pathname !== '/landing') {
+      window.location.replace('/');
+    }
   }, []);
 
   const handleAuthEvent = useCallback(
