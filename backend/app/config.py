@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     NVIDIA_BASE_URL: str = "https://integrate.api.nvidia.com/v1"
     
     CHATBOT_API_KEY: str = ""
+    PROJECT_FINDER_API_KEY: str = ""
 
     # ── Job Search (Adzuna & RapidAPI JSearch) ──
     ADZUNA_APP_ID: str = ""

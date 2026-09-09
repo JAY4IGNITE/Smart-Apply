@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UploadCloud, FileText, ArrowRight, X, Copy, Check } from 'lucide-react';
-import Editor from '@monaco-editor/react';
+import { UploadCloud, FileText, ArrowRight, X, Copy, Check, Download, Sparkles } from 'lucide-react';
 
 import { apiFetch, apiErrorMessage } from '../../api/client';
 import { useToast } from '../../components/Toast';
@@ -29,7 +28,13 @@ export default function CoverLetterGenerator() {
   useEffect(() => {
     (async () => {
       const res = await apiFetch<{ resumes: Resume[] }>('/resumes');
-      if (res.ok) setResumes(res.data.resumes || []);
+      if (res.ok) {
+        const list = res.data?.resumes || [];
+        setResumes(list);
+        if (list.length > 0) {
+          setSelectedResumeId(list[0]._id);
+        }
+      }
     })();
   }, []);
 
@@ -42,8 +47,10 @@ export default function CoverLetterGenerator() {
     }
   };
 
+  const hasResume = (selectedResumeId && selectedResumeId !== 'new') || !!file;
+
   const handleGenerate = async () => {
-    if (!file && !selectedResumeId) {
+    if (!hasResume) {
       showToast('error', 'Please select or upload a resume.');
       return;
     }
@@ -53,7 +60,6 @@ export default function CoverLetterGenerator() {
     }
 
     setGenerating(true);
-    setCoverLetter('');
 
     try {
       const formData = new FormData();
@@ -62,18 +68,21 @@ export default function CoverLetterGenerator() {
       } else if (file) {
         formData.append('resume_file', file);
       }
-      formData.append('job_description', jobDescription);
+      formData.append('job_description', jobDescription.trim());
 
-      const res = await apiFetch<{ cover_letter: string }>('/cover-letter/generate', { method: 'POST', body: formData });
+      const res = await apiFetch<{ cover_letter: string }>('/cover-letter/generate', {
+        method: 'POST',
+        body: formData,
+      });
 
-      if (res.ok) {
+      if (res.ok && res.data?.cover_letter) {
         setCoverLetter(res.data.cover_letter);
-        showToast('success', 'Cover letter generated!');
+        showToast('success', 'Cover letter generated successfully!');
       } else {
         showToast('error', apiErrorMessage(res, 'Failed to generate cover letter.'));
       }
     } catch {
-      showToast('error', 'Network error while generating.');
+      showToast('error', 'Network error while generating cover letter.');
     } finally {
       setGenerating(false);
     }
@@ -87,14 +96,46 @@ export default function CoverLetterGenerator() {
     showToast('success', 'Copied to clipboard');
   };
 
+  const handleDownload = () => {
+    if (!coverLetter) return;
+    const blob = new Blob([coverLetter], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Cover_Letter.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast('success', 'Downloaded as text file');
+  };
+
+  const wordCount = coverLetter ? coverLetter.trim().split(/\s+/).filter(Boolean).length : 0;
+  const charCount = coverLetter ? coverLetter.length : 0;
+
   return (
     <div className="container">
-      <PageHeader title="Cover Letter Generator" subtitle="Instantly craft a personalized cover letter matching your resume to the job." />
+      <PageHeader
+        title="Cover Letter Generator"
+        subtitle="Instantly craft a tailored, high-impact cover letter matching your resume to the job."
+      />
 
-      <PageLoader show={generating} title="Drafting your cover letter" subtitle="Analyzing job requirements and matching your skills..." />
+      <PageLoader
+        show={generating}
+        title="Drafting your cover letter"
+        subtitle="Analyzing job requirements and matching your skills..."
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.15fr)', gap: 22, alignItems: 'start' }} className="cl-grid cover-letter-grid">
-        {/* Input */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.25fr)',
+          gap: 22,
+          alignItems: 'start',
+        }}
+        className="cl-grid cover-letter-grid"
+      >
+        {/* Input Card */}
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
           <div>
             <span className="eyebrow">Step 1 — Base Resume</span>
@@ -136,7 +177,7 @@ export default function CoverLetterGenerator() {
                   border: `1.5px dashed ${isDragging ? 'var(--accent)' : 'var(--border-strong)'}`,
                   background: isDragging ? 'var(--accent-soft)' : 'transparent',
                   borderRadius: 'var(--radius)',
-                  padding: 32,
+                  padding: 28,
                   textAlign: 'center',
                   cursor: 'pointer',
                   transition: 'border-color var(--transition-fast), background-color var(--transition-fast)',
@@ -150,8 +191,10 @@ export default function CoverLetterGenerator() {
                   onChange={(e) => e.target.files?.[0] && acceptFile(e.target.files[0])}
                 />
                 <UploadCloud size={28} style={{ color: 'var(--accent)', margin: '0 auto 10px' }} />
-                <h3 style={{ fontSize: 14.5, marginBottom: 3 }}>Drag &amp; drop</h3>
-                <p className="text-muted" style={{ fontSize: 12.5 }}>or click to browse (PDF only)</p>
+                <h3 style={{ fontSize: 14.5, marginBottom: 3 }}>Drag &amp; drop PDF</h3>
+                <p className="text-muted" style={{ fontSize: 12.5 }}>
+                  or click to browse your computer
+                </p>
 
                 {file && (
                   <div
@@ -160,7 +203,11 @@ export default function CoverLetterGenerator() {
                     style={{ marginTop: 14, display: 'inline-flex' }}
                   >
                     <FileText size={13} /> {file.name}
-                    <button onClick={() => setFile(null)} aria-label="Remove file">
+                    <button
+                      onClick={() => setFile(null)}
+                      aria-label="Remove file"
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', padding: 0 }}
+                    >
                       <X size={12} />
                     </button>
                   </div>
@@ -181,21 +228,25 @@ export default function CoverLetterGenerator() {
             />
           </div>
 
-          <button className="btn btn-primary btn-lg btn-block" onClick={handleGenerate} disabled={generating || (!file && !selectedResumeId) || !jobDescription.trim()}>
+          <button
+            className="btn btn-primary btn-lg btn-block"
+            onClick={handleGenerate}
+            disabled={generating || !hasResume || !jobDescription.trim()}
+          >
             {generating ? (
               <>
                 <ButtonSpinner /> Generating...
               </>
             ) : (
               <>
-                Generate Cover Letter <ArrowRight size={17} />
+                <Sparkles size={17} /> Generate Cover Letter <ArrowRight size={17} />
               </>
             )}
           </button>
         </div>
 
-        {/* Results */}
-        <div className="card" style={{ minHeight: 400, display: 'flex', flexDirection: 'column' }}>
+        {/* Results Card */}
+        <div className="card" style={{ minHeight: 460, display: 'flex', flexDirection: 'column' }}>
           <AnimatePresence mode="wait">
             {!coverLetter && !generating && (
               <motion.div
@@ -203,12 +254,20 @@ export default function CoverLetterGenerator() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  padding: '40px 20px',
+                }}
               >
                 <div
                   style={{
-                    width: 52,
-                    height: 52,
+                    width: 54,
+                    height: 54,
                     borderRadius: '50%',
                     background: 'var(--surface-sunken)',
                     color: 'var(--ink-faint)',
@@ -218,48 +277,84 @@ export default function CoverLetterGenerator() {
                     marginBottom: 16,
                   }}
                 >
-                  <FileText size={24} />
+                  <FileText size={26} />
                 </div>
-                <h3 style={{ fontSize: 16, marginBottom: 5 }}>Ready to draft</h3>
-                <p className="text-muted" style={{ fontSize: 13.5 }}>Provide your resume and a job description to begin.</p>
+                <h3 style={{ fontSize: 16, marginBottom: 6 }}>Ready to generate</h3>
+                <p className="text-muted" style={{ fontSize: 13.5, maxWidth: 320 }}>
+                  Select or upload your resume, paste a target job description, and click generate.
+                </p>
               </motion.div>
             )}
 
             {coverLetter && !generating && (
-              <motion.div key="result" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <h3 style={{ fontSize: 16, fontWeight: 600 }}>Your Cover Letter</h3>
-                  <button className="btn btn-secondary btn-sm" onClick={handleCopy}>
-                    {copied ? <Check size={14} /> : <Copy size={14} />}
-                    {copied ? 'Copied' : 'Copy'}
-                  </button>
+              <motion.div
+                key="result"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 12,
+                    flexWrap: 'wrap',
+                    gap: 8,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <h3 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Your Cover Letter</h3>
+                    <span className="badge" style={{ fontSize: 11.5 }}>
+                      {wordCount} words &bull; {charCount} chars
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button className="btn btn-secondary btn-sm" onClick={handleDownload} title="Download .txt">
+                      <Download size={14} /> Download
+                    </button>
+                    <button className="btn btn-primary btn-sm" onClick={handleCopy}>
+                      {copied ? <Check size={14} /> : <Copy size={14} />}
+                      {copied ? 'Copied' : 'Copy'}
+                    </button>
+                  </div>
                 </div>
-                
-                <div style={{ minHeight: 400, border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-                  <textarea 
-                    value={coverLetter} 
-                    readOnly 
-                    style={{ width: '100%', height: 100, color: 'red', marginBottom: 10, padding: 10, fontFamily: 'monospace' }} 
-                    placeholder="DEBUG: If this is empty, the state is empty." 
-                  />
-                  <Editor
-                    height="400px"
-                    defaultLanguage="markdown"
+
+                <div
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    border: '1px solid var(--border)',
+                    borderRadius: 'var(--radius)',
+                    background: 'var(--surface-sunken)',
+                    padding: 4,
+                  }}
+                >
+                  <textarea
                     value={coverLetter}
-                    onChange={(val) => setCoverLetter(val || '')}
-                    theme="vs-dark"
-                    options={{
-                      minimap: { enabled: false },
-                      wordWrap: 'on',
-                      lineNumbers: 'off',
-                      padding: { top: 16, bottom: 16 },
+                    onChange={(e) => setCoverLetter(e.target.value)}
+                    style={{
+                      width: '100%',
+                      minHeight: 380,
+                      flex: 1,
+                      border: 'none',
+                      outline: 'none',
+                      background: 'transparent',
+                      color: 'var(--ink)',
+                      fontFamily: 'inherit',
                       fontSize: 14,
-                      scrollBeyondLastLine: false,
+                      lineHeight: 1.65,
+                      padding: 16,
+                      resize: 'vertical',
                     }}
+                    placeholder="Cover letter text will appear here..."
                   />
                 </div>
-                <p className="text-muted" style={{ fontSize: 12.5, marginTop: 12 }}>
-                  Feel free to edit the text directly in the editor above before copying it.
+
+                <p className="text-muted" style={{ fontSize: 12.5, marginTop: 12, marginBottom: 0 }}>
+                  You can edit the text directly above before copying or downloading.
                 </p>
               </motion.div>
             )}

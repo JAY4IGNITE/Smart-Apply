@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Code2, Clock, Star, ArrowRight, ChevronLeft, CheckCircle2, Lightbulb } from 'lucide-react';
 
-import { InlineLoader, ButtonSpinner } from '../../components/LoadingSpinner';
-import { apiFetch } from '../../api/client';
+import { InlineLoader } from '../../components/LoadingSpinner';
+import { apiFetch, apiErrorMessage } from '../../api/client';
 import { useToast } from '../../components/Toast';
 import type { Project, RoadmapPhase } from '../../api/types';
 
@@ -91,26 +91,37 @@ export default function ProjectRecommender() {
 
   const handleGetRecommendations = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!skills || !timeCommitment || !interests) {
+    if (!skills.trim() || !timeCommitment.trim() || !interests.trim()) {
       showToast('error', 'Please fill out all fields.');
       return;
     }
 
     setLoading(true);
     try {
-      const res = await apiFetch<Project[]>('/projects/recommend', {
+      const res = await apiFetch<Project[] | { projects?: Project[]; data?: Project[] }>('/projects/recommend', {
         method: 'POST',
         body: JSON.stringify({ skills, time_commitment: timeCommitment, interests }),
       });
 
+      let list: Project[] = [];
       if (res.ok && res.data) {
-        setProjects(res.data);
+        if (Array.isArray(res.data)) {
+          list = res.data;
+        } else if (res.data.projects && Array.isArray(res.data.projects)) {
+          list = res.data.projects;
+        } else if (res.data.data && Array.isArray(res.data.data)) {
+          list = res.data.data;
+        }
+      }
+
+      if (list.length > 0) {
+        setProjects(list);
         setStep(2);
       } else {
-        showToast('error', 'Failed to get recommendations.');
+        showToast('error', apiErrorMessage(res, 'No projects could be generated. Please try adjusting your skills or interests.'));
       }
     } catch {
-      showToast('error', 'Network error.');
+      showToast('error', 'Network error while fetching project recommendations.');
     } finally {
       setLoading(false);
     }
@@ -127,7 +138,7 @@ export default function ProjectRecommender() {
 
     setLoading(true);
     try {
-      const res = await apiFetch<{ phases: RoadmapPhase[] }>('/projects/roadmap', {
+      const res = await apiFetch<{ phases: RoadmapPhase[] } | RoadmapPhase[]>('/projects/roadmap', {
         method: 'POST',
         body: JSON.stringify({
           project_details: selectedProject,
@@ -142,14 +153,23 @@ export default function ProjectRecommender() {
         }),
       });
 
-      if (res.ok && res.data?.phases) {
-        setRoadmap(res.data.phases);
+      let phases: RoadmapPhase[] = [];
+      if (res.ok && res.data) {
+        if (Array.isArray(res.data)) {
+          phases = res.data;
+        } else if (res.data.phases && Array.isArray(res.data.phases)) {
+          phases = res.data.phases;
+        }
+      }
+
+      if (phases.length > 0) {
+        setRoadmap(phases);
         setStep(4);
       } else {
-        showToast('error', 'Failed to generate roadmap.');
+        showToast('error', apiErrorMessage(res, 'Failed to generate roadmap. Please try again.'));
       }
     } catch {
-      showToast('error', 'Network error.');
+      showToast('error', 'Network error while generating roadmap.');
     } finally {
       setLoading(false);
     }
@@ -224,6 +244,13 @@ export default function ProjectRecommender() {
 
             {loading ? (
               <InlineLoader title="Finding your projects" subtitle="Matching ideas to your skills and interests" />
+            ) : projects.length === 0 ? (
+              <div className="card text-center" style={{ padding: '40px 20px' }}>
+                <p className="text-muted mb-4">No recommendations found for these criteria.</p>
+                <button className="btn btn-secondary btn-sm" onClick={() => setStep(1)}>
+                  Adjust your search
+                </button>
+              </div>
             ) : (
               <div style={{ display: 'grid', gap: 18, gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
                 {projects.map((proj) => (
@@ -249,7 +276,12 @@ export default function ProjectRecommender() {
                     </div>
 
                     <div className="flex flex-wrap gap-2 mb-6">
-                      {proj.key_technologies.map((tech) => (
+                      {(Array.isArray(proj.key_technologies)
+                        ? proj.key_technologies
+                        : typeof proj.key_technologies === 'string'
+                        ? (proj.key_technologies as string).split(',').map((s) => s.trim())
+                        : []
+                      ).map((tech) => (
                         <span key={tech} className="badge badge-accent">
                           {tech}
                         </span>
@@ -355,7 +387,7 @@ export default function ProjectRecommender() {
                   <p className="text-muted text-sm mb-4">{phase.description}</p>
 
                   <ul className="flex flex-col gap-2" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {phase.tasks.map((task, j) => (
+                    {(Array.isArray(phase.tasks) ? phase.tasks : []).map((task, j) => (
                       <li key={j} className="flex items-start gap-2 text-sm">
                         <CheckCircle2 size={16} className="shrink-0" style={{ color: 'var(--success)', marginTop: 2 }} />
                         <span>{task}</span>

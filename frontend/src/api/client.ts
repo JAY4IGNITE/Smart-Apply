@@ -45,12 +45,13 @@ export function getApiBaseUrl(endpoint?: string): string {
       cleanEndpoint.startsWith('/ai') ||
       cleanEndpoint.startsWith('/interview') ||
       cleanEndpoint.startsWith('/tailor') ||
-      cleanEndpoint.startsWith('/jobs')
+      cleanEndpoint.startsWith('/jobs') ||
+      cleanEndpoint.startsWith('/projects') ||
+      cleanEndpoint.startsWith('/cover-letter')
     ) {
       baseUrl = import.meta.env.VITE_AI_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || fallback;
     } else if (
       cleanEndpoint.startsWith('/resume-maker') ||
-      cleanEndpoint.startsWith('/cover-letter') ||
       cleanEndpoint.startsWith('/code-execution') ||
       cleanEndpoint.startsWith('/upload')
     ) {

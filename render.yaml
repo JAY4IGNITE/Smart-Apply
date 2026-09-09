@@ -27,6 +27,13 @@ services:
         value: 8788ae5ae01923e09e4fa568477759b6
       - key: RAPIDAPI_KEY
         value: fa07d89f58msh04e859394cc9d75p191797jsn14a1d0492bd2
+      - key: NVIDIA_API_KEY
+        fromService:
+          type: web
+          name: smartapply-ai
+          envVarKey: NVIDIA_API_KEY
+      - key: NVIDIA_MODEL
+        value: meta/llama-3.2-11b-vision-instruct
 
   - type: web
     name: smartapply-ai
@@ -101,6 +108,13 @@ services:
           envVarKey: SECRET_KEY
       - key: FRONTEND_URL
         value: https://smartapplies.app
+      - key: NVIDIA_API_KEY
+        fromService:
+          type: web
+          name: smartapply-ai
+          envVarKey: NVIDIA_API_KEY
+      - key: NVIDIA_MODEL
+        value: meta/llama-3.2-11b-vision-instruct
 
   - type: web
     name: smartapply-frontend

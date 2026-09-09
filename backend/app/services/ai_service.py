@@ -4,6 +4,7 @@ import logging
 import time
 from typing import Any, Dict, List, Optional
 
+import httpx
 from openai import AsyncOpenAI
 import openai
 
@@ -12,8 +13,7 @@ from app.models.api_metrics import APILog
 
 logger = logging.getLogger(__name__)
 
-_client: Optional[AsyncOpenAI] = None
-
+_clients: Dict[str, AsyncOpenAI] = {}
 
 
 def _parse_llm_json(content: str, fallback: Any) -> Any:
@@ -21,53 +21,64 @@ def _parse_llm_json(content: str, fallback: Any) -> Any:
     if not content:
         return fallback
     content = content.strip()
-    
-    if content.startswith("```"):
-        lines = content.split("\n")
-        if len(lines) > 1:
-            content = "\n".join(lines[1:])
-        else:
-            content = content[3:]
-    if content.endswith("```"):
-        content = content[:-3]
-    content = content.strip()
-    
+
+    # If code fence exists anywhere, extract and try parsing blocks
+    if "```" in content:
+        try:
+            parts = content.split("```")
+            for p in parts[1::2]:
+                block = p.split("\n", 1)[1] if "\n" in p else p
+                try:
+                    return json.loads(block.strip())
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+    # Direct json parse
     try:
         return json.loads(content)
-    except json.JSONDecodeError:
-        pass
-        
-    try:
-        start_idx = content.find('{')
-        end_idx = content.rfind('}')
-        if start_idx != -1 and end_idx != -1:
-            return json.loads(content[start_idx:end_idx+1])
-            
-        start_idx = content.find('[')
-        end_idx = content.rfind(']')
-        if start_idx != -1 and end_idx != -1:
-            return json.loads(content[start_idx:end_idx+1])
     except Exception:
         pass
-        
+
+    # Find boundaries
+    first_bracket = content.find('[')
+    last_bracket = content.rfind(']')
+    first_brace = content.find('{')
+    last_brace = content.rfind('}')
+
+    # Order candidates by which opening delimiter appears first
+    candidates = []
+    if first_bracket != -1 and last_bracket > first_bracket:
+        candidates.append((first_bracket, content[first_bracket:last_bracket + 1]))
+    if first_brace != -1 and last_brace > first_brace:
+        candidates.append((first_brace, content[first_brace:last_brace + 1]))
+
+    candidates.sort(key=lambda c: c[0])
+
+    for _, snippet in candidates:
+        try:
+            return json.loads(snippet)
+        except Exception:
+            continue
+
     return fallback
 
-def _get_client() -> AsyncOpenAI:
-    """Lazy-initialize the NVIDIA NIM OpenAI-compatible client.
+
+def _get_client(api_key: Optional[str] = None) -> AsyncOpenAI:
+    """Lazy-initialize an NVIDIA NIM OpenAI-compatible client.
 
     A request-level timeout and automatic retries are set here so a slow or
-    flaky upstream can't hang a user request indefinitely — without them the
-    default client waits ~10 minutes before giving up, which manifests to the
-    user as the whole feature being frozen."""
-    global _client
-    if _client is None:
-        _client = AsyncOpenAI(
+    flaky upstream can't hang a user request indefinitely."""
+    key = (api_key or settings.NVIDIA_API_KEY or "").strip()
+    if key not in _clients:
+        _clients[key] = AsyncOpenAI(
             base_url=settings.NVIDIA_BASE_URL,
-            api_key=settings.NVIDIA_API_KEY,
+            api_key=key,
             timeout=60.0,
             max_retries=2,
         )
-    return _client
+    return _clients[key]
 
 
 import inspect
@@ -96,7 +107,8 @@ def _log_api_metric(**fields) -> None:
 
 async def _call_llm_with_tracking(**kwargs):
     """Wraps client.chat.completions.create to track API latency and success rates."""
-    client = _get_client()
+    api_key = kwargs.pop("api_key", None)
+    client = _get_client(api_key)
     start_time = time.time()
 
     # Auto-detect caller function name
@@ -123,6 +135,13 @@ async def _call_llm_with_tracking(**kwargs):
         except Exception as e:
             err_str = str(e).lower()
             target_model = kwargs.get("model")
+
+            # Fallback to primary API key if a feature-specific key failed authorization
+            if ("401" in err_str or "403" in err_str or "unauthorized" in err_str or "authorization failed" in err_str) and client.api_key != settings.NVIDIA_API_KEY:
+                logger.warning(f"Feature API key failed authorization ({e}). Falling back to primary NVIDIA_API_KEY...")
+                client = _get_client(settings.NVIDIA_API_KEY)
+                continue
+
             if ("404" in err_str or "410" in err_str or "not found" in err_str or "gone" in err_str) and target_model != "meta/llama-3.2-11b-vision-instruct":
                 logger.warning(f"Model '{target_model}' unavailable ({e}). Falling back to meta/llama-3.2-11b-vision-instruct...")
                 kwargs["model"] = "meta/llama-3.2-11b-vision-instruct"
@@ -271,7 +290,6 @@ Return ONLY valid JSON."""
 
 async def suggest_projects(skills: str, time_commitment: str, interests: str) -> List[Dict[str, Any]]:
     """Suggest software projects based on user skills, time, and interests."""
-    client = _get_client()
     prompt = f"""You are an expert software engineering mentor. Based on the following user profile, suggest 3 to 5 realistic software projects they can build for their portfolio.
 
 User Skills: {skills}
@@ -289,7 +307,9 @@ For each project, provide:
 
 Return a JSON array of project objects. Return ONLY valid JSON, no markdown formatting."""
 
+    api_key = settings.PROJECT_FINDER_API_KEY or settings.NVIDIA_API_KEY
     completion = await _call_llm_with_tracking(
+        api_key=api_key,
         model=settings.NVIDIA_MODEL,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
@@ -297,25 +317,77 @@ Return a JSON array of project objects. Return ONLY valid JSON, no markdown form
     )
 
     content = completion.choices[0].message.content or "{}"
-    return _parse_llm_json(content, fallback=[])
+    raw_projects = _parse_llm_json(content, fallback=[])
+
+    # Handle dictionary wrappers like {"projects": [...]}
+    if isinstance(raw_projects, dict):
+        for k in ("projects", "recommendations", "data", "items"):
+            if k in raw_projects and isinstance(raw_projects[k], list):
+                raw_projects = raw_projects[k]
+                break
+        else:
+            raw_projects = []
+
+    if not isinstance(raw_projects, list):
+        raw_projects = []
+
+    normalized_projects = []
+    for idx, p in enumerate(raw_projects):
+        if not isinstance(p, dict):
+            continue
+
+        raw_rating = p.get("rating", 8)
+        try:
+            if isinstance(raw_rating, str):
+                rating = int(float(raw_rating.split("/")[0].strip()))
+            else:
+                rating = int(raw_rating)
+        except Exception:
+            rating = 8
+        rating = max(1, min(10, rating))
+
+        raw_techs = p.get("key_technologies", [])
+        if isinstance(raw_techs, str):
+            key_technologies = [t.strip() for t in raw_techs.split(",") if t.strip()]
+        elif isinstance(raw_techs, list):
+            key_technologies = [str(t).strip() for t in raw_techs if str(t).strip()]
+        else:
+            key_technologies = []
+
+        normalized_projects.append({
+            "id": str(p.get("id") or f"project-{idx + 1}"),
+            "title": str(p.get("title") or f"Portfolio Project {idx + 1}"),
+            "description": str(p.get("description") or ""),
+            "rating": rating,
+            "skill_level": str(p.get("skill_level") or "Intermediate"),
+            "estimated_time": str(p.get("estimated_time") or "2-3 weeks"),
+            "key_technologies": key_technologies,
+        })
+
+    return normalized_projects
+
 
 async def generate_project_roadmap(project_details: Dict[str, Any], preferences: Dict[str, str] = None) -> Dict[str, Any]:
     """Generate a step-by-step roadmap for a specific project."""
-    client = _get_client()
-    
     prefs_text = ""
     if preferences:
         prefs_text = "\nUser Preferences for this Roadmap:\n"
         for k, v in preferences.items():
-            if v and v.strip():
+            if v and str(v).strip():
                 prefs_text += f"- {k}: {v}\n"
+
+    raw_techs = project_details.get("key_technologies", [])
+    if isinstance(raw_techs, list):
+        tech_str = ", ".join(str(t) for t in raw_techs)
+    else:
+        tech_str = str(raw_techs)
 
     prompt = f"""You are an expert technical lead creating a development roadmap.
 
 Create a step-by-step implementation roadmap for the following project:
 Title: {project_details.get('title')}
 Description: {project_details.get('description')}
-Technologies: {', '.join(project_details.get('key_technologies', []))}
+Technologies: {tech_str}
 {prefs_text}
 Return a JSON object with a "phases" array. Each phase should have:
 - "phase_number": integer
@@ -326,7 +398,9 @@ Return a JSON object with a "phases" array. Each phase should have:
 Ensure the roadmap strictly adheres to the user's preferences if provided.
 Return ONLY valid JSON, no markdown formatting."""
 
+    api_key = settings.PROJECT_FINDER_API_KEY or settings.NVIDIA_API_KEY
     completion = await _call_llm_with_tracking(
+        api_key=api_key,
         model=settings.NVIDIA_MODEL,
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
@@ -334,7 +408,40 @@ Return ONLY valid JSON, no markdown formatting."""
     )
 
     content = completion.choices[0].message.content or "{}"
-    return _parse_llm_json(content, fallback={"phases": []})
+    raw_data = _parse_llm_json(content, fallback={"phases": []})
+
+    if isinstance(raw_data, list):
+        phases_list = raw_data
+    elif isinstance(raw_data, dict):
+        phases_list = raw_data.get("phases") or raw_data.get("roadmap") or raw_data.get("steps") or []
+    else:
+        phases_list = []
+
+    normalized_phases = []
+    for idx, phase in enumerate(phases_list):
+        if not isinstance(phase, dict):
+            continue
+        try:
+            phase_num = int(phase.get("phase_number", idx + 1))
+        except Exception:
+            phase_num = idx + 1
+
+        raw_tasks = phase.get("tasks", [])
+        if isinstance(raw_tasks, list):
+            tasks = [str(t) for t in raw_tasks if str(t).strip()]
+        elif isinstance(raw_tasks, str):
+            tasks = [t.strip() for t in raw_tasks.split("\n") if t.strip()]
+        else:
+            tasks = []
+
+        normalized_phases.append({
+            "phase_number": phase_num,
+            "title": str(phase.get("title") or f"Phase {phase_num}"),
+            "description": str(phase.get("description") or ""),
+            "tasks": tasks,
+        })
+
+    return {"phases": normalized_phases}
 
 async def tailor_resume_latex(latex_code: str, recommendations: List[str], custom_instructions: str) -> str:
     """Modify LaTeX resume code based on ATS recommendations and user instructions."""
@@ -389,8 +496,6 @@ Instructions:
 
 async def generate_cover_letter(resume_text: str, job_description: str) -> str:
     """Generate a cover letter based on a resume and job description."""
-    client = _get_client()
-    
     prompt = f"""You are an expert career coach and professional copywriter.
 Write a highly professional, engaging, and concise cover letter for the following job description based on the candidate's resume.
 
@@ -414,19 +519,30 @@ Instructions:
         max_tokens=1000,
     )
 
-    # This endpoint returns a plain-text cover letter (the router's response
-    # model is `cover_letter: str`), so return the text directly. Running it
-    # through the JSON parser used to yield a dict and break the response.
     content = completion.choices[0].message.content or ""
     content = content.strip()
 
-    # Strip a stray markdown code fence if the model added one.
-    if content.startswith("```"):
-        content = content.split("\n", 1)[1] if "\n" in content else content[3:]
-    if content.endswith("```"):
-        content = content[:-3]
+    # Strip code block fences if present
+    if "```" in content:
+        parts = content.split("```")
+        for p in parts[1::2]:
+            block = p.split("\n", 1)[1] if "\n" in p else p
+            if len(block.strip()) > 50:
+                content = block.strip()
+                break
 
-    return content.strip()
+    # Strip leading/trailing backticks if any remain
+    content = content.strip("`").strip()
+
+    # Strip stray conversational intros
+    lines = content.splitlines()
+    if lines and any(lines[0].lower().startswith(prefix) for prefix in ("here is", "here's", "certainly", "sure,")):
+        lines = lines[1:]
+        while lines and not lines[0].strip():
+            lines = lines[1:]
+        content = "\n".join(lines).strip()
+
+    return content
 
 async def smart_fill_resume_fields(resume_text: str, required_fields: List[str], user_profile: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
     """Smart fill resume fields based on extracted text, stored profile data, and required template fields."""

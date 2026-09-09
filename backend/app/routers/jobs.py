@@ -34,14 +34,19 @@ async def get_job_matches(
     if resume_id and resume_id.strip():
         try:
             resume = await Resume.get(PydanticObjectId(resume_id))
-            if resume and resume.user_id == user.id:
+            if resume:
+                if resume.user_id != user.id:
+                    raise HTTPException(status_code=403, detail="Forbidden: cannot access another user's resume")
                 resume_text = resume.extracted_text or ""
+        except HTTPException:
+            raise
         except Exception as e:
             logger.warning(f"Could not load resume {resume_id}: {e}")
 
     if not resume_text:
         # Fallback to user headline or title query
-        resume_text = f"Role: {clean_query}\nCandidate: {user.full_name or 'Job Seeker'}\nHeadline: {user.headline or clean_query}"
+        user_headline = getattr(user, "headline", None) or clean_query
+        resume_text = f"Role: {clean_query}\nCandidate: {user.full_name or 'Job Seeker'}\nHeadline: {user_headline}"
 
     # 2. Fetch Live Jobs from Providers (Adzuna primary, JSearch secondary)
     raw_jobs = await job_service.search_jobs(clean_query, location)
