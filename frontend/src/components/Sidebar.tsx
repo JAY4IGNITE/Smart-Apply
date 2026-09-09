@@ -33,12 +33,11 @@ interface NavSection {
   links: NavLinkItem[];
 }
 
-const NAV_SECTIONS: NavSection[] = [
+const CORE_NAV_SECTIONS: NavSection[] = [
   {
     title: 'Command Center',
     links: [
       { to: '/dashboard', label: 'Executive Overview', icon: LayoutDashboard, end: true },
-      { to: '/docs', label: 'Platform Docs', icon: BookOpen },
     ],
   },
   {
@@ -68,6 +67,12 @@ const NAV_SECTIONS: NavSection[] = [
   },
 ];
 
+const REMAINING_FEATURES: NavLinkItem[] = [
+  { to: '/docs', label: 'Platform Docs', icon: BookOpen },
+  { to: '/dashboard/profile', label: 'Profile Dossier', icon: UserIcon },
+  { to: '/dashboard/settings', label: 'Account Settings', icon: SettingsIcon },
+];
+
 interface SidebarProps {
   mobileOpen: boolean;
   onCloseMobile: () => void;
@@ -81,55 +86,77 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
     <>
       {mobileOpen && <div className="sidebar-overlay" onClick={onCloseMobile} />}
       <aside className={`sidebar ${mobileOpen ? 'open' : ''}`}>
-        {/* Brand Header */}
-        <div className="sidebar-logo">
-          <Link
-            to="/dashboard"
-            onClick={onCloseMobile}
-            style={{ display: 'flex', alignItems: 'center', gap: 11, textDecoration: 'none' }}
-          >
-            <img
-              src="/logo.png"
-              alt="Smart Apply"
-              style={{ height: 28, width: 28, objectFit: 'contain' }}
-            />
-            <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
-            </span>
-          </Link>
+        {/* Upper Card: Features Menu */}
+        <div className="sidebar-features-card">
+          {/* Brand Header */}
+          <div className="sidebar-logo">
+            <Link
+              to="/dashboard"
+              onClick={onCloseMobile}
+              style={{ display: 'flex', alignItems: 'center', gap: 11, textDecoration: 'none' }}
+            >
+              <img
+                src="/logo.png"
+                alt="Smart Apply"
+                style={{ height: 28, width: 28, objectFit: 'contain' }}
+              />
+              <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+                Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+              </span>
+            </Link>
+          </div>
+
+          {/* Navigation Sections */}
+          <nav className="sidebar-nav">
+            {CORE_NAV_SECTIONS.map((section) => (
+              <div key={section.title} className="sidebar-section-card">
+                <div className="sidebar-section-title">
+                  <span>{section.title}</span>
+                </div>
+                {section.links.map((link) => (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    end={'end' in link ? link.end : false}
+                    onClick={onCloseMobile}
+                    className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+                  >
+                    <span className="sidebar-link-content">
+                      <span className="sidebar-icon-wrap">
+                        <link.icon size={16} />
+                      </span>
+                      <span>{link.label}</span>
+                    </span>
+                  </NavLink>
+                ))}
+              </div>
+            ))}
+          </nav>
         </div>
 
-        {/* Navigation Sections */}
-        <nav className="sidebar-nav">
-          {NAV_SECTIONS.map((section) => (
-            <div key={section.title} style={{ marginBottom: 8 }}>
-              <div className="sidebar-section-title">
-                <span>{section.title}</span>
-              </div>
-              {section.links.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  end={'end' in link ? link.end : false}
-                  onClick={onCloseMobile}
-                  className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-                >
-                  <span className="sidebar-link-content">
-                    <span className="sidebar-icon-wrap">
-                      <link.icon size={16} />
-                    </span>
-                    <span>{link.label}</span>
-                  </span>
-                </NavLink>
-              ))}
+        {/* Bottom Card: Remaining Features & User Dossier */}
+        <div className="sidebar-bottom-card">
+          <div className="sidebar-section-card remaining-features-group">
+            <div className="sidebar-section-title">
+              <span>Remaining Features</span>
             </div>
-          ))}
+            {REMAINING_FEATURES.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                onClick={onCloseMobile}
+                className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+              >
+                <span className="sidebar-link-content">
+                  <span className="sidebar-icon-wrap">
+                    <link.icon size={15} />
+                  </span>
+                  <span>{link.label}</span>
+                </span>
+              </NavLink>
+            ))}
 
-          {user?.is_admin && (
-            <div style={{ marginTop: 6 }}>
-              <div className="sidebar-section-title">
-                <span>Governance</span>
-              </div>
+            {user?.is_admin && (
               <NavLink
                 to="/dashboard/sysadmin"
                 onClick={onCloseMobile}
@@ -137,17 +164,14 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
               >
                 <span className="sidebar-link-content">
                   <span className="sidebar-icon-wrap">
-                    <ShieldCheck size={16} />
+                    <ShieldCheck size={15} />
                   </span>
                   <span>Admin Console</span>
                 </span>
               </NavLink>
-            </div>
-          )}
-        </nav>
+            )}
+          </div>
 
-        {/* User Dossier Footer */}
-        <div className="sidebar-footer">
           {/* User Dossier Card */}
           <div className="sidebar-user-card">
             <div className="sidebar-avatar-wrap">
@@ -166,38 +190,18 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
                 {user?.email || 'Pro Member'}
               </div>
             </div>
-          </div>
 
-          {/* Quick Utility Strip */}
-          <div className="sidebar-action-strip">
-            <NavLink
-              to="/dashboard/profile"
-              onClick={onCloseMobile}
-              className="sidebar-mini-btn"
-              title="Profile Dossier"
-            >
-              <UserIcon size={15} />
-            </NavLink>
-
-            <NavLink
-              to="/dashboard/settings"
-              onClick={onCloseMobile}
-              className="sidebar-mini-btn"
-              title="Account Settings"
-            >
-              <SettingsIcon size={15} />
-            </NavLink>
-
-            <ThemeSwitcher variant="compact" />
-
-            <button
-              onClick={logout}
-              aria-label="Log out"
-              className="sidebar-mini-btn danger"
-              title="Sign Out"
-            >
-              <LogOut size={15} />
-            </button>
+            <div className="sidebar-user-actions">
+              <ThemeSwitcher variant="compact" />
+              <button
+                onClick={logout}
+                aria-label="Log out"
+                className="sidebar-mini-btn danger"
+                title="Sign Out"
+              >
+                <LogOut size={15} />
+              </button>
+            </div>
           </div>
         </div>
       </aside>
