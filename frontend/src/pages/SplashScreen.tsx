@@ -39,12 +39,22 @@ function makeBezier(p1x: number, p1y: number, p2x: number, p2y: number) {
 const easeOutCinematic = makeBezier(0.16, 1.0, 0.3, 1.0);
 const easeInCinematic = makeBezier(0.77, 0.0, 0.18, 1.0);
 const easeInOutSmooth = makeBezier(0.65, 0.0, 0.35, 1.0);
+// Gentle ease for S entrance — avoids hard snap at start
+const easeOutSoft = makeBezier(0.25, 1.0, 0.5, 1.0);
 
-const T_S_ENTER = 200;
-const T_EMERGE_STARTS = [0, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
-const T_EMERGE_SPAN = 260;
-const T_COLLAPSE_STARTS = [0, 1700, 1650, 1600, 1550, 1500, 1450, 1400, 1350, 1300];
-const T_COLLAPSE_SPAN = 180;
+// S completes at 220ms, then 80ms rest → M starts at 300ms
+// Container shift starts at 320ms (after first letter has begun moving)
+const T_S_ENTER = 220;
+const T_EMERGE_STARTS = [0, 300, 410, 520, 630, 740, 850, 960, 1070, 1180];
+const T_EMERGE_SPAN = 240;
+// Letters fully emerged by ~1420ms; collapse starts shortly after
+const T_COLLAPSE_STARTS = [0, 1750, 1700, 1650, 1600, 1550, 1500, 1450, 1400, 1350];
+const T_COLLAPSE_SPAN = 190;
+// Container glide timings
+const T_SHIFT_START = 320;
+const T_SHIFT_END = 1200;
+const T_HOLD_END = 1400;
+const T_RETURN_END = 1970;
 
 interface SplashScreenProps {
   onComplete?: () => void;
@@ -164,46 +174,52 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
       if (!animStartTime) animStartTime = now;
       const elapsed = now - animStartTime;
 
-      // 1. Anchor S Entrance
+      // 1. Anchor S Entrance — use soft ease so the very first frame isn't a jump
       const sProgress = Math.min(Math.max(elapsed / T_S_ENTER, 0), 1);
-      const sEase = easeOutCinematic(sProgress);
-      letterChars[0].style.opacity = Math.min(sEase * 1.3, 1).toFixed(4);
-      letterChars[0].style.transform = `scale(${(0.92 + 0.08 * sEase).toFixed(4)})`;
+      const sEase = easeOutSoft(sProgress);
+      letterChars[0].style.opacity = Math.min(sEase * 1.2, 1).toFixed(4);
+      letterChars[0].style.transform = `scale(${(0.88 + 0.12 * sEase).toFixed(4)})`;
 
       // 2. Emergence & Collapse for M through Y
       for (let i = 1; i < 10; i++) {
         let vis = 0;
-        if (elapsed < T_EMERGE_STARTS[i]) {
+        const emergeStart = T_EMERGE_STARTS[i];
+        const collapseStart = T_COLLAPSE_STARTS[i];
+        if (elapsed < emergeStart) {
           vis = 0;
-        } else if (elapsed < 1300) {
-          const p = Math.min((elapsed - T_EMERGE_STARTS[i]) / T_EMERGE_SPAN, 1);
-          vis = easeOutCinematic(p);
-        } else if (elapsed < T_COLLAPSE_STARTS[i]) {
+        } else if (elapsed < emergeStart + T_EMERGE_SPAN) {
+          // Emerging — use soft ease so each letter slides in without jerking
+          const p = (elapsed - emergeStart) / T_EMERGE_SPAN;
+          vis = easeOutSoft(p);
+        } else if (elapsed < collapseStart) {
+          // Fully visible
           vis = 1;
         } else {
-          const p = Math.min((elapsed - T_COLLAPSE_STARTS[i]) / T_COLLAPSE_SPAN, 1);
+          // Collapsing
+          const p = Math.min((elapsed - collapseStart) / T_COLLAPSE_SPAN, 1);
           vis = 1 - easeInCinematic(p);
         }
 
         const displacement = -100 * (1 - vis);
-        // Only fade in as it emerges from behind the preceding letter (eliminates ghosting through S)
-        const opacity = vis <= 0.28 ? 0 : Math.min(Math.max((vis - 0.28) / 0.72, 0), 1);
+        // Only fade in once the letter has begun emerging (avoids ghosting through S)
+        const opacity = vis <= 0.25 ? 0 : Math.min(Math.max((vis - 0.25) / 0.75, 0), 1);
 
         letterSlots[i].style.opacity = opacity.toFixed(4);
         letterSlots[i].style.transform = `translate3d(${displacement.toFixed(2)}%, 0, 0)`;
       }
 
-      // 3. Dynamic Centering: track glides continuously
+      // 3. Dynamic Centering: container glides AFTER S has settled and M has started
       let containerShift = sAnchorOffset;
-      if (elapsed < 200) {
+      if (elapsed < T_SHIFT_START) {
+        // Hold still — let S enter and M begin before any container motion
         containerShift = sAnchorOffset;
-      } else if (elapsed < 1100) {
-        const p = (elapsed - 200) / 900;
+      } else if (elapsed < T_SHIFT_END) {
+        const p = (elapsed - T_SHIFT_START) / (T_SHIFT_END - T_SHIFT_START);
         containerShift = sAnchorOffset * (1 - easeInOutSmooth(p));
-      } else if (elapsed < 1300) {
+      } else if (elapsed < T_HOLD_END) {
         containerShift = 0;
-      } else if (elapsed < 1900) {
-        const p = (elapsed - 1300) / 600;
+      } else if (elapsed < T_RETURN_END) {
+        const p = (elapsed - T_HOLD_END) / (T_RETURN_END - T_HOLD_END);
         containerShift = sAnchorOffset * easeInOutSmooth(p);
       } else {
         containerShift = sAnchorOffset;
@@ -213,8 +229,8 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
         wordTrack.style.transform = `translate3d(${containerShift.toFixed(2)}px, 0, 0)`;
       }
 
-      // 4. Trigger Forward Logo Transition
-      if (elapsed < 1950) {
+      // 4. Trigger Forward Logo Transition (fires after return glide completes)
+      if (elapsed < T_RETURN_END + 20) {
         animFrameRef.current = requestAnimationFrame(renderFrame);
       } else {
         triggerForwardLogoTransition();
