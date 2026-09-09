@@ -475,7 +475,7 @@ export default function JobMatching() {
                 margin: '0 auto 20px',
               }}
             >
-              <Briefcase size={36} />
+              <span style={{ fontSize: 36 }}>💼</span>
             </div>
             <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Discover Live Jobs Matching Your Resume</h3>
             <p className="text-muted" style={{ maxWidth: 460, margin: '0 auto 24px', fontSize: 14.5, lineHeight: 1.6 }}>
@@ -524,7 +524,7 @@ export default function JobMatching() {
                 margin: '0 auto 16px',
               }}
             >
-              <Search size={30} />
+              <span style={{ fontSize: 30 }}>🔍</span>
             </div>
             <h3 style={{ fontSize: 20, fontWeight: 600, marginBottom: 8 }}>No matching jobs found</h3>
             <p className="text-muted" style={{ maxWidth: 420, margin: '0 auto 20px', fontSize: 14 }}>
@@ -613,7 +613,7 @@ export default function JobMatching() {
                             </span>
                             <span>•</span>
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                              <MapPin size={14} color="var(--ink-soft)" /> {job.location}
+                              {job.location}
                             </span>
 
                             {job.is_remote && (
