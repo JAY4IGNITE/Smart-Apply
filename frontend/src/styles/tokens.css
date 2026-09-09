@@ -84,10 +84,10 @@
   --transition-slow: 320ms var(--ease-out);
 
   /* ── Layout ── */
-  --sidebar-width: 248px;
+  --sidebar-width: 264px;
   --sidebar-width-collapsed: 76px;
   --content-max: 1160px;
-  --header-height: 64px;
+  --header-height: 54px;
 
   color-scheme: light;
 }

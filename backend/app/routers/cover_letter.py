@@ -20,6 +20,9 @@ async def generate_cover_letter(
     job_description: str = Form(""),
     resume_id: Optional[str] = Form(None),
     resume_file: Optional[UploadFile] = File(None),
+    tone: Optional[str] = Form(None),
+    company_name: Optional[str] = Form(None),
+    role_title: Optional[str] = Form(None),
     user: User = Depends(get_current_user)
 ):
     """Generate a tailored cover letter using the AI service."""
@@ -63,7 +66,10 @@ async def generate_cover_letter(
     try:
         content = await ai_service.generate_cover_letter(
             resume_text=resume_text.strip(),
-            job_description=job_description.strip()
+            job_description=job_description.strip(),
+            tone=tone.strip() if tone else None,
+            company_name=company_name.strip() if company_name else None,
+            role_title=role_title.strip() if role_title else None,
         )
         return {"cover_letter": content}
     except Exception as e:

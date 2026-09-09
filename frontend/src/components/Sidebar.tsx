@@ -11,47 +11,63 @@ import {
   LogOut,
   Mail,
   Briefcase,
-  Code,
   Wand2,
   BookOpen,
-  ShieldCheck
+  ShieldCheck,
+  Sparkles,
+  Zap,
+  Bot
 } from 'lucide-react';
 import { Linkedin } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
 import '../styles/dashboard.css';
 
-const NAV_SECTIONS = [
+interface NavLinkItem {
+  to: string;
+  label: string;
+  icon: any;
+  end?: boolean;
+  badge?: string;
+  badgeType?: 'ai' | 'new' | 'live' | 'voice' | 'hot';
+}
+
+interface NavSection {
+  title: string;
+  links: NavLinkItem[];
+}
+
+const NAV_SECTIONS: NavSection[] = [
   {
-    title: 'Overview',
+    title: 'Command Center',
     links: [
-      { to: '/dashboard', label: 'Home', icon: LayoutDashboard, end: true },
-      { to: '/docs', label: 'Documentation', icon: BookOpen },
+      { to: '/dashboard', label: 'Executive Overview', icon: LayoutDashboard, end: true },
+      { to: '/docs', label: 'Platform Docs', icon: BookOpen },
     ],
   },
   {
-    title: 'Resume',
+    title: 'Career Dossier',
     links: [
-      { to: '/dashboard/resumes', label: 'My resumes', icon: FileText },
-      { to: '/dashboard/resume-maker', label: 'Resume Maker', icon: FileText },
-      { to: '/dashboard/ats-checker', label: 'ATS checker', icon: ScanSearch },
-      { to: '/dashboard/cover-letter', label: 'Cover letter', icon: Mail },
+      { to: '/dashboard/resumes', label: 'Resume Vault', icon: FileText },
+      { to: '/dashboard/resume-maker', label: 'Resume Studio', icon: Sparkles, badge: 'New', badgeType: 'new' },
+      { to: '/dashboard/ats-checker', label: 'ATS Intelligence', icon: ScanSearch, badge: 'Score', badgeType: 'ai' },
+      { to: '/dashboard/cover-letter', label: 'Cover Letter Studio', icon: Mail, badge: 'Bespoke', badgeType: 'ai' },
       { to: '/dashboard/linkedin', label: 'LinkedIn Optimizer', icon: Linkedin },
     ],
   },
   {
-    title: 'Jobs',
+    title: 'Opportunities',
     links: [
-      { to: '/dashboard/jobs', label: 'Smart matching', icon: Briefcase },
+      { to: '/dashboard/jobs', label: 'Smart Job Matcher', icon: Briefcase, badge: 'Live', badgeType: 'live' },
     ],
   },
   {
-    title: 'Prepare & Build',
+    title: 'Engineering & Prep',
     links: [
-      { to: '/dashboard/ai-chatbot', label: 'AI career chat', icon: MessageSquareText },
-      { to: '/dashboard/project-recommender', label: 'Project ideas', icon: Lightbulb },
-      { to: '/dashboard/idea-prompt-generator', label: 'Idea Prompt Studio', icon: Wand2 },
-      { to: '/dashboard/live-interview', label: 'Live interview', icon: Video },
+      { to: '/dashboard/project-recommender', label: 'Project Architect', icon: Lightbulb, badge: 'Hot', badgeType: 'hot' },
+      { to: '/dashboard/idea-prompt-generator', label: 'Prompt Studio', icon: Wand2, badge: 'v3', badgeType: 'new' },
+      { to: '/dashboard/live-interview', label: 'Voice Mock Studio', icon: Video, badge: 'Voice', badgeType: 'voice' },
+      { to: '/dashboard/ai-chatbot', label: 'AI Career Strategist', icon: MessageSquareText },
     ],
   },
 ];
@@ -63,25 +79,47 @@ interface SidebarProps {
 
 export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
   const { user, logout } = useAuth();
-  const initials = (user?.full_name || user?.email || '?').charAt(0).toUpperCase();
+  const initials = (user?.full_name || user?.email || 'A').charAt(0).toUpperCase();
 
   return (
     <>
       {mobileOpen && <div className="sidebar-overlay" onClick={onCloseMobile} />}
       <aside className={`sidebar ${mobileOpen ? 'open' : ''}`}>
+        {/* Brand Header */}
         <div className="sidebar-logo">
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <img src="/logo.png" alt="Smart Apply" style={{ height: 28, width: 28, objectFit: 'contain' }} />
-            <span style={{ fontWeight: 800, fontSize: '1.12rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
-            </span>
-          </Link>
+          <div className="sidebar-brand-row">
+            <Link
+              to="/dashboard"
+              onClick={onCloseMobile}
+              style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
+            >
+              <img
+                src="/logo.png"
+                alt="Smart Apply"
+                style={{ height: 26, width: 26, objectFit: 'contain' }}
+              />
+              <span style={{ fontWeight: 800, fontSize: '1.14rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+                Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+              </span>
+            </Link>
+
+            <span className="sidebar-brand-badge">Pro Studio</span>
+          </div>
+
+          {/* Real-time System Status Banner */}
+          <div className="sidebar-status-banner">
+            <span className="pulse-dot" />
+            <span>AI Core: Online &bull; Llama 3.2</span>
+          </div>
         </div>
 
+        {/* Navigation Sections */}
         <nav className="sidebar-nav">
           {NAV_SECTIONS.map((section) => (
-            <div key={section.title}>
-              <div className="sidebar-section-title">{section.title}</div>
+            <div key={section.title} style={{ marginBottom: 6 }}>
+              <div className="sidebar-section-title">
+                <span>{section.title}</span>
+              </div>
               {section.links.map((link) => (
                 <NavLink
                   key={link.to}
@@ -91,74 +129,96 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
                   className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
                 >
                   <span className="sidebar-link-content">
-                    <link.icon size={17} />
-                    {link.label}
+                    <span className="sidebar-icon-wrap">
+                      <link.icon size={15} />
+                    </span>
+                    <span>{link.label}</span>
                   </span>
+
+                  {link.badge && (
+                    <span className={`sidebar-pill-badge badge-${link.badgeType || 'ai'}`}>
+                      {link.badge}
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </div>
           ))}
 
           {user?.is_admin && (
-            <div>
-              <div className="sidebar-section-title">Admin</div>
+            <div style={{ marginTop: 4 }}>
+              <div className="sidebar-section-title">
+                <span>Governance</span>
+              </div>
               <NavLink
                 to="/dashboard/sysadmin"
                 onClick={onCloseMobile}
                 className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
               >
                 <span className="sidebar-link-content">
-                  <ShieldCheck size={17} />
-                  Admin Console
+                  <span className="sidebar-icon-wrap">
+                    <ShieldCheck size={15} />
+                  </span>
+                  <span>Admin Console</span>
                 </span>
+                <span className="sidebar-pill-badge badge-ai">Root</span>
               </NavLink>
             </div>
           )}
         </nav>
 
+        {/* User Dossier Footer */}
         <div className="sidebar-footer">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginBottom: 4 }}>
-            <NavLink to="/dashboard/profile" onClick={onCloseMobile} className="sidebar-link">
-              <span className="sidebar-link-content">
-                <UserIcon size={17} />
-                Profile
-              </span>
-            </NavLink>
-            <NavLink to="/dashboard/settings" onClick={onCloseMobile} className="sidebar-link">
-              <span className="sidebar-link-content">
-                <SettingsIcon size={17} />
-                Settings
-              </span>
-            </NavLink>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '4px 0 10px' }}>
-            <ThemeSwitcher variant="compact" />
-          </div>
-          <div className="sidebar-divider" />
-          <div className="sidebar-user">
-            <div className="sidebar-avatar">
+          {/* User Dossier Card */}
+          <div className="sidebar-user-card">
+            <div className="sidebar-avatar-wrap">
               {user?.profile_pic_url ? (
-                <img
-                  src={user.profile_pic_url}
-                  alt=""
-                  style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-                />
+                <img src={user.profile_pic_url} alt="" className="sidebar-avatar-img" />
               ) : (
-                initials
+                <div className="sidebar-avatar-initials">{initials}</div>
               )}
+              <span className="sidebar-avatar-status" title="Active session" />
             </div>
-            <div className="sidebar-user-info" style={{ flex: 1 }}>
-              <div className="name">{user?.full_name || 'Your account'}</div>
-              <div className="email">{user?.email}</div>
+
+            <div className="sidebar-user-info">
+              <div className="sidebar-user-name">
+                {user?.full_name || 'Engineering Candidate'}
+              </div>
+              <div className="sidebar-user-role">
+                {user?.email || 'Pro Member'}
+              </div>
             </div>
+          </div>
+
+          {/* Quick Utility Strip */}
+          <div className="sidebar-action-strip">
+            <NavLink
+              to="/dashboard/profile"
+              onClick={onCloseMobile}
+              className="sidebar-mini-btn"
+              title="Profile Dossier"
+            >
+              <UserIcon size={15} />
+            </NavLink>
+
+            <NavLink
+              to="/dashboard/settings"
+              onClick={onCloseMobile}
+              className="sidebar-mini-btn"
+              title="Account Settings"
+            >
+              <SettingsIcon size={15} />
+            </NavLink>
+
+            <ThemeSwitcher variant="compact" />
+
             <button
               onClick={logout}
               aria-label="Log out"
-              className="btn-icon"
-              style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--ink-faint)' }}
-              title="Log out"
+              className="sidebar-mini-btn danger"
+              title="Sign Out"
             >
-              <LogOut size={16} />
+              <LogOut size={15} />
             </button>
           </div>
         </div>

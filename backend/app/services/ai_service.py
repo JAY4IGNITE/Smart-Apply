@@ -494,22 +494,44 @@ Instructions:
 
     return content.strip()
 
-async def generate_cover_letter(resume_text: str, job_description: str) -> str:
-    """Generate a cover letter based on a resume and job description."""
-    prompt = f"""You are an expert career coach and professional copywriter.
-Write a highly professional, engaging, and concise cover letter for the following job description based on the candidate's resume.
+async def generate_cover_letter(
+    resume_text: str,
+    job_description: str,
+    tone: Optional[str] = None,
+    company_name: Optional[str] = None,
+    role_title: Optional[str] = None,
+) -> str:
+    """Generate a bespoke cover letter based on resume, job description, and narrative style."""
+    context_extras = []
+    if role_title and role_title.strip():
+        context_extras.append(f"TARGET ROLE: {role_title.strip()}")
+    if company_name and company_name.strip():
+        context_extras.append(f"TARGET COMPANY: {company_name.strip()}")
+    if tone and tone.strip():
+        context_extras.append(f"DESIRED NARRATIVE TONE: {tone.strip()}")
+    extras_str = ("\n" + "\n".join(context_extras) + "\n") if context_extras else ""
 
+    prompt = f"""You are an elite executive career strategist and principal technical copywriter.
+Write a compelling, bespoke, and memorable cover letter tailored to the following role and candidate profile.
+{extras_str}
 JOB DESCRIPTION:
 {job_description}
 
 CANDIDATE RESUME:
 {resume_text}
 
-Instructions:
-1. Do not use generic, overly robotic openings (like "I am writing to express my interest in..."). Be enthusiastic and direct.
-2. Highlight 2-3 specific skills or experiences from the resume that directly match the job description.
-3. Keep it under 350 words.
-4. Output ONLY the raw cover letter text. Do not include markdown blocks or conversational text. Use placeholders like [Your Name] or [Company Name] if information is missing.
+Strict Writing Guidelines:
+1. NEVER use generic AI cliches such as: "I am writing to express my interest", "I hope this email finds you well", "I am thrilled to apply", or "I believe I am the perfect candidate".
+2. Open with an authoritative, hook-driven opening sentence that immediately connects candidate strengths to the company's core mission or challenge.
+3. Highlight 2-3 specific, quantified achievements or deep technical competencies from the resume that directly solve the requirements in the job description.
+4. If a specific tone is requested, reflect it authentically:
+   - "High-Impact & Metrics": emphasize quantifiable ROI, scale, throughput, reliability, and business outcomes.
+   - "Deep Tech & Architecture": emphasize system architecture, concurrency, distributed design, algorithmic rigor, and clean engineering principles.
+   - "Product & Mission Velocity": emphasize user empathy, high execution cadence, zero-to-one velocity, and cross-functional leadership.
+   - "Executive & Strategic": emphasize technical strategy, organizational leverage, mentoring, and multi-quarter vision.
+5. If target company or role is specified, weave them naturally into the letter rather than leaving generic brackets.
+6. Maintain an optimal length between 250 and 350 words. High signal-to-noise ratio.
+7. Output ONLY the polished cover letter text. Do NOT include markdown code fences or conversational commentary.
 """
 
     completion = await _call_llm_with_tracking(

@@ -762,5 +762,240 @@ textarea.input-field {
   }
 }
 
+/* ─────────────────────────────────────────────────────────────
+ * Executive Letterhead & Dossier Studio Styles
+ * ───────────────────────────────────────────────────────────── */
 
+.letterhead-sheet {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 44px 48px;
+  box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--transition-base), border-color var(--transition-base);
+}
 
+[data-theme='dark'] .letterhead-sheet {
+  background: linear-gradient(180deg, #111425 0%, #0c0e1a 100%);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 48px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.letterhead-watermark {
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  opacity: 0.55;
+  user-select: none;
+  pointer-events: none;
+}
+
+.letterhead-top-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+.letterhead-body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.78;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Tone & Persona Selector Cards */
+.tone-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.tone-card {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--surface-sunken);
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tone-card:hover {
+  border-color: var(--border-strong);
+  background: var(--surface);
+  transform: translateY(-1px);
+}
+
+.tone-card.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.tone-card-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tone-card-desc {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+
+/* Interactive Skill Cloud */
+.skill-cloud-category {
+  margin-bottom: 14px;
+}
+
+.skill-cloud-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.skill-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.interactive-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.interactive-chip:hover {
+  border-color: var(--border-strong);
+  color: var(--ink);
+  background: var(--surface-sunken);
+  transform: translateY(-1px);
+}
+
+.interactive-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(82, 39, 255, 0.28);
+}
+
+/* Recruiter Insight Box */
+.recruiter-signal-box {
+  background: linear-gradient(135deg, rgba(82, 39, 255, 0.06) 0%, rgba(124, 58, 237, 0.03) 100%);
+  border: 1px solid var(--accent-soft-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin: 12px 0;
+  position: relative;
+}
+
+[data-theme='dark'] .recruiter-signal-box {
+  background: linear-gradient(135deg, rgba(144, 97, 255, 0.1) 0%, rgba(217, 70, 239, 0.04) 100%);
+  border-color: rgba(144, 97, 255, 0.25);
+}
+
+/* Interactive Timeline / Roadmap Tracker */
+.roadmap-track {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.roadmap-phase-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 22px;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.roadmap-phase-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.milestone-task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  user-select: none;
+}
+
+.milestone-task-item:hover {
+  background: var(--surface-sunken);
+}
+
+.milestone-task-item.completed span {
+  text-decoration: line-through;
+  color: var(--ink-faint);
+}
+
+/* Print Styles for Executive Letterhead */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .printable-letterhead,
+  .printable-letterhead * {
+    visibility: visible !important;
+  }
+  .printable-letterhead {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 20mm 20mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
