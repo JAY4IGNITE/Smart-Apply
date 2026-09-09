@@ -134,40 +134,37 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
           </nav>
         </div>
 
-        {/* Bottom Card: Remaining Features & User Dossier */}
+        {/* Bottom Card: Minimized Remaining Features & User Dossier */}
         <div className="sidebar-bottom-card">
-          <div className="sidebar-section-card remaining-features-group">
-            <div className="sidebar-section-title">
-              <span>Remaining Features</span>
-            </div>
-            {REMAINING_FEATURES.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                onClick={onCloseMobile}
-                className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-              >
-                <span className="sidebar-link-content">
-                  <span className="sidebar-icon-wrap">
-                    <link.icon size={15} />
-                  </span>
-                  <span>{link.label}</span>
-                </span>
-              </NavLink>
-            ))}
+          <div className={`sidebar-remaining-pills ${user?.is_admin ? 'has-admin' : ''}`}>
+            {REMAINING_FEATURES.map((link) => {
+              const shortLabel = link.label
+                .replace('Platform ', '')
+                .replace(' Dossier', '')
+                .replace('Account ', '');
+              return (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  onClick={onCloseMobile}
+                  className={({ isActive }) => `sidebar-pill-btn ${isActive ? 'active' : ''}`}
+                  title={link.label}
+                >
+                  <link.icon size={13} />
+                  <span>{shortLabel}</span>
+                </NavLink>
+              );
+            })}
 
             {user?.is_admin && (
               <NavLink
                 to="/dashboard/sysadmin"
                 onClick={onCloseMobile}
-                className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+                className={({ isActive }) => `sidebar-pill-btn ${isActive ? 'active' : ''}`}
+                title="Admin Console"
               >
-                <span className="sidebar-link-content">
-                  <span className="sidebar-icon-wrap">
-                    <ShieldCheck size={15} />
-                  </span>
-                  <span>Admin Console</span>
-                </span>
+                <ShieldCheck size={13} />
+                <span>Admin</span>
               </NavLink>
             )}
           </div>
