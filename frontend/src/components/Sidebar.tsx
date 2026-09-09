@@ -14,9 +14,7 @@ import {
   Wand2,
   BookOpen,
   ShieldCheck,
-  Sparkles,
-  Zap,
-  Bot
+  Sparkles
 } from 'lucide-react';
 import { Linkedin } from './Icons';
 import { useAuth } from '../context/AuthContext';
@@ -28,8 +26,6 @@ interface NavLinkItem {
   label: string;
   icon: any;
   end?: boolean;
-  badge?: string;
-  badgeType?: 'ai' | 'new' | 'live' | 'voice' | 'hot';
 }
 
 interface NavSection {
@@ -49,24 +45,24 @@ const NAV_SECTIONS: NavSection[] = [
     title: 'Career Dossier',
     links: [
       { to: '/dashboard/resumes', label: 'Resume Vault', icon: FileText },
-      { to: '/dashboard/resume-maker', label: 'Resume Studio', icon: Sparkles, badge: 'New', badgeType: 'new' },
-      { to: '/dashboard/ats-checker', label: 'ATS Intelligence', icon: ScanSearch, badge: 'Score', badgeType: 'ai' },
-      { to: '/dashboard/cover-letter', label: 'Cover Letter Studio', icon: Mail, badge: 'Bespoke', badgeType: 'ai' },
+      { to: '/dashboard/resume-maker', label: 'Resume Studio', icon: Sparkles },
+      { to: '/dashboard/ats-checker', label: 'ATS Intelligence', icon: ScanSearch },
+      { to: '/dashboard/cover-letter', label: 'Cover Letter Studio', icon: Mail },
       { to: '/dashboard/linkedin', label: 'LinkedIn Optimizer', icon: Linkedin },
     ],
   },
   {
     title: 'Opportunities',
     links: [
-      { to: '/dashboard/jobs', label: 'Smart Job Matcher', icon: Briefcase, badge: 'Live', badgeType: 'live' },
+      { to: '/dashboard/jobs', label: 'Smart Job Matcher', icon: Briefcase },
     ],
   },
   {
     title: 'Engineering & Prep',
     links: [
-      { to: '/dashboard/project-recommender', label: 'Project Architect', icon: Lightbulb, badge: 'Hot', badgeType: 'hot' },
-      { to: '/dashboard/idea-prompt-generator', label: 'Prompt Studio', icon: Wand2, badge: 'v3', badgeType: 'new' },
-      { to: '/dashboard/live-interview', label: 'Voice Mock Studio', icon: Video, badge: 'Voice', badgeType: 'voice' },
+      { to: '/dashboard/project-recommender', label: 'Project Architect', icon: Lightbulb },
+      { to: '/dashboard/idea-prompt-generator', label: 'Prompt Studio', icon: Wand2 },
+      { to: '/dashboard/live-interview', label: 'Voice Mock Studio', icon: Video },
       { to: '/dashboard/ai-chatbot', label: 'AI Career Strategist', icon: MessageSquareText },
     ],
   },
@@ -87,36 +83,26 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
       <aside className={`sidebar ${mobileOpen ? 'open' : ''}`}>
         {/* Brand Header */}
         <div className="sidebar-logo">
-          <div className="sidebar-brand-row">
-            <Link
-              to="/dashboard"
-              onClick={onCloseMobile}
-              style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
-            >
-              <img
-                src="/logo.png"
-                alt="Smart Apply"
-                style={{ height: 26, width: 26, objectFit: 'contain' }}
-              />
-              <span style={{ fontWeight: 800, fontSize: '1.14rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-                Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
-              </span>
-            </Link>
-
-            <span className="sidebar-brand-badge">Pro Studio</span>
-          </div>
-
-          {/* Real-time System Status Banner */}
-          <div className="sidebar-status-banner">
-            <span className="pulse-dot" />
-            <span>AI Core: Online &bull; Llama 3.2</span>
-          </div>
+          <Link
+            to="/dashboard"
+            onClick={onCloseMobile}
+            style={{ display: 'flex', alignItems: 'center', gap: 11, textDecoration: 'none' }}
+          >
+            <img
+              src="/logo.png"
+              alt="Smart Apply"
+              style={{ height: 28, width: 28, objectFit: 'contain' }}
+            />
+            <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+            </span>
+          </Link>
         </div>
 
         {/* Navigation Sections */}
         <nav className="sidebar-nav">
           {NAV_SECTIONS.map((section) => (
-            <div key={section.title} style={{ marginBottom: 6 }}>
+            <div key={section.title} style={{ marginBottom: 8 }}>
               <div className="sidebar-section-title">
                 <span>{section.title}</span>
               </div>
@@ -130,23 +116,17 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
                 >
                   <span className="sidebar-link-content">
                     <span className="sidebar-icon-wrap">
-                      <link.icon size={15} />
+                      <link.icon size={16} />
                     </span>
                     <span>{link.label}</span>
                   </span>
-
-                  {link.badge && (
-                    <span className={`sidebar-pill-badge badge-${link.badgeType || 'ai'}`}>
-                      {link.badge}
-                    </span>
-                  )}
                 </NavLink>
               ))}
             </div>
           ))}
 
           {user?.is_admin && (
-            <div style={{ marginTop: 4 }}>
+            <div style={{ marginTop: 6 }}>
               <div className="sidebar-section-title">
                 <span>Governance</span>
               </div>
@@ -157,11 +137,10 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
               >
                 <span className="sidebar-link-content">
                   <span className="sidebar-icon-wrap">
-                    <ShieldCheck size={15} />
+                    <ShieldCheck size={16} />
                   </span>
                   <span>Admin Console</span>
                 </span>
-                <span className="sidebar-pill-badge badge-ai">Root</span>
               </NavLink>
             </div>
           )}
@@ -177,7 +156,6 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
               ) : (
                 <div className="sidebar-avatar-initials">{initials}</div>
               )}
-              <span className="sidebar-avatar-status" title="Active session" />
             </div>
 
             <div className="sidebar-user-info">
