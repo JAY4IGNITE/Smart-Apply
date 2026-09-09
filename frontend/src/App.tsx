@@ -9,6 +9,7 @@ import { InlineLoader } from './components/LoadingSpinner';
 import { useAuth } from './context/AuthContext';
 import { apiFetch } from './api/client';
 import { AlertTriangle } from 'lucide-react';
+import { useKeepAlive } from './hooks/useKeepAlive';
 
 // Route-level code splitting: each page (and its dependencies) loads only when
 // the person actually navigates there, keeping the initial bundle small.
@@ -121,6 +122,9 @@ function AdminProtected({ children }: { children: React.ReactNode }) {
 export default function App() {
   const { user } = useAuth();
   const [maintenance, setMaintenance] = useState(false);
+
+  // Ping all Render services every 5 min to prevent free-tier spin-down
+  useKeepAlive();
 
   useEffect(() => {
     let mounted = true;
