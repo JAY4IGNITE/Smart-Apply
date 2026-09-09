@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search,
-  MapPin,
-  Briefcase,
   ExternalLink,
   CheckCircle2,
   DollarSign,
@@ -15,7 +12,6 @@ import {
   ChevronUp,
   Building,
   SlidersHorizontal,
-  FileCheck,
   Globe2,
   X
 } from 'lucide-react';
@@ -224,11 +220,10 @@ export default function JobMatching() {
           style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, alignItems: 'end' }}
         >
           <div>
-            <label className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-              <Briefcase size={14} color="var(--primary)" /> Target Role or Keywords
+            <label className="eyebrow" style={{ marginBottom: 8, display: 'block' }}>
+              Target Role or Keywords
             </label>
-            <div className="input-with-icon" style={{ position: 'relative' }}>
-              <Search size={16} />
+            <div style={{ position: 'relative' }}>
               <input
                 type="text"
                 className="input-field"
@@ -259,11 +254,10 @@ export default function JobMatching() {
           </div>
 
           <div>
-            <label className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-              <MapPin size={14} color="var(--primary)" /> Preferred Location
+            <label className="eyebrow" style={{ marginBottom: 8, display: 'block' }}>
+              Preferred Location
             </label>
-            <div className="input-with-icon">
-              <MapPin size={16} />
+            <div>
               <input
                 type="text"
                 className="input-field"
@@ -275,8 +269,8 @@ export default function JobMatching() {
           </div>
 
           <div>
-            <label className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-              <FileCheck size={14} color="var(--primary)" /> Benchmark Resume
+            <label className="eyebrow" style={{ marginBottom: 8, display: 'block' }}>
+              Benchmark Resume
             </label>
             <select
               className="input-field"
