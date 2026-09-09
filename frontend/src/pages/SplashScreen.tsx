@@ -40,11 +40,11 @@ const easeOutCinematic = makeBezier(0.16, 1.0, 0.3, 1.0);
 const easeInCinematic = makeBezier(0.77, 0.0, 0.18, 1.0);
 const easeInOutSmooth = makeBezier(0.65, 0.0, 0.35, 1.0);
 
-const T_S_ENTER = 260;
-const T_EMERGE_STARTS = [0, 280, 410, 540, 670, 800, 930, 1060, 1190, 1320];
-const T_EMERGE_SPAN = 360;
-const T_COLLAPSE_STARTS = [0, 2420, 2360, 2300, 2240, 2180, 2120, 2060, 2000, 1950];
-const T_COLLAPSE_SPAN = 240;
+const T_S_ENTER = 200;
+const T_EMERGE_STARTS = [0, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+const T_EMERGE_SPAN = 260;
+const T_COLLAPSE_STARTS = [0, 1700, 1650, 1600, 1550, 1500, 1450, 1400, 1350, 1300];
+const T_COLLAPSE_SPAN = 180;
 
 interface SplashScreenProps {
   onComplete?: () => void;
@@ -175,7 +175,7 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
         let vis = 0;
         if (elapsed < T_EMERGE_STARTS[i]) {
           vis = 0;
-        } else if (elapsed < 1950) {
+        } else if (elapsed < 1300) {
           const p = Math.min((elapsed - T_EMERGE_STARTS[i]) / T_EMERGE_SPAN, 1);
           vis = easeOutCinematic(p);
         } else if (elapsed < T_COLLAPSE_STARTS[i]) {
@@ -195,15 +195,15 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
 
       // 3. Dynamic Centering: track glides continuously
       let containerShift = sAnchorOffset;
-      if (elapsed < 280) {
+      if (elapsed < 200) {
         containerShift = sAnchorOffset;
-      } else if (elapsed < 1550) {
-        const p = (elapsed - 280) / 1270;
+      } else if (elapsed < 1100) {
+        const p = (elapsed - 200) / 900;
         containerShift = sAnchorOffset * (1 - easeInOutSmooth(p));
-      } else if (elapsed < 1950) {
+      } else if (elapsed < 1300) {
         containerShift = 0;
-      } else if (elapsed < 2580) {
-        const p = (elapsed - 1950) / 630;
+      } else if (elapsed < 1900) {
+        const p = (elapsed - 1300) / 600;
         containerShift = sAnchorOffset * easeInOutSmooth(p);
       } else {
         containerShift = sAnchorOffset;
@@ -214,7 +214,7 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
       }
 
       // 4. Trigger Forward Logo Transition
-      if (elapsed < 2600) {
+      if (elapsed < 1950) {
         animFrameRef.current = requestAnimationFrame(renderFrame);
       } else {
         triggerForwardLogoTransition();
@@ -322,40 +322,7 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
       {/* Flash Wave */}
       <div className="transition-flash" id="transitionFlash" ref={transitionFlashRef}></div>
 
-      {/* Skip Intro Button */}
-      <button
-        type="button"
-        onClick={handleFinished}
-        style={{
-          position: 'fixed',
-          top: 24,
-          right: 24,
-          zIndex: 100000,
-          background: 'rgba(255, 255, 255, 0.12)',
-          border: '1px solid rgba(255, 255, 255, 0.25)',
-          color: '#ffffff',
-          padding: '7px 16px',
-          borderRadius: 999,
-          fontSize: 13,
-          fontWeight: 600,
-          cursor: 'pointer',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-          transition: 'all 0.2s ease',
-          letterSpacing: '0.02em',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.24)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.45)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
-        }}
-        aria-label="Skip intro animation"
-      >
-        Skip Intro ›
-      </button>
+
     </div>
   );
 
