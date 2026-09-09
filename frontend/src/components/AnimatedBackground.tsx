@@ -22,6 +22,7 @@ export default function AnimatedBackground() {
     >
       <div style={{ width: '100%', height: '100%', position: 'relative' }}>
         <GradientBlinds
+          dpr={1.25}
           gradientColors={['#FF9FFC', '#5227FF']}
           angle={0}
           noise={0.3}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ExternalLink,
@@ -79,6 +79,7 @@ export default function JobMatching() {
 
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const cacheRef = useRef<Map<string, JobPosting[]>>(new Map());
 
   useEffect(() => {
     (async () => {
@@ -101,6 +102,14 @@ export default function JobMatching() {
       return;
     }
 
+    const cacheKey = `${selectedResumeId}:${q.toLowerCase()}:${(loc || 'us').toLowerCase()}`;
+    if (cacheRef.current.has(cacheKey)) {
+      setJobs(cacheRef.current.get(cacheKey)!);
+      setHasSearched(true);
+      setExpandedJobId(null);
+      return;
+    }
+
     setIsSearching(true);
     setHasSearched(true);
     setExpandedJobId(null);
@@ -119,6 +128,7 @@ export default function JobMatching() {
       });
 
       if (res.ok && res.data?.matches) {
+        cacheRef.current.set(cacheKey, res.data.matches);
         setJobs(res.data.matches);
         if (res.data.matches.length > 0) {
           showToast('success', `Found & scored ${res.data.matches.length} live opportunities!`);

@@ -184,7 +184,20 @@ export default function Landing() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const [introActive, setIntroActive] = useState(true);
+  const [introActive, setIntroActive] = useState(() => {
+    try {
+      return sessionStorage.getItem('sa_intro_seen') !== '1';
+    } catch {
+      return false;
+    }
+  });
+
+  const handleIntroComplete = () => {
+    try {
+      sessionStorage.setItem('sa_intro_seen', '1');
+    } catch {}
+    setIntroActive(false);
+  };
   const [activeTab, setActiveTab] = useState<'ats' | 'interview' | 'latex' | 'projects'>('ats');
   const [selectedRole, setSelectedRole] = useState<string>('backend');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -217,7 +230,7 @@ export default function Landing() {
               overflow: 'hidden',
             }}
           >
-            <SplashScreen onComplete={() => setIntroActive(false)} standalone={false} />
+            <SplashScreen onComplete={handleIntroComplete} standalone={false} />
           </motion.div>
         )}
       </AnimatePresence>

@@ -321,6 +321,41 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
 
       {/* Flash Wave */}
       <div className="transition-flash" id="transitionFlash" ref={transitionFlashRef}></div>
+
+      {/* Skip Intro Button */}
+      <button
+        type="button"
+        onClick={handleFinished}
+        style={{
+          position: 'fixed',
+          top: 24,
+          right: 24,
+          zIndex: 100000,
+          background: 'rgba(255, 255, 255, 0.12)',
+          border: '1px solid rgba(255, 255, 255, 0.25)',
+          color: '#ffffff',
+          padding: '7px 16px',
+          borderRadius: 999,
+          fontSize: 13,
+          fontWeight: 600,
+          cursor: 'pointer',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          transition: 'all 0.2s ease',
+          letterSpacing: '0.02em',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.24)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.45)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+        }}
+        aria-label="Skip intro animation"
+      >
+        Skip Intro ›
+      </button>
     </div>
   );
 

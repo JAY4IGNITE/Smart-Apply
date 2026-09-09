@@ -121,29 +121,23 @@ function AdminProtected({ children }: { children: React.ReactNode }) {
 export default function App() {
   const { user } = useAuth();
   const [maintenance, setMaintenance] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
 
+    // Fetch public settings in the background without blocking initial paint
     apiFetch<{ maintenance_mode: boolean }>('/auth/public-settings')
       .then(res => {
-        if (mounted && res.ok) {
-          setMaintenance(res.data.maintenance_mode);
+        if (mounted && res.ok && res.data?.maintenance_mode) {
+          setMaintenance(true);
         }
       })
-      .finally(() => {
-        if (mounted) {
-          setLoading(false);
-        }
-      });
+      .catch(() => {});
 
     return () => {
       mounted = false;
     };
   }, []);
-
-  if (loading) return <PageFallback />;
 
   if (maintenance && !user?.is_admin) {
     return (

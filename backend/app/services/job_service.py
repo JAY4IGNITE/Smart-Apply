@@ -210,24 +210,41 @@ def _get_curated_fallback_jobs(query: str, location: str = "Remote") -> List[Dic
     ]
 
 
+import time
+
+_JOB_CACHE: Dict[str, Tuple[float, List[Dict[str, Any]]]] = {}
+_JOB_CACHE_TTL = 3600  # 1 hour
+
 async def search_jobs(query: str, location: str = "us") -> List[Dict[str, Any]]:
     """
     Search for jobs across primary (Adzuna) and secondary (JSearch) providers.
     Guarantees responsive results even under third-party API rate limits.
+    Cached for 1 hour to provide instant response times on repeat searches.
     """
     if not query or not query.strip():
         return []
 
+    cache_key = f"{query.strip().lower()}:{location.strip().lower()}"
+    now = time.time()
+    if cache_key in _JOB_CACHE:
+        cached_time, cached_jobs = _JOB_CACHE[cache_key]
+        if now - cached_time < _JOB_CACHE_TTL:
+            return [dict(j) for j in cached_jobs]
+
     # 1. Primary: Adzuna (Fast, live, global, includes salary)
     jobs = await search_adzuna_jobs(query, location)
     if jobs:
+        _JOB_CACHE[cache_key] = (now, jobs)
         return jobs
 
     # 2. Secondary: JSearch RapidAPI
     jobs = await search_jsearch_jobs(query, location)
     if jobs:
+        _JOB_CACHE[cache_key] = (now, jobs)
         return jobs
 
     # 3. Tertiary: Curated fallback
     logger.info(f"Using curated fallback jobs for query '{query}'")
-    return _get_curated_fallback_jobs(query, location)
+    fallback = _get_curated_fallback_jobs(query, location)
+    _JOB_CACHE[cache_key] = (now, fallback)
+    return fallback

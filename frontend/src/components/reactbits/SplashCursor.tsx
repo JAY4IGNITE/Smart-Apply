@@ -35,12 +35,12 @@ class Pointer {
 
 function SplashCursor({
   SIM_RESOLUTION = 128,
-  DYE_RESOLUTION = 1440,
+  DYE_RESOLUTION = 512,
   CAPTURE_RESOLUTION = 512,
   DENSITY_DISSIPATION = 3.5,
   VELOCITY_DISSIPATION = 2,
   PRESSURE = 0.1,
-  PRESSURE_ITERATIONS = 20,
+  PRESSURE_ITERATIONS = 10,
   CURL = 3,
   SPLAT_RADIUS = 0.2,
   SPLAT_FORCE = 6000,
@@ -51,11 +51,19 @@ function SplashCursor({
   RAINBOW_MODE = true,
   COLOR = '#ff0000'
 }: SplashCursorProps) {
+  // Gracefully disable fluid simulation on touch/mobile or reduced-motion devices to preserve 60fps scrolling
+  const isTouchOrMobile = typeof window !== 'undefined' && (
+    'ontouchstart' in window ||
+    (navigator.maxTouchPoints != null && navigator.maxTouchPoints > 0) ||
+    window.innerWidth < 768 ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameId = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (isTouchOrMobile || !canvasRef.current) return;
     const canvas: HTMLCanvasElement = canvasRef.current;
 
     let isActive = true;
@@ -718,6 +726,10 @@ function SplashCursor({
 
     function updateFrame() {
       if (!isActive) return;
+      if (document.hidden) {
+        animationFrameId.current = requestAnimationFrame(updateFrame);
+        return;
+      }
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
       updateColors(dt);
@@ -1072,6 +1084,10 @@ function SplashCursor({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (isTouchOrMobile) {
+    return null;
+  }
 
   return (
     <div

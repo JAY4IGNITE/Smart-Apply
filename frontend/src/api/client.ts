@@ -104,20 +104,41 @@ export async function apiFetch<T = unknown>(
 
   const baseUrl = getApiBaseUrl(endpoint);
   let response: Response;
+
+  // Add 15s timeout to prevent hung requests when backend is slow/cold-starting
+  const controller = new AbortController();
+  const timeoutMs = endpoint.startsWith('/jobs') || endpoint.startsWith('/tailor') || endpoint.startsWith('/ai') ? 35000 : 15000;
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  if (options.signal) {
+    options.signal.addEventListener('abort', () => controller.abort());
+  }
+
   try {
-    response = await fetch(`${baseUrl}${endpoint}`, {
-      ...options,
-      headers,
-      credentials: 'include',
-    });
+    try {
+      response = await fetch(`${baseUrl}${endpoint}`, {
+        ...options,
+        headers,
+        credentials: 'include',
+        signal: controller.signal,
+      });
+    } catch (error) {
+      if (controller.signal.aborted && !options.signal?.aborted) {
+        return { data: { detail: 'Request timed out. Please try again.' } as T, ok: false, status: 408 };
+      }
+      // Network error (e.g. server down, offline). Wait 500ms and retry exactly once.
+      await new Promise(resolve => setTimeout(resolve, 500));
+      response = await fetch(`${baseUrl}${endpoint}`, {
+        ...options,
+        headers,
+        credentials: 'include',
+        signal: controller.signal,
+      });
+    }
   } catch (error) {
-    // Network error (e.g. server down, offline). Wait 500ms and retry exactly once.
-    await new Promise(resolve => setTimeout(resolve, 500));
-    response = await fetch(`${baseUrl}${endpoint}`, {
-      ...options,
-      headers,
-      credentials: 'include',
-    });
+    return { data: { detail: 'Network error or server unreachable.' } as T, ok: false, status: 503 };
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   if (response.status === 401) {
