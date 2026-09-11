@@ -297,7 +297,350 @@ export default function SkillAssessment() {
       </div>
 
       {/* Main Container */}
-      {!result ? (
+      {activeTab === 'quiz' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* Quiz Configuration Card */}
+          <div className="card" style={{ padding: 24, borderRadius: 'var(--radius-lg)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Brain size={20} color="var(--accent)" />
+                  <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
+                    NVIDIA NIM Academic Diagnostic Quiz
+                  </h2>
+                </div>
+                <p style={{ margin: '4px 0 0', fontSize: 13.5, color: 'var(--ink-soft)' }}>
+                  Generates rigorous university-standard multiple-choice questions testing conceptual depth and complexity.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <div>
+                  <span style={{ fontSize: 12, color: 'var(--ink-soft)', marginRight: 6 }}>Subject:</span>
+                  <select
+                    value={quizSkill}
+                    onChange={(e) => setQuizSkill(e.target.value)}
+                    className="input-field"
+                    style={{ padding: '6px 12px', fontSize: 13, borderRadius: 8, width: 'auto' }}
+                  >
+                    {(currentSkills.length ? currentSkills : [
+                      'Data Structures & Algorithms',
+                      'Operating Systems',
+                      'Database Management Systems',
+                      'Computer Networks',
+                      'System Design',
+                      'Python',
+                      'React',
+                    ]).map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <span style={{ fontSize: 12, color: 'var(--ink-soft)', marginRight: 6 }}>Rigor:</span>
+                  <select
+                    value={quizDifficulty}
+                    onChange={(e) => setQuizDifficulty(e.target.value)}
+                    className="input-field"
+                    style={{ padding: '6px 12px', fontSize: 13, borderRadius: 8, width: 'auto' }}
+                  >
+                    <option value="Undergraduate">Undergraduate</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced / Viva</option>
+                  </select>
+                </div>
+
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={handleGenerateQuiz}
+                  disabled={quizLoading}
+                  style={{ gap: 6, fontWeight: 600, padding: '7px 16px', borderRadius: 8 }}
+                >
+                  {quizLoading ? (
+                    <>
+                      <RefreshCw size={14} className="spin" /> Generating Quiz...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={14} /> Generate Academic Quiz
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* If Quiz Result is ready */}
+          {quizResult && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div
+                className="card"
+                style={{
+                  padding: 24,
+                  borderRadius: 'var(--radius-lg)',
+                  background: 'var(--gradient-glow-card)',
+                  border: '1.5px solid var(--accent-soft-border)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: 20,
+                }}
+              >
+                <div>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase' }}>
+                    {quizResult.skill} Academic Evaluation
+                  </span>
+                  <h3 style={{ margin: '4px 0 6px', fontSize: 22, fontWeight: 800, color: 'var(--ink)' }}>
+                    {quizResult.academic_grade}
+                  </h3>
+                  <p style={{ margin: 0, fontSize: 14, color: 'var(--ink-soft)', maxWidth: 620 }}>
+                    {quizResult.summary}
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div
+                    style={{
+                      width: 88,
+                      height: 88,
+                      borderRadius: '50%',
+                      background: 'var(--surface)',
+                      border: '4px solid var(--accent)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 8px 24px -4px rgba(82, 39, 255, 0.25)',
+                    }}
+                  >
+                    <span style={{ fontSize: 24, fontWeight: 800, color: 'var(--ink)' }}>{quizResult.score}%</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--accent)' }}>SCORE</span>
+                  </div>
+
+                  <button
+                    className="btn btn-sm btn-outline"
+                    onClick={() => {
+                      setQuizResult(null);
+                      handleGenerateQuiz();
+                    }}
+                    style={{ borderRadius: 999 }}
+                  >
+                    Try Another Set
+                  </button>
+                </div>
+              </div>
+
+              {/* Question Breakdown List */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {quizResult.breakdown.map((item, idx) => (
+                  <div
+                    key={item.id || idx}
+                    className="card"
+                    style={{
+                      padding: 20,
+                      borderRadius: 'var(--radius)',
+                      border: `1.5px solid ${item.is_correct ? 'var(--success-border, #10B981)' : 'var(--danger-border, #EF4444)'}`,
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                      {item.is_correct ? (
+                        <span className="badge badge-success" style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <CheckCircle2 size={12} /> Correct
+                        </span>
+                      ) : (
+                        <span className="badge badge-danger" style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <AlertCircle size={12} /> Incorrect
+                        </span>
+                      )}
+                      <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink-soft)' }}>
+                        Question {idx + 1}
+                      </span>
+                    </div>
+
+                    <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)', marginBottom: 12 }}>
+                      {item.question}
+                    </p>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
+                      <div style={{ fontSize: 13, color: item.is_correct ? 'var(--success)' : 'var(--danger)' }}>
+                        <strong>Your Answer:</strong> {item.user_answer_text}
+                      </div>
+                      {!item.is_correct && (
+                        <div style={{ fontSize: 13, color: 'var(--success)' }}>
+                          <strong>Correct Answer:</strong> {item.correct_answer_text}
+                        </div>
+                      )}
+                    </div>
+
+                    <div
+                      style={{
+                        padding: '12px 14px',
+                        background: 'var(--surface-sunken)',
+                        borderRadius: 8,
+                        borderLeft: '3px solid var(--accent)',
+                        marginBottom: 8,
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                        <Brain size={14} color="var(--accent)" />
+                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)' }}>Academic Explanation:</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.5 }}>
+                        {item.academic_explanation}
+                      </p>
+                    </div>
+
+                    {item.textbook_ref && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--ink-faint)' }}>
+                        <BookOpen size={13} />
+                        <span>Curriculum Reference: <strong>{item.textbook_ref}</strong></span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Active Quiz Questions (when generated and not yet submitted) */}
+          {quizQuestions.length > 0 && !quizResult && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {quizQuestions.map((q, qIndex) => {
+                const selected = quizAnswers[String(q.id)];
+                return (
+                  <div
+                    key={q.id}
+                    className="card"
+                    style={{ padding: 22, borderRadius: 'var(--radius)' }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase' }}>
+                        Question {qIndex + 1} of {quizQuestions.length}
+                      </span>
+                      {selected !== undefined && (
+                        <span style={{ fontSize: 12, color: 'var(--success)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <CheckCircle2 size={13} /> Answered
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)', marginBottom: 16, lineHeight: 1.4 }}>
+                      {q.question}
+                    </h3>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {q.options.map((opt, optIndex) => {
+                        const isChosen = selected === optIndex;
+                        const letter = String.fromCharCode(65 + optIndex);
+                        return (
+                          <div
+                            key={optIndex}
+                            onClick={() => handleSelectQuizOption(q.id, optIndex)}
+                            style={{
+                              padding: '12px 16px',
+                              borderRadius: 8,
+                              border: isChosen ? '2px solid var(--accent)' : '1px solid var(--border)',
+                              background: isChosen ? 'var(--accent-soft)' : 'var(--surface-sunken)',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 12,
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: 26,
+                                height: 26,
+                                borderRadius: '50%',
+                                background: isChosen ? 'var(--accent)' : 'var(--surface)',
+                                color: isChosen ? '#FFF' : 'var(--ink)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: 12,
+                                fontWeight: 700,
+                                flexShrink: 0,
+                              }}
+                            >
+                              {letter}
+                            </span>
+                            <span style={{ fontSize: 14, color: isChosen ? 'var(--accent)' : 'var(--ink)', fontWeight: isChosen ? 600 : 400 }}>
+                              {opt}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Submit Quiz Action */}
+              <button
+                className="btn btn-lg btn-primary"
+                onClick={handleSubmitQuiz}
+                disabled={quizEvaluating}
+                style={{ width: '100%', justifyContent: 'center', gap: 8, fontSize: 15, fontWeight: 600, padding: 14 }}
+              >
+                {quizEvaluating ? (
+                  <>
+                    <RefreshCw size={16} className="spin" /> Evaluating Academic Answers...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={16} /> Submit Quiz for Academic Grading ({Object.keys(quizAnswers).length}/{quizQuestions.length} Answered)
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Empty State before quiz generation */}
+          {quizQuestions.length === 0 && !quizLoading && !quizResult && (
+            <div
+              className="card"
+              style={{
+                padding: 40,
+                textAlign: 'center',
+                borderRadius: 'var(--radius-lg)',
+                border: '1.5px dashed var(--border)',
+              }}
+            >
+              <div
+                style={{
+                  width: 54,
+                  height: 54,
+                  borderRadius: '50%',
+                  background: 'var(--accent-soft)',
+                  color: 'var(--accent)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 16px',
+                }}
+              >
+                <Brain size={28} />
+              </div>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>
+                Ready to Test Your Academic Mastery?
+              </h3>
+              <p style={{ fontSize: 14, color: 'var(--ink-soft)', maxWidth: 480, margin: '0 auto 20px' }}>
+                Select your subject above and click <strong>Generate Academic Quiz</strong>. NVIDIA NIM will dynamically synthesize 5 conceptual university-grade questions with citations and explanations.
+              </p>
+              <button
+                className="btn btn-primary"
+                onClick={handleGenerateQuiz}
+                style={{ gap: 8, fontWeight: 600, margin: '0 auto' }}
+              >
+                <Sparkles size={16} /> Generate Quiz Now
+              </button>
+            </div>
+          )}
+        </div>
+      ) : !result ? (
         <div className="card" style={{ padding: 26, borderRadius: 'var(--radius-lg)' }}>
           <div style={{ marginBottom: 20 }}>
             <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 6 }}>

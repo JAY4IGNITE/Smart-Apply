@@ -135,11 +135,16 @@ export default function PersonalizedRoadmap() {
             <Map size={20} />
           </div>
           <div>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: 'var(--ink)' }}>
-              Personalized Learning Roadmap
-            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: 'var(--ink)' }}>
+                Personalized Learning Roadmap
+              </h1>
+              <span className="badge badge-accent" style={{ fontSize: 11, padding: '2px 8px', fontWeight: 700 }}>
+                NVIDIA NIM Academic AI
+              </span>
+            </div>
             <p style={{ margin: '2px 0 0', fontSize: 13.5, color: 'var(--ink-soft)' }}>
-              A milestone-driven curriculum mapped to your target career and prioritized skill gaps.
+              A semester & milestone-driven university curriculum mapped to your target career and prioritized skill gaps.
             </p>
           </div>
         </div>
