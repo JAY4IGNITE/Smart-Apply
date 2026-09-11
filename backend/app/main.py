@@ -13,7 +13,25 @@ from app.rate_limiter import limiter
 from app.config import settings
 
 from app.database import close_db, init_db
-from app.routers import ai, auth, upload, user, resume, projects, interview, tailor, stats, cover_letter, jobs, linkedin, code_execution, admin, resume_maker
+from app.routers import (
+    ai,
+    auth,
+    upload,
+    user,
+    resume,
+    projects,
+    interview,
+    tailor,
+    stats,
+    cover_letter,
+    jobs,
+    linkedin,
+    code_execution,
+    admin,
+    resume_maker,
+    skills,
+    github,
+)
 from app.websockets.auth_ws import router as ws_router
 from app.websockets.manager import manager
 
@@ -38,8 +56,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Smart Apply API",
-    description="AI-powered job application platform",
+    title="SkillHub API",
+    description="SkillHub — Student Learning, Skill-Development & Career Intelligence Platform",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -99,6 +117,8 @@ app.include_router(jobs.router)
 app.include_router(linkedin.router)
 app.include_router(admin.router)
 app.include_router(resume_maker.router)
+app.include_router(skills.router)
+app.include_router(github.router)
 
 # ── WebSocket Router ──
 app.include_router(ws_router, prefix="/api")

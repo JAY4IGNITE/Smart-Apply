@@ -43,6 +43,17 @@ const AdminSettings = lazy(() => import('./pages/dashboard/AdminSettings'));
 const ResumeMaker = lazy(() => import('./pages/dashboard/ResumeMaker'));
 const AdminResumeTemplates = lazy(() => import('./pages/dashboard/AdminResumeTemplates'));
 
+// SkillHub New Modules
+const CareersExplorer = lazy(() => import('./pages/dashboard/CareersExplorer'));
+const SkillExplorer = lazy(() => import('./pages/dashboard/SkillExplorer'));
+const SkillAssessment = lazy(() => import('./pages/dashboard/SkillAssessment'));
+const SkillGaps = lazy(() => import('./pages/dashboard/SkillGaps'));
+const PersonalizedRoadmap = lazy(() => import('./pages/dashboard/PersonalizedRoadmap'));
+const LearningResources = lazy(() => import('./pages/dashboard/LearningResources'));
+const StudentPortfolio = lazy(() => import('./pages/dashboard/StudentPortfolio'));
+const Certifications = lazy(() => import('./pages/dashboard/Certifications'));
+const GitHubAnalyzer = lazy(() => import('./pages/dashboard/GitHubAnalyzer'));
+
 function PageFallback() {
   return (
     <div
@@ -180,6 +191,41 @@ export default function App() {
 
         {/* Dashboard */}
         <Route path="/dashboard" element={<Protected><Home /></Protected>} />
+
+        {/* SkillHub Intelligence & Discovery */}
+        <Route path="/discover/careers" element={<Protected><CareersExplorer /></Protected>} />
+        <Route path="/discover/skills" element={<Protected><SkillExplorer /></Protected>} />
+        <Route path="/discover" element={<Navigate to="/discover/careers" replace />} />
+
+        {/* SkillHub Assessment & Gaps */}
+        <Route path="/assess/skills" element={<Protected><SkillAssessment /></Protected>} />
+        <Route path="/assess/gaps" element={<Protected><SkillGaps /></Protected>} />
+        <Route path="/assess" element={<Navigate to="/assess/skills" replace />} />
+
+        {/* SkillHub Learn & Roadmaps */}
+        <Route path="/learn/roadmap" element={<Protected><PersonalizedRoadmap /></Protected>} />
+        <Route path="/learn/resources" element={<Protected><LearningResources /></Protected>} />
+        <Route path="/learn" element={<Navigate to="/learn/roadmap" replace />} />
+
+        {/* SkillHub Build & Portfolio */}
+        <Route path="/build/portfolio" element={<Protected><StudentPortfolio /></Protected>} />
+        <Route path="/build/projects" element={<Navigate to="/dashboard/project-recommender" replace />} />
+        <Route path="/build" element={<Navigate to="/build/portfolio" replace />} />
+
+        {/* SkillHub Prove & Credentials */}
+        <Route path="/prove/certifications" element={<Protected><Certifications /></Protected>} />
+        <Route path="/prove/github" element={<Protected><GitHubAnalyzer /></Protected>} />
+        <Route path="/prove" element={<Navigate to="/prove/certifications" replace />} />
+
+        {/* SkillHub Career (Preserved SmartApply Direct & Aliases) */}
+        <Route path="/career/resumes" element={<Navigate to="/dashboard/resumes" replace />} />
+        <Route path="/career/resume" element={<Navigate to="/dashboard/resumes" replace />} />
+        <Route path="/career/analyzer" element={<Navigate to="/dashboard/ats-checker" replace />} />
+        <Route path="/career/opportunities" element={<Navigate to="/dashboard/jobs" replace />} />
+        <Route path="/career/jobs" element={<Navigate to="/dashboard/jobs" replace />} />
+        <Route path="/career/cover-letter" element={<Navigate to="/dashboard/cover-letter" replace />} />
+        <Route path="/career" element={<Navigate to="/dashboard/resumes" replace />} />
+
         <Route path="/dashboard/resumes" element={<Protected><Resumes /></Protected>} />
         <Route path="/dashboard/cover-letter" element={<Protected><CoverLetterGenerator /></Protected>} />
         <Route path="/dashboard/jobs" element={<Protected><JobMatching /></Protected>} />

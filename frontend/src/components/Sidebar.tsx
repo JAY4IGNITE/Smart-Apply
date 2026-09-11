@@ -14,7 +14,15 @@ import {
   Wand2,
   BookOpen,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  Compass,
+  Cpu,
+  Target,
+  TrendingUp,
+  Map,
+  FolderGit2,
+  Award,
+  Github,
 } from 'lucide-react';
 import { Linkedin } from './Icons';
 import { useAuth } from '../context/AuthContext';
@@ -41,26 +49,55 @@ const CORE_NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
-    title: 'Career Dossier',
+    title: 'Discover',
+    links: [
+      { to: '/discover/careers', label: 'Career Explorer', icon: Compass },
+      { to: '/discover/skills', label: 'Skill Explorer', icon: Cpu },
+    ],
+  },
+  {
+    title: 'Assess',
+    links: [
+      { to: '/assess/skills', label: 'Skill Assessment', icon: Target },
+      { to: '/assess/gaps', label: 'Skill Gap Analysis', icon: TrendingUp },
+    ],
+  },
+  {
+    title: 'Learn',
+    links: [
+      { to: '/learn/roadmap', label: 'Learning Roadmap', icon: Map },
+      { to: '/learn/resources', label: 'Curated Resources', icon: BookOpen },
+    ],
+  },
+  {
+    title: 'Build',
+    links: [
+      { to: '/dashboard/project-recommender', label: 'Project Architect', icon: Lightbulb },
+      { to: '/dashboard/idea-prompt-generator', label: 'Prompt Studio', icon: Wand2 },
+      { to: '/build/portfolio', label: 'Student Portfolio', icon: FolderGit2 },
+    ],
+  },
+  {
+    title: 'Prove',
+    links: [
+      { to: '/prove/certifications', label: 'Certifications', icon: Award },
+      { to: '/prove/github', label: 'GitHub Evidence', icon: Github },
+    ],
+  },
+  {
+    title: 'Career (SmartApply Suite)',
     links: [
       { to: '/dashboard/resumes', label: 'Resume Vault', icon: FileText },
       { to: '/dashboard/resume-maker', label: 'Resume Studio', icon: Sparkles },
       { to: '/dashboard/ats-checker', label: 'ATS Intelligence', icon: ScanSearch },
+      { to: '/dashboard/jobs', label: 'Smart Job Matcher', icon: Briefcase },
       { to: '/dashboard/cover-letter', label: 'Cover Letter Studio', icon: Mail },
       { to: '/dashboard/linkedin', label: 'LinkedIn Optimizer', icon: Linkedin },
     ],
   },
   {
-    title: 'Opportunities',
+    title: 'Interview',
     links: [
-      { to: '/dashboard/jobs', label: 'Smart Job Matcher', icon: Briefcase },
-    ],
-  },
-  {
-    title: 'Engineering & Prep',
-    links: [
-      { to: '/dashboard/project-recommender', label: 'Project Architect', icon: Lightbulb },
-      { to: '/dashboard/idea-prompt-generator', label: 'Prompt Studio', icon: Wand2 },
       { to: '/dashboard/live-interview', label: 'Voice Mock Studio', icon: Video },
       { to: '/dashboard/ai-chatbot', label: 'AI Career Strategist', icon: MessageSquareText },
     ],
@@ -97,11 +134,11 @@ export default function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
             >
               <img
                 src="/logo.png"
-                alt="Smart Apply"
+                alt="SkillHub"
                 style={{ height: 28, width: 28, objectFit: 'contain' }}
               />
               <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-                Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+                Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
               </span>
             </Link>
           </div>
