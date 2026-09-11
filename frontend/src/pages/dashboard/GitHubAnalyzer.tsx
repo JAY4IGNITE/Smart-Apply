@@ -60,22 +60,96 @@ export default function GitHubAnalyzer() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GitHubAnalysisResult | null>(null);
 
+  const fetchGitHubDirectly = async (username: string): Promise<GitHubAnalysisResult> => {
+    const userRes = await fetch(`https://api.github.com/users/${username}`);
+    if (!userRes.ok) {
+      throw new Error(userRes.status === 404 ? 'User not found on GitHub' : 'GitHub API unavailable');
+    }
+    const userData = await userRes.json();
+
+    const reposRes = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=30`);
+    const reposData: any[] = reposRes.ok ? await reposRes.json() : [];
+
+    const languages: Record<string, number> = {};
+    let totalStars = 0;
+    let totalForks = 0;
+    const analyzedRepos: RepoInfo[] = [];
+
+    for (const r of reposData) {
+      if (r.fork) continue;
+      const lang = r.language;
+      if (lang) languages[lang] = (languages[lang] || 0) + 1;
+      const stars = r.stargazers_count || 0;
+      const forks = r.forks_count || 0;
+      totalStars += stars;
+      totalForks += forks;
+
+      analyzedRepos.push({
+        name: r.name,
+        description: r.description || 'No description provided',
+        html_url: r.html_url,
+        language: lang || 'Mixed',
+        stars,
+        forks,
+        updated_at: r.updated_at,
+        topics: r.topics || [],
+      });
+    }
+
+    const totalCounted = Object.values(languages).reduce((a, b) => a + b, 0) || 1;
+    const languageBreakdown: LanguageStat[] = Object.entries(languages)
+      .sort((a, b) => b[1] - a[1])
+      .map(([l, count]) => ({
+        language: l,
+        repo_count: count,
+        percentage: Math.round((count / totalCounted) * 1000) / 10,
+      }));
+
+    const inferredSkills: InferredSkill[] = languageBreakdown.slice(0, 5).map((l) => ({
+      skill: l.language,
+      confidence: Math.min(50 + l.repo_count * 10, 95),
+      evidence: `Detected across ${l.repo_count} original GitHub repositories`,
+    }));
+
+    return {
+      username: userData.login,
+      avatar_url: userData.avatar_url,
+      public_repos: userData.public_repos || 0,
+      followers: userData.followers || 0,
+      total_stars: totalStars,
+      total_forks: totalForks,
+      languages: languageBreakdown,
+      inferred_skills: inferredSkills,
+      top_repositories: analyzedRepos.slice(0, 8),
+    };
+  };
+
   const runAnalysis = async (targetUsernameOrUrl: string) => {
-    if (!targetUsernameOrUrl.trim()) return;
+    let clean = targetUsernameOrUrl.trim().replace(/\/+$/, '');
+    if (clean.includes('github.com/')) {
+      clean = clean.split('github.com/').pop()?.split('/')[0] || clean;
+    }
+    if (!clean) return;
+
     setLoading(true);
     try {
+      // 1. Try platform backend endpoint first
       const res = await apiFetch<GitHubAnalysisResult>('/github/analyze', {
         method: 'POST',
-        body: JSON.stringify({ username_or_url: targetUsernameOrUrl }),
+        body: JSON.stringify({ username_or_url: clean }),
       });
       if (res.ok && res.data) {
         setResult(res.data);
         showToast('success', `GitHub intelligence computed for @${res.data.username}!`);
-      } else {
-        showToast('error', 'Could not analyze GitHub profile. Check username.');
+        return;
       }
-    } catch {
-      showToast('error', 'Network error.');
+
+      // 2. Resilient direct GitHub API fallback (if backend microservice is redeploying)
+      const directResult = await fetchGitHubDirectly(clean);
+      setResult(directResult);
+      showToast('success', `GitHub intelligence computed for @${directResult.username}!`);
+    } catch (err: any) {
+      showToast('error', err?.message || 'Could not analyze GitHub profile. Check username.');
     } finally {
       setLoading(false);
     }
