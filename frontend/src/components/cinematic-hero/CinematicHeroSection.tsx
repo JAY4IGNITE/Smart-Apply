@@ -215,7 +215,7 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
                 textTransform: 'uppercase',
               }}
             >
-              SkillHub
+              SmartHub
             </span>
           </div>
 
@@ -271,13 +271,13 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
               {/* Central Gap Space that expands */}
               <div style={{ width: '6vw', flexShrink: 0 }} />
 
-              {/* APPLY — glides right */}
+              {/* HUB — glides right */}
               <motion.div
                 style={{ x: splitRightX, flex: 1, display: 'flex', justifyContent: 'flex-end' }}
                 className="will-change-transform"
               >
                 <h1 className="cinematic-heading-word">
-                  Apply
+                  Hub
                 </h1>
               </motion.div>
             </div>

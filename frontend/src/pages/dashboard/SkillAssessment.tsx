@@ -12,6 +12,8 @@ import {
   Award,
   RefreshCw,
   Compass,
+  Brain,
+  HelpCircle,
 } from 'lucide-react';
 import { apiFetch } from '../../api/client';
 import { useToast } from '../../components/Toast';
@@ -40,7 +42,37 @@ interface AssessmentResult {
   recommendations: string[];
 }
 
+interface QuizQuestion {
+  id: number;
+  question: string;
+  options: string[];
+  correct_index: number;
+  academic_explanation: string;
+  textbook_ref: string;
+}
+
+interface QuizEvaluation {
+  skill: string;
+  score: number;
+  correct_count: number;
+  total_questions: number;
+  academic_grade: string;
+  summary: string;
+  breakdown: Array<{
+    id: number;
+    question: string;
+    user_choice: number | null;
+    user_answer_text: string;
+    correct_choice: number;
+    correct_answer_text: string;
+    is_correct: boolean;
+    academic_explanation: string;
+    textbook_ref: string;
+  }>;
+}
+
 export default function SkillAssessment() {
+  const [activeTab, setActiveTab] = useState<'rating' | 'quiz'>('rating');
   const [careers, setCareers] = useState<Career[]>([]);
   const [targetCareer, setTargetCareer] = useState<string>(() => localStorage.getItem('skillhub_career_goal') || 'Software Engineer');
   const [currentSkills, setCurrentSkills] = useState<string[]>([]);
@@ -48,6 +80,16 @@ export default function SkillAssessment() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<AssessmentResult | null>(null);
+
+  // NVIDIA Academic Quiz State
+  const [quizSkill, setQuizSkill] = useState<string>('Data Structures & Algorithms');
+  const [quizDifficulty, setQuizDifficulty] = useState<string>('Intermediate');
+  const [quizLoading, setQuizLoading] = useState(false);
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({});
+  const [quizEvaluating, setQuizEvaluating] = useState(false);
+  const [quizResult, setQuizResult] = useState<QuizEvaluation | null>(null);
+
   const { showToast } = useToast();
   const navigate = useNavigate();
 
@@ -97,6 +139,59 @@ export default function SkillAssessment() {
     setRatings((prev) => ({ ...prev, [skill]: val }));
   };
 
+  const handleGenerateQuiz = async () => {
+    setQuizLoading(true);
+    setQuizResult(null);
+    setQuizAnswers({});
+    try {
+      const res = await apiFetch<{ skill: string; difficulty: string; questions: QuizQuestion[] }>(
+        `/skills/assess/quiz?skill=${encodeURIComponent(quizSkill)}&difficulty=${encodeURIComponent(quizDifficulty)}`
+      );
+      if (res.ok && res.data?.questions) {
+        setQuizQuestions(res.data.questions);
+        showToast('success', `Generated ${res.data.questions.length} academic questions with NVIDIA NIM!`);
+      } else {
+        showToast('error', 'Failed to generate academic quiz.');
+      }
+    } catch {
+      showToast('error', 'Network error.');
+    } finally {
+      setQuizLoading(false);
+    }
+  };
+
+  const handleSelectQuizOption = (questionId: number, optionIndex: number) => {
+    setQuizAnswers((prev) => ({ ...prev, [String(questionId)]: optionIndex }));
+  };
+
+  const handleSubmitQuiz = async () => {
+    if (Object.keys(quizAnswers).length < quizQuestions.length) {
+      showToast('error', 'Please answer all questions before submitting.');
+      return;
+    }
+    setQuizEvaluating(true);
+    try {
+      const res = await apiFetch<QuizEvaluation>('/skills/assess/submit-quiz', {
+        method: 'POST',
+        body: JSON.stringify({
+          skill: quizSkill,
+          questions: quizQuestions,
+          answers: quizAnswers,
+        }),
+      });
+      if (res.ok && res.data) {
+        setQuizResult(res.data);
+        showToast('success', `Assessment graded! Academic score: ${res.data.score}%`);
+      } else {
+        showToast('error', 'Failed to evaluate quiz.');
+      }
+    } catch {
+      showToast('error', 'Network error.');
+    } finally {
+      setQuizEvaluating(false);
+    }
+  };
+
   const handleRunAssessment = async () => {
     setSubmitting(true);
     try {
@@ -141,12 +236,33 @@ export default function SkillAssessment() {
           </div>
           <div>
             <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, color: 'var(--ink)' }}>
-              Skill Assessment & Benchmarking
+              Skill Assessment & Academic Benchmarking
             </h1>
             <p style={{ margin: '2px 0 0', fontSize: 13.5, color: 'var(--ink-soft)' }}>
-              Benchmark your technical competencies against industry standards for your target role.
+              Benchmark your technical competencies and take university-grade academic quizzes powered by NVIDIA NIM.
             </p>
           </div>
+        </div>
+
+        {/* Assessment Mode Selector Tabs */}
+        <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+          <button
+            className={`btn btn-sm ${activeTab === 'rating' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setActiveTab('rating')}
+            style={{ borderRadius: 999, padding: '7px 16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <Compass size={14} /> Diagnostic Self-Rating & Gap Matrix
+          </button>
+          <button
+            className={`btn btn-sm ${activeTab === 'quiz' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setActiveTab('quiz')}
+            style={{ borderRadius: 999, padding: '7px 16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <Brain size={14} /> NVIDIA AI Academic Quiz
+            <span style={{ fontSize: 10, background: 'rgba(255, 53, 232, 0.2)', color: '#FF35E8', padding: '1px 6px', borderRadius: 4, fontWeight: 700 }}>
+              NIM
+            </span>
+          </button>
         </div>
 
         {/* Target Career Selector Card */}

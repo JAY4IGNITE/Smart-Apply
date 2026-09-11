@@ -158,7 +158,7 @@ export default function SmartApplyLogoReveal({ scrollYProgress }: Props) {
         >
           <img
             src="/logo.png"
-            alt="SkillHub Logo"
+            alt="SmartHub Logo"
             className="cinematic-logo-img"
             loading="eager"
             decoding="async"
@@ -181,7 +181,7 @@ export default function SmartApplyLogoReveal({ scrollYProgress }: Props) {
         }}
       >
         <h2 className="cinematic-wordmark">
-          SkillHub
+          SmartHub
         </h2>
 
         {/* ── Scene 7: Tagline ── */}
