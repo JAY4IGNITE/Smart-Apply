@@ -215,7 +215,7 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
                 textTransform: 'uppercase',
               }}
             >
-              SmartHub
+              SkillHub
             </span>
           </div>
 
@@ -258,13 +258,13 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
             className="cinematic-typography-container"
           >
             <div className="cinematic-typography-row">
-              {/* SMART — glides left */}
+              {/* SKILL — glides left */}
               <motion.div
                 style={{ x: splitLeftX, flex: 1, display: 'flex', justifyContent: 'flex-start' }}
                 className="will-change-transform"
               >
                 <h1 className="cinematic-heading-word">
-                  Smart
+                  Skill
                 </h1>
               </motion.div>
 
