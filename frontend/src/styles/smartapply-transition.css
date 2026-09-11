@@ -69,15 +69,13 @@
 
 /* Layer hierarchy: S is anchor (top), remaining letters emerge from behind */
 .slot-s  { z-index: 30; opacity: 1; background-color: #000000; }
-.slot-m  { z-index: 29; }
-.slot-a1 { z-index: 28; }
-.slot-r  { z-index: 27; }
-.slot-t  { z-index: 26; }
-.slot-a2 { z-index: 25; }
-.slot-p1 { z-index: 24; }
-.slot-p2 { z-index: 23; }
-.slot-l  { z-index: 22; }
-.slot-y  { z-index: 21; }
+.slot-k  { z-index: 29; }
+.slot-i  { z-index: 28; }
+.slot-l1 { z-index: 27; }
+.slot-l2 { z-index: 26; }
+.slot-h  { z-index: 25; }
+.slot-u  { z-index: 24; }
+.slot-b  { z-index: 23; }
 
 .letter-char {
   display: inline-block;

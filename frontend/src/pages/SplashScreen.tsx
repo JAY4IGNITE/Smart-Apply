@@ -42,19 +42,18 @@ const easeInOutSmooth = makeBezier(0.65, 0.0, 0.35, 1.0);
 // Gentle ease for S entrance — avoids hard snap at start
 const easeOutSoft = makeBezier(0.25, 1.0, 0.5, 1.0);
 
-// S completes at 220ms, then 80ms rest → M starts at 300ms
-// Container shift starts at 320ms (after first letter has begun moving)
+// S completes at 220ms, then rest -> K through B emerge sequentially
 const T_S_ENTER = 220;
-const T_EMERGE_STARTS = [0, 300, 410, 520, 630, 740, 850, 960, 1070, 1180];
-const T_EMERGE_SPAN = 240;
-// Letters fully emerged by ~1420ms; collapse starts shortly after
-const T_COLLAPSE_STARTS = [0, 1750, 1700, 1650, 1600, 1550, 1500, 1450, 1400, 1350];
-const T_COLLAPSE_SPAN = 190;
+const T_EMERGE_STARTS = [0, 280, 390, 500, 610, 720, 830, 940];
+const T_EMERGE_SPAN = 230;
+// Letters fully emerged by ~1170ms; collapse starts shortly after
+const T_COLLAPSE_STARTS = [0, 1550, 1500, 1450, 1400, 1350, 1300, 1250];
+const T_COLLAPSE_SPAN = 180;
 // Container glide timings
-const T_SHIFT_START = 320;
-const T_SHIFT_END = 1200;
-const T_HOLD_END = 1400;
-const T_RETURN_END = 1970;
+const T_SHIFT_START = 300;
+const T_SHIFT_END = 1050;
+const T_HOLD_END = 1250;
+const T_RETURN_END = 1750;
 
 interface SplashScreenProps {
   onComplete?: () => void;
@@ -93,7 +92,7 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
 
     const letterSlots: HTMLElement[] = [];
     const letterChars: HTMLElement[] = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 8; i++) {
       const slot = document.getElementById('slot-' + i);
       const char = document.getElementById('char-' + i);
       if (slot && char) {
@@ -102,9 +101,9 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
       }
     }
 
-    if (letterSlots.length !== 10 || letterChars.length !== 10) return;
+    if (letterSlots.length !== 8 || letterChars.length !== 8) return;
 
-    const slotWidths = new Array(10).fill(0);
+    const slotWidths = new Array(8).fill(0);
     let totalWordWidth = 0;
     let sWidth = 0;
     let sAnchorOffset = 0;
@@ -112,7 +111,7 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
     function measureGeometry() {
       if (!wordTrack) return;
       wordTrack.style.transform = 'none';
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 8; i++) {
         letterSlots[i].style.transform = 'none';
         letterChars[i].style.transform = 'none';
         letterSlots[i].style.opacity = i === 0 ? '1' : '0';
@@ -128,7 +127,7 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
       }
 
       totalWordWidth = 0;
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 8; i++) {
         const rect = letterSlots[i].getBoundingClientRect();
         slotWidths[i] = rect.width;
         totalWordWidth += rect.width;
@@ -180,8 +179,8 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
       letterChars[0].style.opacity = Math.min(sEase * 1.2, 1).toFixed(4);
       letterChars[0].style.transform = `scale(${(0.88 + 0.12 * sEase).toFixed(4)})`;
 
-      // 2. Emergence & Collapse for M through Y
-      for (let i = 1; i < 10; i++) {
+      // 2. Emergence & Collapse for K through B (SKILLHUB)
+      for (let i = 1; i < 8; i++) {
         let vis = 0;
         const emergeStart = T_EMERGE_STARTS[i];
         const collapseStart = T_COLLAPSE_STARTS[i];
@@ -208,10 +207,10 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
         letterSlots[i].style.transform = `translate3d(${displacement.toFixed(2)}%, 0, 0)`;
       }
 
-      // 3. Dynamic Centering: container glides AFTER S has settled and M has started
+      // 3. Dynamic Centering: container glides AFTER S has settled and K has started
       let containerShift = sAnchorOffset;
       if (elapsed < T_SHIFT_START) {
-        // Hold still — let S enter and M begin before any container motion
+        // Hold still — let S enter and K begin before any container motion
         containerShift = sAnchorOffset;
       } else if (elapsed < T_SHIFT_END) {
         const p = (elapsed - T_SHIFT_START) / (T_SHIFT_END - T_SHIFT_START);
@@ -251,7 +250,7 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
       letterChars[0].style.opacity = '0';
       letterChars[0].style.transform = 'scale(0.92)';
 
-      for (let i = 1; i < 10; i++) {
+      for (let i = 1; i < 8; i++) {
         letterSlots[i].style.opacity = '0';
         letterSlots[i].style.transform = 'translate3d(-100%, 0, 0)';
       }
@@ -304,19 +303,17 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
 
   const content = (
     <div className="stage-container" id="stageContainer" ref={stageRef}>
-      {/* SMARTAPPLY Word Track Stage */}
+      {/* SKILLHUB Word Track Stage */}
       <div className="word-stage" id="wordStage">
         <div className="word-track" id="wordTrack" ref={wordTrackRef}>
           <div className="letter-slot slot-s" id="slot-0"><span className="letter-char" id="char-0">S</span></div>
-          <div className="letter-slot slot-m" id="slot-1"><span className="letter-char" id="char-1">M</span></div>
-          <div className="letter-slot slot-a1" id="slot-2"><span className="letter-char" id="char-2">A</span></div>
-          <div className="letter-slot slot-r" id="slot-3"><span className="letter-char" id="char-3">R</span></div>
-          <div className="letter-slot slot-t" id="slot-4"><span className="letter-char" id="char-4">T</span></div>
-          <div className="letter-slot slot-a2" id="slot-5"><span className="letter-char" id="char-5">A</span></div>
-          <div className="letter-slot slot-p1" id="slot-6"><span className="letter-char" id="char-6">P</span></div>
-          <div className="letter-slot slot-p2" id="slot-7"><span className="letter-char" id="char-7">P</span></div>
-          <div className="letter-slot slot-l" id="slot-8"><span className="letter-char" id="char-8">L</span></div>
-          <div className="letter-slot slot-y" id="slot-9"><span className="letter-char" id="char-9">Y</span></div>
+          <div className="letter-slot slot-k" id="slot-1"><span className="letter-char" id="char-1">K</span></div>
+          <div className="letter-slot slot-i" id="slot-2"><span className="letter-char" id="char-2">I</span></div>
+          <div className="letter-slot slot-l1" id="slot-3"><span className="letter-char" id="char-3">L</span></div>
+          <div className="letter-slot slot-l2" id="slot-4"><span className="letter-char" id="char-4">L</span></div>
+          <div className="letter-slot slot-h" id="slot-5"><span className="letter-char" id="char-5">H</span></div>
+          <div className="letter-slot slot-u" id="slot-6"><span className="letter-char" id="char-6">U</span></div>
+          <div className="letter-slot slot-b" id="slot-7"><span className="letter-char" id="char-7">B</span></div>
         </div>
       </div>
 
@@ -326,8 +323,8 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
           <img
             className="logo-emblem-img"
             id="logoEmblemImg"
-            src="/user_uploaded_logo.png"
-            alt="SmartApply Real Logo"
+            src="/logo.png"
+            alt="SkillHub Real Logo"
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).src = '/logo.png';
             }}
@@ -337,8 +334,6 @@ export default function SplashScreen({ onComplete, standalone = true }: SplashSc
 
       {/* Flash Wave */}
       <div className="transition-flash" id="transitionFlash" ref={transitionFlashRef}></div>
-
-
     </div>
   );
 
