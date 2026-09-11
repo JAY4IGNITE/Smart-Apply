@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   FolderGit2,
   Plus,
-  Github,
   Globe,
   Star,
   Trash2,
@@ -13,9 +12,10 @@ import {
   ExternalLink,
   Code2,
 } from 'lucide-react';
+import { Github } from '../../components/Icons';
 import { apiFetch } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import { useToast } from '../../context/ToastContext';
+import { useToast } from '../../components/Toast';
 import '../../styles/dashboard.css';
 
 interface Project {

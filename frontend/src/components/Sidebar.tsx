@@ -22,9 +22,8 @@ import {
   Map,
   FolderGit2,
   Award,
-  Github,
 } from 'lucide-react';
-import { Linkedin } from './Icons';
+import { Linkedin, Github } from './Icons';
 import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
 import '../styles/dashboard.css';

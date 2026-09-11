@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Github,
   Search,
   Star,
   GitFork,
@@ -13,9 +12,10 @@ import {
   Layers,
   Award,
 } from 'lucide-react';
+import { Github } from '../../components/Icons';
 import { apiFetch } from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
-import { useToast } from '../../context/ToastContext';
+import { useToast } from '../../components/Toast';
 import '../../styles/dashboard.css';
 
 interface LanguageStat {

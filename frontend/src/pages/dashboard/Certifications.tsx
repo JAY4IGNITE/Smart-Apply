@@ -11,7 +11,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { apiFetch } from '../../api/client';
-import { useToast } from '../../context/ToastContext';
+import { useToast } from '../../components/Toast';
 import '../../styles/dashboard.css';
 
 interface Cert {
