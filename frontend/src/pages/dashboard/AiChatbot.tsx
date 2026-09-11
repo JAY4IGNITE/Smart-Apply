@@ -10,14 +10,16 @@ import type { ChatMessage } from '../../api/types';
 const INITIAL_MESSAGE: ChatMessage = {
   role: 'assistant',
   content:
-    "Hi there! I'm your AI career advisor. How can I help you today? I can review cover letters, give career advice, or help you prepare for an interview.",
+    "Hello! I am your **SkillHub Academic & Career AI Advisor**, powered by NVIDIA NIM.\n\nI can help you master university-level coursework, break down complex algorithmic & systems theory with academic proofs, provide textbook citations, or guide your semester projects and placement interviews. How can I support your learning journey today?",
 };
 
 const QUICK_PROMPTS = [
-  'Write a cover letter for a Frontend Developer role',
-  "How should I answer 'What is your greatest weakness?'",
-  'Help me negotiate my salary',
-  'What skills should I learn for AI engineering?',
+  'Explain Dijkstra vs A* Search with Time & Space Complexity (CLRS format)',
+  'Break down Operating Systems Process Synchronization & Semaphores',
+  'Explain Normalization in DBMS (1NF to BCNF) with textbook examples',
+  'Design a university capstone project in AI, Vector Databases & Microservices',
+  'What are the core differences between TCP and UDP packet structures?',
+  'Help me prepare for an upcoming technical viva and mock interview',
 ];
 
 export default function AiChatbot() {
@@ -105,8 +107,13 @@ export default function AiChatbot() {
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 80px)', maxWidth: 880, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 18 }}>
         <div>
-          <h1 style={{ fontSize: 24, marginBottom: 4 }}>AI career chat</h1>
-          <p className="text-muted" style={{ fontSize: 14 }}>Personalized guidance for your job search</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h1 style={{ fontSize: 24, marginBottom: 4 }}>SkillHub Academic & Career AI</h1>
+            <span className="badge badge-accent" style={{ fontSize: 11, padding: '2px 8px' }}>NVIDIA NIM</span>
+          </div>
+          <p className="text-muted" style={{ fontSize: 14 }}>
+            University syllabus tutoring, algorithmic proofs, textbook references, and placement guidance
+          </p>
         </div>
         <button className="btn btn-secondary btn-sm" onClick={() => setMessages([INITIAL_MESSAGE])}>
           <Trash2 size={14} /> Clear

@@ -17,6 +17,7 @@ from app.models.skills import (
     CareerReadinessScore,
 )
 from app.middleware.auth_middleware import get_current_user
+from app.services import ai_service
 
 router = APIRouter(prefix="/api/skills", tags=["skills"])
 
@@ -139,6 +140,16 @@ class CertCreateRequest(BaseModel):
 class RoadmapTaskToggle(BaseModel):
     task_id: str
     completed: bool
+
+class QuizSubmitRequest(BaseModel):
+    skill: str
+    questions: List[Dict[str, Any]]
+    answers: Dict[str, int]  # question_id string -> option index
+
+class AcademicTutorRequest(BaseModel):
+    subject_or_skill: str
+    question_or_topic: str
+    academic_level: Optional[str] = "Undergraduate Engineering / B.Tech"
 
 
 # ── Endpoints ──
@@ -332,59 +343,128 @@ async def get_latest_skill_gaps(target_career: Optional[str] = None, user: User 
     }
 
 
+@router.get("/assess/quiz")
+async def get_academic_quiz(
+    skill: str = "Data Structures & Algorithms",
+    difficulty: str = "Intermediate",
+    user: User = Depends(get_current_user)
+):
+    """
+    Generate an academic multiple-choice assessment quiz using NVIDIA NIM.
+    Generates 5 questions adhering to university CS and engineering curricula.
+    """
+    questions = await ai_service.generate_academic_quiz(skill=skill, difficulty=difficulty, num_questions=5)
+    return {
+        "skill": skill,
+        "difficulty": difficulty,
+        "questions": questions
+    }
+
+
+@router.post("/assess/submit-quiz")
+async def submit_academic_quiz(
+    body: QuizSubmitRequest,
+    user: User = Depends(get_current_user)
+):
+    """
+    Grade and evaluate an academic quiz submission using NVIDIA NIM,
+    returning score, detailed academic explanations, and updating student skill proficiency.
+    """
+    result = await ai_service.evaluate_academic_quiz_answers(
+        skill=body.skill,
+        questions=body.questions,
+        user_answers=body.answers
+    )
+
+    # Persist the verified score into StudentSkill
+    prof_score = result.get("score", 60)
+    existing_skill = await StudentSkill.find_one(
+        StudentSkill.user_id == user.id,
+        StudentSkill.skill_name == body.skill
+    )
+    if existing_skill:
+        # Blend previous rating with quiz outcome (favoring verified quiz)
+        existing_skill.proficiency = int(round((existing_skill.proficiency * 0.3) + (prof_score * 0.7)))
+        existing_skill.evidence_source = "nvidia_academic_quiz"
+        existing_skill.last_updated = datetime.utcnow()
+        await existing_skill.save()
+    else:
+        new_skill = StudentSkill(
+            user_id=user.id,
+            skill_name=body.skill,
+            proficiency=prof_score,
+            evidence_source="nvidia_academic_quiz"
+        )
+        await new_skill.insert()
+        if body.skill not in user.skills:
+            user.skills.append(body.skill)
+            await user.save()
+
+    return result
+
+
+@router.post("/academic/tutor")
+async def academic_tutor_query(
+    body: AcademicTutorRequest,
+    user: User = Depends(get_current_user)
+):
+    """
+    Academic concept tutor powered by NVIDIA NIM.
+    Generates university-level answers with formal proofs, complexity, and textbook citations.
+    """
+    prompt = f"""You are a distinguished university professor of computer science and engineering.
+Answer the following student question according to university academic syllabus and rigorous standards.
+
+Subject / Skill: {body.subject_or_skill}
+Academic Level: {body.academic_level or 'Undergraduate B.Tech / Computer Science'}
+Student Question / Concept:
+{body.question_or_topic}
+
+Guidelines for your response:
+1. Formal Definition & Conceptual Overview: State the formal academic definition clearly.
+2. Underlying Mathematical / Algorithmic Foundations: Include equations, state machines, or algorithmic complexity (Big-O time and space) where appropriate.
+3. Concrete Code / Architecture Example: Provide an illustrative, well-commented snippet or architectural diagram.
+4. Academic Exam / Viva Tip: Highlight common misconceptions, examiner expectations, or university viva questions.
+5. Standard Textbook References: Cite standard literature (e.g., Cormen CLRS, Silberschatz, Tanenbaum, Russell & Norvig).
+"""
+    reply = await ai_service.chat_completion([{"role": "user", "content": prompt}])
+    return {
+        "subject_or_skill": body.subject_or_skill,
+        "academic_level": body.academic_level,
+        "answer": reply
+    }
+
+
 @router.post("/roadmap/generate")
 async def generate_personalized_roadmap(target_career: str, user: User = Depends(get_current_user)):
-    """Generate a step-by-step personalized learning roadmap based on career goal and gaps."""
-    # Find existing or create fresh roadmap
-    milestones = [
-        {
-            "phase": "Phase 1: Core Foundations",
-            "title": "Master Programming Languages & Data Structures",
-            "duration": "Weeks 1–3",
-            "tasks": [
-                {"id": "t1", "title": "Advanced Language Features & Memory Models", "completed": True, "type": "learn"},
-                {"id": "t2", "title": "Trees, Graphs & Dynamic Programming Problems", "completed": True, "type": "practice"},
-                {"id": "t3", "title": "Time & Space Complexity Benchmark Analysis", "completed": False, "type": "assess"},
-            ]
-        },
-        {
-            "phase": "Phase 2: Full Architecture & APIs",
-            "title": "Build Scalable Backend Services & Database Models",
-            "duration": "Weeks 4–7",
-            "tasks": [
-                {"id": "t4", "title": "REST & GraphQL API Design with Auth (JWT)", "completed": False, "type": "learn"},
-                {"id": "t5", "title": "PostgreSQL Schema Design, Indexing & Transactions", "completed": False, "type": "build"},
-                {"id": "t6", "title": "Asynchronous Task Queues & Redis Caching", "completed": False, "type": "build"},
-            ]
-        },
-        {
-            "phase": "Phase 3: Real-World Systems & Deployment",
-            "title": "Containerization, Cloud Deployments & CI/CD",
-            "duration": "Weeks 8–10",
-            "tasks": [
-                {"id": "t7", "title": "Dockerize Microservices with Multi-Stage Builds", "completed": False, "type": "learn"},
-                {"id": "t8", "title": "Automated GitHub Actions CI/CD Pipeline", "completed": False, "type": "build"},
-                {"id": "t9", "title": "Deploy on Cloud (AWS/Render) with Health Probes", "completed": False, "type": "build"},
-            ]
-        },
-        {
-            "phase": "Phase 4: Interview & Application Readiness",
-            "title": "Resume Tailoring, Portfolio Polish & Mock Interviews",
-            "duration": "Weeks 11–12",
-            "tasks": [
-                {"id": "t10", "title": "Deploy Live Portfolio Showcase & Link GitHub", "completed": False, "type": "build"},
-                {"id": "t11", "title": "Score 85%+ on ATS Resume Compatibility Checker", "completed": False, "type": "assess"},
-                {"id": "t12", "title": "Complete 2 Live Voice Technical Mock Interviews", "completed": False, "type": "practice"},
-            ]
-        }
-    ]
+    """Generate a step-by-step personalized learning roadmap based on career goal and gaps using NVIDIA NIM."""
+    ai_generated = await ai_service.generate_academic_roadmap(
+        target_career=target_career,
+        academic_level="Undergraduate B.Tech / Computer Science & Engineering",
+        user_skills=user.skills
+    )
+
+    milestones = ai_generated.get("milestones", [])
+    completed_tasks = ["t1", "t2"]
+
+    # Delete existing roadmap for target_career if updating, or update in place
+    existing = await PersonalizedRoadmap.find_one(
+        PersonalizedRoadmap.user_id == user.id,
+        PersonalizedRoadmap.target_career == target_career
+    )
+    if existing:
+        existing.milestones = milestones
+        existing.title = ai_generated.get("title", f"{target_career} Academic & Career Master Roadmap")
+        existing.created_at = datetime.utcnow()
+        await existing.save()
+        return existing
 
     roadmap = PersonalizedRoadmap(
         user_id=user.id,
         target_career=target_career,
-        title=f"{target_career} Career Master Roadmap",
+        title=ai_generated.get("title", f"{target_career} Academic & Career Master Roadmap"),
         milestones=milestones,
-        completed_tasks=["t1", "t2"],
+        completed_tasks=completed_tasks,
         created_at=datetime.utcnow()
     )
     await roadmap.insert()

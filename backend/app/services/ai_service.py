@@ -869,10 +869,15 @@ Return ONLY valid JSON, no markdown formatting."""
 _CHAT_SYSTEM_MSG = {
     "role": "system",
     "content": (
-        "You are Smart Apply AI, a friendly and helpful career advisor for "
-        "students and job seekers. Help with resume tips, cover letters, "
-        "interview preparation, job search strategies, and career guidance. "
-        "Keep responses concise, actionable, and encouraging."
+        "You are SkillHub AI, an advanced academic and career intelligence mentor for university students and engineers. "
+        "You deliver rigorous, academically sound, and conceptually precise guidance grounded in computer science and engineering curricula "
+        "(Data Structures, Algorithms, Operating Systems, Computer Networks, Database Management Systems, AI/ML Theory, System Design, and Software Engineering). "
+        "When answering student or technical queries: "
+        "1. Structure your answers with formal academic definitions, underlying theoretical concepts, and intuitive real-world engineering analogies. "
+        "2. Provide algorithmic complexity analysis (Time O(n), Space O(1)) and mathematical derivations where appropriate. "
+        "3. Cite standard academic textbook references (e.g., Cormen/CLRS for Algorithms, Silberschatz/Galvin for OS, Kurose-Ross for Networks, Korth/Elmasri for DBMS, Russell-Norvig for AI). "
+        "4. Bridge academic coursework directly with industry implementation practices and technical interview expectations. "
+        "Maintain a professorial, inspiring, clear, and highly articulate academic tone."
     ),
 }
 
@@ -1246,5 +1251,287 @@ Return ONLY a valid JSON object with the following schema:
             "ui_pages": ["Home", "Dashboard"]
         }
     })
+
+
+# ── SkillHub NVIDIA NIM Academic Intelligence Services ──
+
+def _fallback_academic_roadmap(target_career: str) -> Dict[str, Any]:
+    """Fallback academic roadmap structured into curriculum semesters and phases."""
+    return {
+        "title": f"{target_career} Academic & Career Master Roadmap",
+        "milestones": [
+            {
+                "phase": "Phase 1: Academic Foundations & Core Theory",
+                "title": "Discrete Math, Programming Foundations & Algorithmic Analysis",
+                "duration": "Semester 1–2",
+                "tasks": [
+                    {"id": "t1", "title": "Asymptotic Complexity (Big-O, Omega, Theta) & Recurrences", "completed": True, "type": "learn"},
+                    {"id": "t2", "title": "Core Linear & Tree Data Structures (BSTs, Heaps, Hash Tables)", "completed": True, "type": "practice"},
+                    {"id": "t3", "title": "Laboratory Benchmark: Sorting & Memory Allocation in C/Python", "completed": False, "type": "build"},
+                ]
+            },
+            {
+                "phase": "Phase 2: Core Engineering & Systems Coursework",
+                "title": "Operating Systems, Computer Networks & Database Internals",
+                "duration": "Semester 3–4",
+                "tasks": [
+                    {"id": "t4", "title": "Process Scheduling, Thread Synchronization & IPC Mechanisms", "completed": False, "type": "learn"},
+                    {"id": "t5", "title": "Relational Schema Normalization (1NF–BCNF) & ACID Transactions", "completed": False, "type": "practice"},
+                    {"id": "t6", "title": "Socket Programming: Multi-threaded HTTP/TCP Server Lab", "completed": False, "type": "build"},
+                ]
+            },
+            {
+                "phase": "Phase 3: Advanced Architecture & Modern Frameworks",
+                "title": "Distributed Systems, Cloud Deployments & API Design",
+                "duration": "Semester 5–6",
+                "tasks": [
+                    {"id": "t7", "title": "RESTful & Async Microservice Architecture with Containerization", "completed": False, "type": "learn"},
+                    {"id": "t8", "title": "Distributed Consensus & Caching Systems (Redis / Message Brokers)", "completed": False, "type": "build"},
+                    {"id": "t9", "title": "CI/CD Pipeline with Automated Unit & Integration Test Suites", "completed": False, "type": "assess"},
+                ]
+            },
+            {
+                "phase": "Phase 4: Capstone Engineering & Placement Readiness",
+                "title": "Major Capstone Project, System Design & Technical Viva Prep",
+                "duration": "Semester 7–8",
+                "tasks": [
+                    {"id": "t10", "title": "Deploy Full-Stack Production Capstone with Metrics & Logging", "completed": False, "type": "build"},
+                    {"id": "t11", "title": "Score 85%+ on Academic Viva & Technical Mock Interview", "completed": False, "type": "practice"},
+                    {"id": "t12", "title": "Portfolio Verification: GitHub Repository & ATS Resume Optimization", "completed": False, "type": "assess"},
+                ]
+            }
+        ]
+    }
+
+
+async def generate_academic_roadmap(
+    target_career: str, academic_level: str = "B.Tech / Undergraduate Computer Science", user_skills: Optional[List[str]] = None
+) -> Dict[str, Any]:
+    """Generate a 4-phase academic semester curriculum & career roadmap using NVIDIA NIM."""
+    prompt = f"""You are a university computer science academic dean and senior industry curriculum director.
+Design a highly structured 4-phase academic and industry-aligned learning roadmap for a student pursuing: "{target_career}".
+Academic Degree / Context: {academic_level}
+Current Verified Skills: {', '.join(user_skills) if user_skills else 'Beginner to Intermediate'}
+
+Create 4 academic milestones (e.g. Phase 1: Academic Foundations & Core Theory, Phase 2: Core Engineering & Systems Coursework, Phase 3: Advanced Architecture & Specialization, Phase 4: Capstone Engineering & Placement Readiness).
+Each phase MUST contain:
+- phase: (e.g. "Phase 1: Academic Foundations & Core Theory")
+- title: concise descriptive title
+- duration: (e.g. "Semester 1–2", "Semester 3–4", etc.)
+- tasks: exactly 3 actionable tasks with fields:
+  - id: (e.g. "t1", "t2", ...)
+  - title: specific academic or practical task title
+  - completed: boolean (set first 2 to true, rest false)
+  - type: one of "learn", "practice", "build", "assess"
+
+Return ONLY valid JSON matching this schema:
+{{
+  "title": "{target_career} Academic & Career Master Roadmap",
+  "milestones": [
+    {{
+      "phase": "Phase 1: Academic Foundations & Core Theory",
+      "title": "Title here",
+      "duration": "Semester 1–2",
+      "tasks": [
+        {{"id": "t1", "title": "Task title", "completed": true, "type": "learn"}},
+        {{"id": "t2", "title": "Task title", "completed": true, "type": "practice"}},
+        {{"id": "t3", "title": "Task title", "completed": false, "type": "build"}}
+      ]
+    }}
+  ]
+}}
+"""
+    try:
+        completion = await _call_llm_with_tracking(
+            model=settings.NVIDIA_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+            max_tokens=2000,
+        )
+        content = completion.choices[0].message.content or "{}"
+        parsed = _parse_llm_json(content, fallback=None)
+        if parsed and isinstance(parsed, dict) and "milestones" in parsed and len(parsed["milestones"]) >= 3:
+            counter = 1
+            for m in parsed["milestones"]:
+                for t in m.get("tasks", []):
+                    t["id"] = f"t{counter}"
+                    counter += 1
+            return parsed
+    except Exception as e:
+        logger.error(f"Error generating academic roadmap with NVIDIA NIM: {e}", exc_info=True)
+
+    return _fallback_academic_roadmap(target_career)
+
+
+def _fallback_academic_quiz(skill: str) -> List[Dict[str, Any]]:
+    """Curated academic quiz fallback for standard computer science subjects."""
+    return [
+        {
+            "id": 1,
+            "question": f"In academic algorithm analysis, what is the tight asymptotic upper bound (Big-O) of quicksort in the worst-case, and which choice of pivot mitigates this?",
+            "options": [
+                "O(n log n), mitigated by choosing the first element as pivot",
+                "O(n^2), mitigated by median-of-three or randomized pivot selection",
+                "O(n), mitigated by duplicate key avoidance",
+                "O(2^n), mitigated by memoization tables"
+            ],
+            "correct_index": 1,
+            "academic_explanation": "Quicksort degrades to O(n^2) when subproblems are unbalanced (e.g., sorted array with first element pivot). Randomized or median-of-three pivot selection ensures expected O(n log n) runtime.",
+            "textbook_ref": "Cormen, Leiserson, Rivest, Stein — Introduction to Algorithms (CLRS), Chapter 7"
+        },
+        {
+            "id": 2,
+            "question": f"Which of the following conditions is NOT one of Coffman's four necessary conditions for a system deadlock to occur in Operating Systems?",
+            "options": [
+                "Mutual Exclusion",
+                "Hold and Wait",
+                "Preemptive Resource Revocation",
+                "Circular Wait"
+            ],
+            "correct_index": 2,
+            "academic_explanation": "The four Coffman conditions are: Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. If preemption is allowed, deadlock cannot persist.",
+            "textbook_ref": "Silberschatz, Galvin, Gagne — Operating System Concepts, Chapter 8"
+        },
+        {
+            "id": 3,
+            "question": f"In relational database theory, what distinguishes Boyce-Codd Normal Form (BCNF) from Third Normal Form (3NF)?",
+            "options": [
+                "BCNF permits multi-valued dependencies whereas 3NF strictly eliminates them",
+                "In BCNF, for every functional dependency X -> Y, X must be a superkey without exception for prime attributes",
+                "3NF requires relations to be non-loss decomposable whereas BCNF does not",
+                "BCNF is strictly applicable only to non-relational document stores"
+            ],
+            "correct_index": 1,
+            "academic_explanation": "In 3NF, X -> Y is permitted if X is a superkey OR Y is a prime attribute (part of a candidate key). BCNF eliminates this second exception, requiring X to strictly be a superkey.",
+            "textbook_ref": "Silberschatz, Korth, Sudarshan — Database System Concepts, Chapter 7"
+        },
+        {
+            "id": 4,
+            "question": f"In TCP/IP networking, during the three-way handshake, what flags and sequence numbers are exchanged to establish a reliable connection?",
+            "options": [
+                "Client sends SYN; Server replies with SYN-ACK; Client acknowledges with ACK",
+                "Client sends FIN; Server replies with RST; Client establishes session",
+                "Client sends PUSH; Server responds with PULL; Client validates checksum",
+                "Client sends UDP packet; Server echoes timestamp"
+            ],
+            "correct_index": 0,
+            "academic_explanation": "Connection establishment requires SYN (seq=x), SYN-ACK (seq=y, ack=x+1), and client final ACK (ack=y+1).",
+            "textbook_ref": "Kurose & Ross — Computer Networking: A Top-Down Approach, Chapter 3"
+        },
+        {
+            "id": 5,
+            "question": f"When implementing concurrent systems in modern engineering, which principle defines safety versus liveness properties?",
+            "options": [
+                "Safety ensures nothing bad happens; Liveness guarantees something good eventually happens",
+                "Safety measures CPU cache latency; Liveness measures memory allocation",
+                "Safety requires single-threaded runtimes; Liveness allows distributed nodes",
+                "Safety is static type checking; Liveness is runtime dynamic dispatch"
+            ],
+            "correct_index": 0,
+            "academic_explanation": "In formal concurrency theory (Lamport), safety states that an undesirable state is never reached (e.g. mutual exclusion), while liveness ensures progress is made (e.g. absence of starvation).",
+            "textbook_ref": "Leslie Lamport — Proving the Correctness of Multiprocess Programs (1977)"
+        }
+    ]
+
+
+async def generate_academic_quiz(
+    skill: str, difficulty: str = "Intermediate", num_questions: int = 5
+) -> List[Dict[str, Any]]:
+    """Generate university-grade academic multiple-choice questions for a subject using NVIDIA NIM."""
+    prompt = f"""You are a distinguished university computer science professor and academic board examiner.
+Generate {num_questions} rigorous, university curriculum-standard multiple-choice assessment questions for the topic/skill: "{skill}".
+Academic Rigor: {difficulty}
+
+Each question MUST test conceptual depth, mathematical/algorithmic analysis, or engineering trade-offs.
+Each question MUST follow this exact schema:
+- id: integer 1 to {num_questions}
+- question: clear, precise academic question text
+- options: list of exactly 4 plausible answer strings
+- correct_index: integer (0, 1, 2, or 3) indicating the single correct option
+- academic_explanation: in-depth theoretical and conceptual explanation of why the correct answer is right and why distractors fail
+- textbook_ref: standard university curriculum or textbook citation (e.g. CLRS, Silberschatz, Korth, Tanenbaum, etc.)
+
+Return ONLY valid JSON matching:
+{{
+  "questions": [
+    {{
+      "id": 1,
+      "question": "Question text...",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correct_index": 0,
+      "academic_explanation": "Academic explanation...",
+      "textbook_ref": "Introduction to Algorithms, Chapter 3"
+    }}
+  ]
+}}
+"""
+    try:
+        completion = await _call_llm_with_tracking(
+            model=settings.NVIDIA_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            max_tokens=2200,
+        )
+        content = completion.choices[0].message.content or "{}"
+        parsed = _parse_llm_json(content, fallback=None)
+        if parsed and isinstance(parsed, dict) and "questions" in parsed and len(parsed["questions"]) > 0:
+            return parsed["questions"]
+    except Exception as e:
+        logger.error(f"Error generating academic quiz with NVIDIA NIM: {e}", exc_info=True)
+
+    return _fallback_academic_quiz(skill)
+
+
+async def evaluate_academic_quiz_answers(
+    skill: str, questions: List[Dict[str, Any]], user_answers: Dict[str, int]
+) -> Dict[str, Any]:
+    """Evaluate student's quiz answers against academic criteria, computing score and feedback."""
+    correct_count = 0
+    detailed_results = []
+
+    for q in questions:
+        qid = str(q.get("id"))
+        user_choice = user_answers.get(qid)
+        correct_choice = q.get("correct_index", 0)
+        is_correct = (user_choice == correct_choice)
+        if is_correct:
+            correct_count += 1
+        
+        opts = q.get("options", [])
+        detailed_results.append({
+            "id": q.get("id"),
+            "question": q.get("question"),
+            "user_choice": user_choice,
+            "user_answer_text": opts[user_choice] if user_choice is not None and 0 <= user_choice < len(opts) else "No answer",
+            "correct_choice": correct_choice,
+            "correct_answer_text": opts[correct_choice] if 0 <= correct_choice < len(opts) else "",
+            "is_correct": is_correct,
+            "academic_explanation": q.get("academic_explanation", ""),
+            "textbook_ref": q.get("textbook_ref", "")
+        })
+
+    total_q = max(len(questions), 1)
+    percentage = int(round((correct_count / total_q) * 100))
+
+    if percentage >= 80:
+        academic_grade = "Distinction / Advanced Mastery (A)"
+        summary = f"Exceptional theoretical and conceptual mastery in {skill}. Ready for advanced capstone and senior technical vivas."
+    elif percentage >= 60:
+        academic_grade = "Proficient / Solid Foundation (B)"
+        summary = f"Good academic grounding in {skill}. Review specific textbook chapters to cement algorithmic and system edge-cases."
+    else:
+        academic_grade = "Developing / Foundational Review Required (C)"
+        summary = f"Core fundamentals in {skill} require revision. Review recommended readings and laboratory coursework."
+
+    return {
+        "skill": skill,
+        "score": percentage,
+        "correct_count": correct_count,
+        "total_questions": len(questions),
+        "academic_grade": academic_grade,
+        "summary": summary,
+        "breakdown": detailed_results
+    }
+
 
 
