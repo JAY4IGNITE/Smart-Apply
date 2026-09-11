@@ -58,7 +58,7 @@ function PageFallback() {
         zIndex: 99999,
       }}
     >
-      <InlineLoader title="Loading SmartApply" showDots={false} />
+      <InlineLoader title="Loading SkillHub" showDots={false} />
     </div>
   );
 }

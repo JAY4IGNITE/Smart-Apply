@@ -202,7 +202,7 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <img
               src="/logo.png"
-              alt="SmartApply"
+              alt="SkillHub"
               style={{ width: 32, height: 32, objectFit: 'contain' }}
             />
             <span
@@ -215,7 +215,7 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
                 textTransform: 'uppercase',
               }}
             >
-              SmartApply
+              SkillHub
             </span>
           </div>
 

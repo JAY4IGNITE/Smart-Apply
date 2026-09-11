@@ -73,7 +73,7 @@ export default function Navbar({ visible = true }: NavbarProps) {
         <Link to="/landing" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', gap: 11 }}>
           <img
             src="/logo.png"
-            alt="Smart Apply"
+            alt="SkillHub"
             style={{
               width: 32,
               height: 32,
@@ -87,7 +87,7 @@ export default function Navbar({ visible = true }: NavbarProps) {
             onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
           />
           <span style={{ fontWeight: 800, fontSize: '1.18rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-            Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+            Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
           </span>
         </Link>
 

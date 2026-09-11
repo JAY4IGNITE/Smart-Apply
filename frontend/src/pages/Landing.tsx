@@ -158,7 +158,7 @@ spec:
 const FAQS = [
   {
     q: 'What resume file formats can I upload and export?',
-    a: 'You can upload existing resumes in PDF, DOCX, or plain text format. SmartApply parses your content into structured sections. You can then export your tailored resumes as vector-crisp PDFs or download the clean, raw LaTeX source code (.tex) to store in your personal repositories.',
+    a: 'You can upload existing resumes in PDF, DOCX, or plain text format. SkillHub parses your content into structured sections. You can then export your tailored resumes as vector-crisp PDFs or download the clean, raw LaTeX source code (.tex) to store in your personal repositories.',
   },
   {
     q: 'Which programming languages are supported in the live interview sandbox?',
@@ -170,11 +170,11 @@ const FAQS = [
   },
   {
     q: 'Is my personal data or resume used to train AI models?',
-    a: 'No. Candidate privacy is a foundational principle of SmartApply. Your resume content, interview transcriptions, and code submissions are processed in isolated sessions. We never sell your personal information or use your proprietary documents to train public machine learning models.',
+    a: 'No. Candidate privacy is a foundational principle of SkillHub. Your resume content, interview transcriptions, and code submissions are processed in isolated sessions. We never sell your personal information or use your proprietary documents to train public machine learning models.',
   },
   {
-    q: 'Can I use SmartApply without creating an account?',
-    a: 'You can explore this interactive sandbox directly on the landing page. Creating a free account lets you persistently save your resumes, generate customized cover letters, track interview performance history, and access the portfolio project roadmap.',
+    q: 'Can I use SkillHub without creating an account?',
+    a: 'You can explore this interactive sandbox directly on the landing page. Creating a free account lets you persistently save your resumes, track skill assessments, generate personalized roadmaps, and access career intelligence tools.',
   },
 ];
 
@@ -281,7 +281,7 @@ export default function Landing() {
           >
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#FF9FFC', boxShadow: '0 0 10px #FF9FFC' }} />
             <span style={{ fontSize: 13, fontWeight: 600, color: isDark ? '#FF9FFC' : '#5227FF', letterSpacing: '0.02em' }}>
-              SmartApply Studio · Technical Career Engineering
+              SkillHub · Student Learning & Career Intelligence Platform
             </span>
           </div>
 
@@ -442,7 +442,7 @@ export default function Landing() {
                     <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#f59e0b', opacity: 0.8 }} />
                     <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#10b981', opacity: 0.8 }} />
                     <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink-faint)', marginLeft: 8 }}>
-                      SmartApply Studio · Live Demonstration
+                      SkillHub Studio · Live Demonstration
                     </span>
                   </div>
 
@@ -881,7 +881,7 @@ export default function Landing() {
               Functional Capabilities
             </span>
             <h2 style={{ fontSize: 'clamp(28px, 3.6vw, 44px)', fontWeight: 800, marginTop: 10, color: 'var(--ink)', letterSpacing: '-0.025em' }}>
-              Everything in SmartApply, built for technical candidates.
+              Everything in SkillHub, built for ambitious students and technical candidates.
             </h2>
             <p style={{ color: 'var(--ink-soft)', fontSize: 16, maxWidth: 640, margin: '14px auto 0', lineHeight: 1.6 }}>
               Six dedicated tools built to help you navigate every stage of modern software engineering applications.
@@ -996,7 +996,7 @@ export default function Landing() {
               Workflow
             </span>
             <h2 style={{ fontSize: 'clamp(28px, 3.6vw, 42px)', fontWeight: 800, marginTop: 10, color: 'var(--ink)', letterSpacing: '-0.025em' }}>
-              How SmartApply integrates with your job hunt.
+              How SkillHub integrates with your job hunt.
             </h2>
           </div>
 
@@ -1005,7 +1005,7 @@ export default function Landing() {
               {
                 step: '01',
                 title: 'Import Resume & Target Job',
-                desc: 'Upload your existing resume in PDF, DOCX, or text format and paste the job description you are targeting. SmartApply parses your skills and identifies matching and missing terms.',
+                desc: 'Upload your existing resume in PDF, DOCX, or text format and paste the job description you are targeting. SkillHub parses your skills and identifies matching and missing terms.',
               },
               {
                 step: '02',
@@ -1087,7 +1087,7 @@ export default function Landing() {
             </h3>
 
             <p style={{ fontSize: 14.5, color: 'var(--ink-soft)', lineHeight: 1.6, maxWidth: 780, margin: '0 0 28px' }}>
-              SmartApply is engineered on modern cloud infrastructure with isolated execution environments. We believe your career data belongs solely to you.
+              SkillHub is engineered on modern cloud infrastructure with isolated execution environments. We believe your career data belongs solely to you.
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
@@ -1131,7 +1131,7 @@ export default function Landing() {
               Frequently Asked Questions
             </span>
             <h2 style={{ fontSize: 'clamp(26px, 3.4vw, 38px)', fontWeight: 800, marginTop: 10, color: 'var(--ink)', letterSpacing: '-0.025em' }}>
-              Common questions about SmartApply.
+              Common questions about SkillHub.
             </h2>
           </div>
 
@@ -1223,7 +1223,7 @@ export default function Landing() {
               Ready to streamline your applications?
             </h2>
             <p style={{ color: 'var(--ink-soft)', fontSize: 16, maxWidth: 540, margin: '0 auto 32px', lineHeight: 1.6 }}>
-              Tailor your resume, verify ATS keyword compatibility, and run live mock interview sessions with SmartApply Studio.
+              Assess your skills, build real projects, tailor your resume, and practice interviews with SkillHub.
             </p>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
               <button
@@ -1273,7 +1273,7 @@ export default function Landing() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <img
               src="/logo.png"
-              alt="Smart Apply"
+              alt="SkillHub"
               style={{
                 width: 26,
                 height: 26,
@@ -1282,7 +1282,7 @@ export default function Landing() {
               }}
             />
             <span style={{ fontWeight: 700, color: 'var(--ink)', fontSize: 15 }}>
-              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+              Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
             </span>
           </div>
 
@@ -1293,7 +1293,7 @@ export default function Landing() {
           </div>
 
           <div style={{ fontSize: 12.5, color: 'var(--ink-faint)' }}>
-            © {new Date().getFullYear()} SmartApply · Open Architecture
+            © {new Date().getFullYear()} SkillHub · Student Learning & Career Platform
           </div>
         </div>
       </footer>

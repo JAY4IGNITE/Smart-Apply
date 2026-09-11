@@ -67,16 +67,16 @@ export default function Login() {
       >
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <img src="/logo.png" alt="Smart Apply" style={{ height: 42, width: 42, objectFit: 'contain' }} />
+            <img src="/logo.png" alt="SkillHub" style={{ height: 42, width: 42, objectFit: 'contain' }} />
             <span style={{ fontWeight: 800, fontSize: '1.4rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+              Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
             </span>
           </Link>
         </div>
 
         <div className="auth-header">
           <h2>Welcome back</h2>
-          <p>Sign in to keep working on your job search</p>
+          <p>Sign in to keep accelerating your skill & career growth</p>
         </div>
 
         {error && (
@@ -138,7 +138,7 @@ export default function Login() {
         </form>
 
         <div className="auth-links">
-          New to Smart Apply? <Link to="/signup">Create an account</Link>
+          New to SkillHub? <Link to="/signup">Create an account</Link>
         </div>
       </motion.div>
     </div>

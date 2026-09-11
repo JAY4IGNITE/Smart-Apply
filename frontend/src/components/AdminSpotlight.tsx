@@ -175,7 +175,7 @@ export default function AdminSpotlight() {
             </div>
             
             <div style={{ padding: '8px 20px', background: 'var(--surface-sunken)', borderTop: '1px solid var(--border)', fontSize: '0.75rem', color: 'var(--ink-faint)', display: 'flex', justifyContent: 'center' }}>
-              Search globally across the platform. Powered by SmartApply God Mode.
+              Search globally across the platform. Powered by SkillHub Admin Spotlight.
             </div>
           </motion.div>
         </div>

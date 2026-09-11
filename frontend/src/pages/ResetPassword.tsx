@@ -86,9 +86,9 @@ export default function ResetPassword() {
       >
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <img src="/logo.png" alt="Smart Apply" style={{ height: 42, width: 42, objectFit: 'contain' }} />
+            <img src="/logo.png" alt="SkillHub" style={{ height: 42, width: 42, objectFit: 'contain' }} />
             <span style={{ fontWeight: 800, fontSize: '1.4rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+              Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
             </span>
           </Link>
         </div>

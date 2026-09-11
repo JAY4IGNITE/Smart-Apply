@@ -146,7 +146,7 @@ export default function Settings() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 0', flexWrap: 'wrap', gap: 14 }}>
           <div>
             <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 3 }}>Theme</div>
-            <div className="text-muted" style={{ fontSize: 13 }}>Choose how Smart Apply looks on this device</div>
+            <div className="text-muted" style={{ fontSize: 13 }}>Choose how SkillHub looks on this device</div>
           </div>
           <ThemeSwitcher />
         </div>

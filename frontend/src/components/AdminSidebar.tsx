@@ -20,9 +20,9 @@ export default function AdminSidebar({ mobileOpen, onCloseMobile }: AdminSidebar
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div className="sidebar-header" style={{ padding: '24px 20px 16px' }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', marginBottom: 6 }}>
-              <img src="/logo.png" alt="Smart Apply" style={{ height: 28, width: 28, objectFit: 'contain' }} />
+              <img src="/logo.png" alt="SkillHub" style={{ height: 28, width: 28, objectFit: 'contain' }} />
               <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-                Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
+                Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
               </span>
             </Link>
             <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
