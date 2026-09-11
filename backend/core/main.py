@@ -15,7 +15,7 @@ from slowapi.errors import RateLimitExceeded
 from app.rate_limiter import limiter
 from app.config import settings
 from app.database import close_db, init_db
-from app.routers import auth, user, resume, projects, jobs, linkedin, admin, stats, cover_letter, code_execution, resume_maker, skills, github
+from app.routers import auth, user, resume, projects, jobs, linkedin, admin, stats, cover_letter, code_execution, resume_maker
 from app.websockets.auth_ws import router as ws_router
 from app.websockets.manager import manager
 
@@ -91,8 +91,6 @@ app.include_router(code_execution.router)
 app.include_router(resume_maker.router)
 app.include_router(admin.router)
 app.include_router(stats.router)
-app.include_router(skills.router)
-app.include_router(github.router)
 
 # ── WebSocket Router ──
 app.include_router(ws_router, prefix="/api")

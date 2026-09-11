@@ -86,16 +86,16 @@ export default function Signup() {
       >
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <img src="/logo.png" alt="SkillHub" style={{ height: 42, width: 42, objectFit: 'contain' }} />
+            <img src="/logo.png" alt="Smart Apply" style={{ height: 42, width: 42, objectFit: 'contain' }} />
             <span style={{ fontWeight: 800, fontSize: '1.4rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-              Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
+              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
             </span>
           </Link>
         </div>
 
         <div className="auth-header">
           <h2>Create your account</h2>
-          <p>Start your student learning & career development journey</p>
+          <p>Start your AI-powered job search journey</p>
         </div>
 
         {error && (

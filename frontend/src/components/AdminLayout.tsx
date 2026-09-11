@@ -15,9 +15,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <div className="mobile-dashboard-nav">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <img src="/logo.png" alt="SkillHub" style={{ height: 26, width: 26, objectFit: 'contain' }} />
+            <img src="/logo.png" alt="Smart Apply" style={{ height: 26, width: 26, objectFit: 'contain' }} />
             <span style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--ink)' }}>
-              Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
+              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
             </span>
           </div>
           <button

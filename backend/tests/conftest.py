@@ -11,38 +11,13 @@ from app.models.interview_report import InterviewReport
 from app.models.settings import SystemSettings
 from app.models.api_metrics import APILog
 from app.models.resume_template import ResumeTemplate
-from app.models.skills import (
-    CareerPath,
-    Skill,
-    StudentSkill,
-    SkillAssessmentRecord,
-    PersonalizedRoadmap,
-    StudentProject,
-    StudentCertification,
-    CareerReadinessScore,
-)
 
 @pytest_asyncio.fixture(autouse=True)
 async def test_db():
     client = AsyncMongoMockClient()
     await init_beanie(
         database=client["test_db"],
-        document_models=[
-            User,
-            Resume,
-            InterviewReport,
-            SystemSettings,
-            APILog,
-            ResumeTemplate,
-            CareerPath,
-            Skill,
-            StudentSkill,
-            SkillAssessmentRecord,
-            PersonalizedRoadmap,
-            StudentProject,
-            StudentCertification,
-            CareerReadinessScore,
-        ],
+        document_models=[User, Resume, InterviewReport, SystemSettings, APILog, ResumeTemplate],
     )
     yield
 

@@ -104,7 +104,7 @@ export default function Onboarding() {
       });
       if (res.ok) {
         updateUser(res.data.user);
-        showToast('success', 'Profile complete — welcome to SkillHub!');
+        showToast('success', 'Profile complete — welcome to Smart Apply!');
         navigate('/dashboard');
       } else {
         showToast('error', 'Failed to save your profile.');

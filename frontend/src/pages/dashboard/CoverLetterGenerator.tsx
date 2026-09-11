@@ -657,7 +657,7 @@ export default function CoverLetterGenerator() {
                   padding: 40,
                 }}
               >
-                <div className="letterhead-watermark">SKILLHUB // CAREER DOSSIER</div>
+                <div className="letterhead-watermark">SMARTAPPLY // APPLICANT FOLIO</div>
                 <div className="letterhead-top-accent" />
 
                 <div

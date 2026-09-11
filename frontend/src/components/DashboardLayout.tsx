@@ -31,9 +31,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         {/* Mobile Header (only visible on mobile screens <= 1024px) */}
         <div className="mobile-dashboard-nav">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img src="/logo.png" alt="SkillHub" style={{ height: 26, width: 26, objectFit: 'contain' }} />
+            <img src="/logo.png" alt="Smart Apply" style={{ height: 26, width: 26, objectFit: 'contain' }} />
             <span style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--ink)' }}>
-              Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
+              Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
             </span>
           </div>
           <button

@@ -202,7 +202,7 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <img
               src="/logo.png"
-              alt="SkillHub"
+              alt="SmartApply"
               style={{ width: 32, height: 32, objectFit: 'contain' }}
             />
             <span
@@ -215,7 +215,7 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
                 textTransform: 'uppercase',
               }}
             >
-              SkillHub
+              SmartApply
             </span>
           </div>
 
@@ -258,26 +258,26 @@ export default function CinematicHeroSection({ onExploreClick }: Props) {
             className="cinematic-typography-container"
           >
             <div className="cinematic-typography-row">
-              {/* SKILL — glides left */}
+              {/* SMART — glides left */}
               <motion.div
                 style={{ x: splitLeftX, flex: 1, display: 'flex', justifyContent: 'flex-start' }}
                 className="will-change-transform"
               >
                 <h1 className="cinematic-heading-word">
-                  Skill
+                  Smart
                 </h1>
               </motion.div>
 
               {/* Central Gap Space that expands */}
               <div style={{ width: '6vw', flexShrink: 0 }} />
 
-              {/* HUB — glides right */}
+              {/* APPLY — glides right */}
               <motion.div
                 style={{ x: splitRightX, flex: 1, display: 'flex', justifyContent: 'flex-end' }}
                 className="will-change-transform"
               >
                 <h1 className="cinematic-heading-word">
-                  Hub
+                  Apply
                 </h1>
               </motion.div>
             </div>

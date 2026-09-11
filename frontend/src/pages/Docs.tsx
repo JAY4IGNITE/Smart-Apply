@@ -190,9 +190,9 @@ export default function Docs() {
               <Menu size={18} />
             </button>
             <Link to="/" className="docs-header-logo" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-              <img src="/logo.png" alt="SkillHub" style={{ height: 26, width: 26, objectFit: 'contain' }} />
+              <img src="/logo.png" alt="Smart Apply" style={{ height: 26, width: 26, objectFit: 'contain' }} />
               <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.025em', color: 'var(--ink)' }}>
-                Skill<span style={{ color: 'var(--accent)' }}>Hub</span>
+                Smart<span style={{ color: 'var(--accent)' }}>Apply</span>
               </span>
             </Link>
             <div className="docs-header-divider" />
@@ -243,17 +243,17 @@ export default function Docs() {
           <div className="docs-prose">
 
             {/* ═══ OVERVIEW ═══ */}
-            <h1>SkillHub Documentation</h1>
+            <h1>SmartApply Documentation</h1>
             <p className="docs-subtitle">
-              Everything you need to understand, set up, and extend SkillHub — the comprehensive student learning, skill development, and career intelligence platform.
+              Everything you need to understand, set up, and extend SmartApply — the AI-powered career companion for job seekers.
             </p>
 
             <h2 id="overview">Overview</h2>
             <p>
-              SkillHub is an end-to-end AI-powered student learning and career preparation platform that bridges the gap between curriculum and industry expectations. It unifies <strong>career exploration</strong>, <strong>skill diagnostic assessments</strong>, <strong>gap analysis</strong>, <strong>personalized learning roadmaps</strong>, <strong>portfolio building</strong>, and <strong>application intelligence</strong> (automated resume tailoring, ATS compatibility, and live voice mock interviews) into a single, cohesive experience.
+              SmartApply is an end-to-end AI-powered job application platform that helps candidates land interviews faster. It combines <strong>automated resume tailoring</strong>, <strong>ATS compatibility analysis</strong>, <strong>real-time voice AI mock interviews</strong> with sandboxed code execution, and <strong>intelligent career coaching</strong> into a single, seamless product.
             </p>
             <Callout type="info">
-              SkillHub is built for scale — empowering individual students, university career development centers, bootcamps, and modern engineering candidates.
+              SmartApply is built for scale — from individual job seekers to university placement cells and enterprise recruiting teams.
             </Callout>
 
             {/* ═══ FEATURES ═══ */}

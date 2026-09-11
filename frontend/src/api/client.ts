@@ -48,9 +48,7 @@ export function getApiBaseUrl(endpoint?: string): string {
       cleanEndpoint.startsWith('/jobs') ||
       cleanEndpoint.startsWith('/projects') ||
       cleanEndpoint.startsWith('/cover-letter') ||
-      cleanEndpoint.startsWith('/linkedin') ||
-      cleanEndpoint.startsWith('/skills') ||
-      cleanEndpoint.startsWith('/github')
+      cleanEndpoint.startsWith('/linkedin')
     ) {
       baseUrl = import.meta.env.VITE_AI_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || fallback;
     } else if (
@@ -122,8 +120,7 @@ export async function apiFetch<T = unknown>(
     endpoint.startsWith('/linkedin') ||
     endpoint.startsWith('/interview') ||
     endpoint.startsWith('/resume-maker') ||
-    endpoint.startsWith('/code') ||
-    endpoint.startsWith('/skills');
+    endpoint.startsWith('/code');
 
   const controller = new AbortController();
   const timeoutMs = isAiOrLongRunning ? 90000 : 45000;
