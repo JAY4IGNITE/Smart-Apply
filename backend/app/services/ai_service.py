@@ -258,8 +258,17 @@ You MUST return your analysis as a valid JSON object matching the exact schema b
 
         content = completion.choices[0].message.content or "{}"
         parsed = _parse_llm_json(content, fallback=None)
-        if parsed and isinstance(parsed, dict) and "score" in parsed:
-            return parsed
+        if parsed and isinstance(parsed, dict):
+            try:
+                score = max(0, min(100, int(parsed.get("score", 50))))
+            except Exception:
+                score = 50
+            return {
+                "score": score,
+                "matched_keywords": [str(x) for x in parsed.get("matched_keywords", []) if x] if isinstance(parsed.get("matched_keywords"), list) else [],
+                "missing_keywords": [str(x) for x in parsed.get("missing_keywords", []) if x] if isinstance(parsed.get("missing_keywords"), list) else [],
+                "suggestions": [str(x) for x in parsed.get("suggestions", []) if x] if isinstance(parsed.get("suggestions"), list) else []
+            }
         return _fallback_ats_score(resume_text_clean, job_description_clean)
     except Exception as e:
         logger.error(f"Error during ATS analysis: {e}", exc_info=True)
@@ -294,12 +303,24 @@ Return ONLY valid JSON."""
         )
 
         content = completion.choices[0].message.content or "{}"
-        return _parse_llm_json(content, fallback={
+        parsed = _parse_llm_json(content, fallback=None)
+        if parsed and isinstance(parsed, dict):
+            try:
+                score = max(0, min(100, int(parsed.get("score", 75))))
+            except Exception:
+                score = 75
+            return {
+                "score": score,
+                "strengths": [str(x) for x in parsed.get("strengths", []) if x] if isinstance(parsed.get("strengths"), list) else [],
+                "weaknesses": [str(x) for x in parsed.get("weaknesses", []) if x] if isinstance(parsed.get("weaknesses"), list) else [],
+                "improved_answer": str(parsed.get("improved_answer", "")) or "Structure your answer with STAR: Situation, Task, Action, and measurable Result."
+            }
+        return {
             "score": 75,
             "strengths": ["Clear communication", "Addressed the core problem"],
             "weaknesses": ["Could provide more quantifiable results"],
             "improved_answer": "Structure your answer with STAR: Situation, Task, Action, and measurable Result.",
-        })
+        }
     except Exception as e:
         logger.error(f"Error evaluating interview answer: {e}", exc_info=True)
         return {
@@ -811,7 +832,7 @@ Instructions:
         content = completion.choices[0].message.content or "{}"
         parsed = _parse_llm_json(content, fallback=None)
         if parsed and isinstance(parsed, dict) and len(parsed) > 0:
-            return parsed
+            return {str(k): (str(v) if v is not None else "") for k, v in parsed.items()}
         return _fallback_smart_fill(resume_text_clean, required_fields, user_profile)
     except Exception as e:
         logger.error(f"Error during smart_fill_resume_fields: {e}", exc_info=True)
@@ -863,7 +884,19 @@ Return ONLY valid JSON, no markdown formatting."""
     )
 
     content = completion.choices[0].message.content or "{}"
-    return _parse_llm_json(content, fallback={})
+    parsed = _parse_llm_json(content, fallback=None)
+    if parsed and isinstance(parsed, dict):
+        return {
+            "full_name": str(parsed.get("full_name", "")) or None,
+            "bio": str(parsed.get("bio", "")) or None,
+            "skills": [str(s) for s in parsed.get("skills", []) if s] if isinstance(parsed.get("skills"), list) else [],
+            "education": parsed.get("education", []) if isinstance(parsed.get("education"), list) else [],
+            "experience": parsed.get("experience", []) if isinstance(parsed.get("experience"), list) else [],
+            "linkedin_url": str(parsed.get("linkedin_url", "")) or None,
+            "github_url": str(parsed.get("github_url", "")) or None,
+            "portfolio_url": str(parsed.get("portfolio_url", "")) or None
+        }
+    return {}
 
 
 _CHAT_SYSTEM_MSG = {
@@ -952,11 +985,18 @@ Return ONLY valid JSON."""
     )
 
     content = completion.choices[0].message.content or "{}"
-    return _parse_llm_json(content, fallback={
+    parsed = _parse_llm_json(content, fallback=None)
+    if parsed and isinstance(parsed, dict):
+        return {
+            "question": str(parsed.get("question", "")) or "Tell me about a challenging project you've worked on.",
+            "category": str(parsed.get("category", "")) or "Behavioral",
+            "tips": str(parsed.get("tips", "")) or "Use the STAR method: Situation, Task, Action, Result."
+        }
+    return {
         "question": "Tell me about a challenging project you've worked on.",
         "category": "Behavioral",
         "tips": "Use the STAR method: Situation, Task, Action, Result.",
-    })
+    }
 
 
 def _fallback_linkedin_optimization(profile_text: str) -> Dict[str, Any]:
@@ -1015,8 +1055,12 @@ Return your analysis as a valid JSON object matching the exact schema below. Do 
 
         content = completion.choices[0].message.content or "{}"
         parsed = _parse_llm_json(content, fallback=None)
-        if parsed and isinstance(parsed, dict) and "headline_suggestions" in parsed:
-            return parsed
+        if parsed and isinstance(parsed, dict):
+            return {
+                "headline_suggestions": [str(x) for x in parsed.get("headline_suggestions", []) if x] if isinstance(parsed.get("headline_suggestions"), list) else [],
+                "summary_rewrite": str(parsed.get("summary_rewrite", "")) or _fallback_linkedin_optimization("").get("summary_rewrite"),
+                "experience_improvements": parsed.get("experience_improvements", []) if isinstance(parsed.get("experience_improvements"), list) else []
+            }
         return _fallback_linkedin_optimization(profile_text_clean)
     except Exception as e:
         logger.error(f"Error during LinkedIn profile optimization: {e}", exc_info=True)
@@ -1138,9 +1182,11 @@ Return ONLY a valid JSON object matching this exact structure:
     )
 
     content = completion.choices[0].message.content or "{}"
-    return _parse_llm_json(content, fallback={
+    parsed = _parse_llm_json(content, fallback=None)
+    
+    fallback_idea = {
         "refined_title": "AI Project Concept",
-        "one_liner": raw_idea[:100],
+        "one_liner": raw_idea[:100] if raw_idea else "An AI Project Idea",
         "category": "Web Application",
         "estimated_complexity": 5,
         "suggested_stack": ["TypeScript", "React", "Node.js"],
@@ -1159,7 +1205,23 @@ Return ONLY a valid JSON object matching this exact structure:
                 "purpose": "Target Audience"
             }
         ]
-    })
+    }
+
+    if parsed and isinstance(parsed, dict):
+        try:
+            complexity = max(1, min(10, int(parsed.get("estimated_complexity", 5))))
+        except Exception:
+            complexity = 5
+        return {
+            "refined_title": str(parsed.get("refined_title", "")) or fallback_idea["refined_title"],
+            "one_liner": str(parsed.get("one_liner", "")) or fallback_idea["one_liner"],
+            "category": str(parsed.get("category", "")) or fallback_idea["category"],
+            "estimated_complexity": complexity,
+            "suggested_stack": [str(x) for x in parsed.get("suggested_stack", []) if x] if isinstance(parsed.get("suggested_stack"), list) else fallback_idea["suggested_stack"],
+            "initial_analysis": str(parsed.get("initial_analysis", "")) or fallback_idea["initial_analysis"],
+            "clarifying_questions": parsed.get("clarifying_questions", []) if isinstance(parsed.get("clarifying_questions"), list) else fallback_idea["clarifying_questions"]
+        }
+    return fallback_idea
 
 
 async def generate_idea_master_prompt(
@@ -1232,7 +1294,9 @@ Return ONLY a valid JSON object with the following schema:
     )
 
     content = completion.choices[0].message.content or "{}"
-    return _parse_llm_json(content, fallback={
+    parsed = _parse_llm_json(content, fallback=None)
+    
+    fallback_master = {
         "prompt_title": f"Master Prompt - {refined_title or 'App'}",
         "target_format": target_format,
         "suggested_filename": suggested_ext,
@@ -1245,6 +1309,16 @@ Return ONLY a valid JSON object with the following schema:
             "primary_api_routes": ["/api/health", "/api/generate"],
             "ui_pages": ["Home", "Dashboard"]
         }
-    })
+    }
+
+    if parsed and isinstance(parsed, dict):
+        return {
+            "prompt_title": str(parsed.get("prompt_title", "")) or fallback_master["prompt_title"],
+            "target_format": str(parsed.get("target_format", "")) or fallback_master["target_format"],
+            "suggested_filename": str(parsed.get("suggested_filename", "")) or fallback_master["suggested_filename"],
+            "master_prompt": str(parsed.get("master_prompt", "")) or fallback_master["master_prompt"],
+            "architecture_summary": parsed.get("architecture_summary", {}) if isinstance(parsed.get("architecture_summary"), dict) else fallback_master["architecture_summary"]
+        }
+    return fallback_master
 
 
